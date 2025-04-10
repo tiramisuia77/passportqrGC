@@ -1,0 +1,1289 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Solicitud de Pasaporte Cubano</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.9.3/html2pdf.bundle.js"></script>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            line-height: 1.6;
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+            color: #333;
+        }
+        .header {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+        .header h1 {
+            margin: 5px 0;
+            font-size: 18px;
+        }
+        .header h2 {
+            margin: 5px 0;
+            font-size: 16px;
+            font-weight: normal;
+        }
+        .form-section {
+            margin-bottom: 25px;
+            border: 1px solid #ccc;
+            padding: 15px;
+            border-radius: 5px;
+        }
+        .form-title {
+            background-color: #f0f0f0;
+            padding: 5px 10px;
+            margin: -15px -15px 15px -15px;
+            border-bottom: 1px solid #ccc;
+            font-weight: bold;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .title-container {
+            display: flex;
+            align-items: center;
+        }
+        .form-row {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 15px;
+            margin-bottom: 15px;
+        }
+        .form-group {
+            flex: 1;
+            min-width: 200px;
+        }
+        label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: bold;
+            font-size: 14px;
+        }
+        input, select, textarea {
+            width: 100%;
+            padding: 8px;
+            border: 1px solid #999;
+            border-radius: 4px;
+            box-sizing: border-box;
+        }
+        input[type="text"], input[type="email"], input[type="tel"], textarea {
+            text-transform: uppercase;
+        }
+        .photo-box {
+            border: 2px dashed #999;
+            width: 150px;
+            height: 180px;
+            margin: 10px auto;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            padding: 10px;
+            background-color: #f9f9f9;
+        }
+        .signature-box {
+            border: 1px solid #000;
+            width: 100%;
+            height: 80px;
+            margin: 10px 0;
+            background-color: #fff;
+        }
+        .qr-container {
+            margin: 20px auto;
+            text-align: center;
+            padding: 15px;
+            border: 1px solid #ddd;
+            background-color: #f9f9f9;
+            display: block;
+            width: 280px;
+        }
+        .btn-container {
+            text-align: center;
+            margin: 30px 0;
+        }
+        button {
+            padding: 10px 20px;
+            background-color: #0066cc;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 16px;
+        }
+        button:hover {
+            background-color: #0055aa;
+        }
+        .residence-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 10px 0;
+        }
+        .residence-table th, .residence-table td {
+            border: 1px solid #ddd;
+            padding: 8px;
+            text-align: left;
+        }
+        .residence-table th {
+            background-color: #f2f2f2;
+        }
+        .declaration {
+            font-style: italic;
+            margin: 15px 0;
+            padding: 10px;
+            background-color: #f5f5f5;
+            border-left: 3px solid #ccc;
+        }
+        #loader {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.5);
+            display: none;
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+        }
+        .spinner {
+            border: 5px solid #f3f3f3;
+            border-top: 5px solid #3498db;
+            border-radius: 50%;
+            width: 50px;
+            height: 50px;
+            animation: spin 1s linear infinite;
+            margin: 20px auto;
+        }
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+        .error-field {
+            border: 1px solid red !important;
+        }
+        @media print {
+            button, .no-print {
+                display: none;
+            }
+            .qr-container {
+                display: block !important;
+                page-break-inside: avoid;
+            }
+        }
+        .compact-form-group {
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            height: 100%;
+        }
+        .tramite-select {
+            height: 180px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+        }
+        .tramite-select select {
+            height: 50px;
+            font-size: 16px;
+        }
+    </style>
+</head>
+<body>
+    <div id="loader">
+        <div style="background: white; padding: 20px; border-radius: 5px; text-align: center;">
+            <p>Generando PDF, por favor espere...</p>
+            <div class="spinner"></div>
+        </div>
+    </div>
+
+    <div id="form-to-print">
+        <div class="header">
+           
+            <h1>SOLICITUD DE PASAPORTE</h1>
+        </div>
+
+        <div class="form-section">
+            <div class="form-title">
+                <span>DATOS BÁSICOS</span>
+                <div style="display: flex; align-items: center; gap: 10px;">
+                    <label for="tramite" style="margin: 0; white-space: nowrap;">Tipo de Trámite:</label>
+                    <select id="tramite" name="tramite" required style="width: 150px; margin: 0;">
+                        <option value="">Seleccione</option>
+                        <option value="primera_vez">Primera Vez</option>
+                        <option value="renovacion">Renovación</option>
+                        <option value="prorroga">Prórroga</option>
+                        <option value="ccv">CCV</option>
+                        <option value="pe-1">PE-1</option>
+                    </select>
+                </div>
+            </div>
+            <div class="form-row">
+                <div class="form-group" style="flex: 1;">
+                    <label>Foto del Solicitante</label>
+                    <div class="photo-box">
+                        FOTO PEGADA (4 x 4.5 cm)
+                    </div>
+                </div>
+                <div class="form-group" style="flex: 2;">
+                    <label>Firma del Solicitante</label>
+                    <div class="signature-box" style="height: 180px; display: flex; align-items: center; justify-content: center;">
+                        <span style="color: #999; font-style: italic;">Firmar dentro de este espacio</span>
+                    </div>
+                </div>
+            </div>
+            <div class="declaration">
+                Declaro que los datos que aparecen en este formulario se ajustan a la realidad
+            </div>
+        </div>
+
+        <div class="form-section">
+            <div class="form-title">DATOS GENERALES</div>
+            <div class="form-row">
+                <div class="form-group">
+                    <label>Fecha de Solicitud</label>
+                    <div class="form-row">
+                        <input type="number" id="diaSolicitud" name="diaSolicitud" placeholder="Día" min="1" max="31" style="width: 50px;" required>
+                        <input type="number" id="mesSolicitud" name="mesSolicitud" placeholder="Mes" min="1" max="12" style="width: 50px;" required>
+                        <input type="number" id="anoSolicitud" name="anoSolicitud" placeholder="Año" min="1900" max="2100" style="width: 70px;" required>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label>Número de Pasaporte</label>
+                    <input type="text" required>
+                </div>
+                <div class="form-group">
+                    <label>Consulado</label>
+                    <input type="text" required>
+                </div>
+            </div>
+
+            <div class="form-row">
+                <!-- Campo Carné de Identidad -->
+                <div class="form-group">
+                    <label>Carné de Identidad</label>
+                    <input type="text" id="carneIdentidad" name="carneIdentidad" required>
+                </div>
+                <!-- Campo Número de Pasaporte -->
+                <div class="form-group">
+                    <label>Número de Pasaporte</label>
+                    <input type="text" id="numeroPasaporte" name="numeroPasaporte" required>
+                </div>
+            </div>
+
+            <div class="form-row">
+                <!-- Campo País de Residencia -->
+                <div class="form-group">
+                    <label>País de Residencia</label>
+                    <select id="paisResidencia" name="paisResidencia" required>
+                        <!-- Opciones de países se llenarán dinámicamente -->
+                    </select>
+                </div>
+            </div>
+
+            <div class="form-row">
+                <div class="form-group">
+                    <label>Primer Apellido</label>
+                    <input type="text" id="primerApellido" name="primerApellido" required>
+                </div>
+                <div class="form-group">
+                    <label>Segundo Apellido</label>
+                    <input type="text" id="segundoApellido" name="segundoApellido">
+                </div>
+            </div>
+
+            <div class="form-row">
+                <div class="form-group">
+                    <label>Primer Nombre</label>
+                    <input type="text" id="primerNombre" name="primerNombre" required>
+                </div>
+                <div class="form-group">
+                    <label>Segundo Nombre</label>
+                    <input type="text">
+                </div>
+            </div>
+
+            <div class="form-row">
+                <div class="form-group">
+                    <label>Hijo de: Padre</label>
+                    <input type="text">
+                </div>
+                <div class="form-group">
+                    <label>y Madre</label>
+                    <input type="text">
+                </div>
+            </div>
+
+            <div class="form-row">
+                <div class="form-group">
+                    <label>Estatura (cm)</label>
+                    <input type="number" min="100" max="250">
+                </div>
+                <div class="form-group">
+                    <label for="sexo">Sexo</label>
+                    <select id="sexo" name="sexo" required>
+                        <option value="">Seleccione</option>
+                        <option value="masculino">Masculino</option>
+                        <option value="femenino">Femenino</option>
+                    </select>
+                </div>
+            </div>
+
+            <div class="form-row">
+                <div class="form-group">
+                    <label>Color de Ojos</label>
+                    <select>
+                        <option value="">Seleccione</option>
+                        <option value="claros">Claros</option>
+                        <option value="negros">Negros</option>
+                        <option value="pardos">Pardos</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label>Color de Piel</label>
+                    <select>
+                        <option value="">Seleccione</option>
+                        <option value="blanca">Blanca</option>
+                        <option value="negra">Negra</option>
+                        <option value="amarilla">Amarilla</option>
+                        <option value="mulata">Mulata</option>
+                        <option value="albina">Albina</option>
+                    </select>
+                </div>
+            </div>
+
+            <div class="form-row">
+                <div class="form-group">
+                    <label>Color de Cabello</label>
+                    <select>
+                        <option value="">Seleccione</option>
+                        <option value="negro">Negro</option>
+                        <option value="canoso">Canoso</option>
+                        <option value="rubio">Rubio</option>
+                        <option value="castaño">Castaño</option>
+                        <option value="rojo">Rojo</option>
+                        <option value="otros">Otros</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label>Características Especiales</label>
+                    <input type="text" placeholder="Marcas, cicatrices, etc.">
+                </div>
+            </div>
+
+            <div class="form-row">
+                <div class="form-group">
+                    <label>Fecha de Nacimiento</label>
+                    <div class="form-row">
+                        <input type="number" id="diaNacimiento" name="diaNacimiento" placeholder="Día" min="1" max="31" style="width: 50px;">
+                        <input type="number" id="mesNacimiento" name="mesNacimiento" placeholder="Mes" min="1" max="12" style="width: 50px;">
+                        <input type="number" id="anoNacimiento" name="anoNacimiento" placeholder="Año" min="1900" max="2100" style="width: 70px;">
+                    </div>
+                </div>
+            </div>
+
+            <div class="form-row">
+                <!-- Campo País de Nacimiento -->
+                <div class="form-group" style="flex: 1;">
+                    <label>País de Nacimiento</label>
+                    <select id="paisNacimiento" name="paisNacimiento" required>
+                        <!-- Opciones de países se llenarán dinámicamente -->
+                    </select>
+                </div>
+                <!-- Contenedor dinámico para Provincia -->
+                <div class="form-group" id="provincia-container" style="flex: 1;">
+                    <label>Provincia</label>
+                    <!-- Aquí se insertará el select o input para provincia -->
+                </div>
+                <!-- Contenedor dinámico para Municipio -->
+                <div class="form-group" id="municipio-container" style="flex: 1;">
+                    <label>Municipio</label>
+                    <!-- Aquí se insertará el select o input para municipio -->
+                </div>
+            </div>
+
+            <div class="form-row">
+                <div class="form-group">
+                    <label>Clasificación Migratoria al salir de Cuba</label>
+                    <select>
+                        <option value="">Seleccione</option>
+                        <option value="PVE">PVE</option>
+                        <option value="PVT">PVT</option>
+                        <option value="PSE">PSE</option>
+                        <option value="AO">AO</option>
+                        <option value="PRE/PSI">PRE/PSI</option>
+                        <option value="PSI">PSI</option>
+                        <option value="ILEGAL">ILEGAL</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label>Fecha de salida de Cuba</label>
+                    <div class="form-row">
+                        <input type="number" id="diaSalida" name="diaSalida" placeholder="Día" min="1" max="31" style="width: 50px;">
+                        <input type="number" id="mesSalida" name="mesSalida" placeholder="Mes" min="1" max="12" style="width: 50px;">
+                        <input type="number" id="anoSalida" name="anoSalida" placeholder="Año" min="1900" max="2100" style="width: 70px;">
+                    </div>
+                </div>
+            </div>
+
+            <div class="form-row">
+                <div class="form-group">
+                    <label>Estado Civil</label>
+                    <select>
+                        <option value="">Seleccione</option>
+                        <option value="soltero">Soltero</option>
+                        <option value="casado">Casado</option>
+                        <option value="viudo">Viudo</option>
+                        <option value="divorciado">Divorciado</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label>País de Residencia</label>
+                    <input type="text">
+                </div>
+            </div>
+        </div>
+
+        <div class="form-section">
+            <div class="form-title">LUGAR DE RESIDENCIA ACTUAL</div>
+            <div class="form-row">
+                <div class="form-group">
+                    <label>Dirección (calle, Ave. Nro. Entre Calles)</label>
+                    <input type="text">
+                </div>
+            </div>
+            <div class="form-row">
+                <div class="form-group">
+                    <label>Código Postal</label>
+                    <input type="text">
+                </div>
+                <div class="form-group">
+                    <label>Provincia - Estado - Región</label>
+                    <input type="text">
+                </div>
+                <div class="form-group">
+                    <label>País</label>
+                    <input type="text">
+                </div>
+            </div>
+            <div class="form-row">
+                <div class="form-group">
+                    <label>Teléfono</label>
+                    <input type="tel">
+                </div>
+                <div class="form-group">
+                    <label>Fax</label>
+                    <input type="tel">
+                </div>
+                <div class="form-group">
+                    <label>E-Mail</label>
+                    <input type="email">
+                </div>
+            </div>
+        </div>
+
+        <div class="form-section">
+            <div class="form-title">DATOS LABORALES O DE ESTUDIO</div>
+            <div class="form-row">
+                <div class="form-group">
+                    <label>Nombre del Centro de Trabajo/Estudio</label>
+                    <input type="text">
+                </div>
+            </div>
+            <div class="form-row">
+                <div class="form-group">
+                    <label>Profesión</label>
+                    <input type="text">
+                </div>
+                <div class="form-group">
+                    <label>Ocupación</label>
+                    <input type="text">
+                </div>
+            </div>
+            <div class="form-row">
+                <div class="form-group">
+                    <label>Dirección (calle, Ave., Nro., Entre Calles)</label>
+                    <input type="text">
+                </div>
+            </div>
+            <div class="form-row">
+                <div class="form-group">
+                    <label>Código Postal</label>
+                    <input type="text">
+                </div>
+                <div class="form-group">
+                    <label>Provincia - Estado - Región</label>
+                    <input type="text">
+                </div>
+                <div class="form-group">
+                    <label>País</label>
+                    <input type="text">
+                </div>
+            </div>
+            <div class="form-row">
+                <div class="form-group">
+                    <label>Teléfono</label>
+                    <input type="tel">
+                </div>
+                <div class="form-group">
+                    <label>Fax</label>
+                    <input type="tel">
+                </div>
+                <div class="form-group">
+                    <label>E-Mail</label>
+                    <input type="email">
+                </div>
+            </div>
+        </div>
+
+        <div class="form-section">
+            <div class="form-title">INFORMACIÓN ADICIONAL</div>
+            <div class="form-row">
+                <div class="form-group">
+                    <label>Nivel Cultural</label>
+                    <input type="text">
+                </div>
+                <div class="form-group">
+                    <label>Ocupación</label>
+                    <input type="text">
+                </div>
+                <div class="form-group">
+                    <label>Profesión u Oficio</label>
+                    <input type="text">
+                </div>
+            </div>
+
+            <div class="form-row">
+                <div class="form-group">
+                    <label>Nombre y Apellidos de la Referencia en Cuba</label>
+                    <input type="text">
+                </div>
+            </div>
+
+            <div class="form-row">
+                <div class="form-group">
+                    <label>Dirección de la Referencia (incluir el municipio y la provincia)</label>
+                    <input type="text">
+                </div>
+            </div>
+
+            <div class="form-row">
+                <div class="form-group">
+                    <label>Lugar de Residencia en Cuba (dos últimas direcciones)</label>
+                    <table class="residence-table">
+                        <thead>
+                            <tr>
+                                <th>Dirección</th>
+                                <th>Desde</th>
+                                <th>Hasta</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td><input type="text" style="width: 100%; border: none;"></td>
+                                <td><input type="text" style="width: 100%; border: none;"></td>
+                                <td><input type="text" style="width: 100%; border: none;"></td>
+                            </tr>
+                            <tr>
+                                <td><input type="text" style="width: 100%; border: none;"></td>
+                                <td><input type="text" style="width: 100%; border: none;"></td>
+                                <td><input type="text" style="width: 100%; border: none;"></td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        <div class="form-section">
+            <div class="form-title">DOCUMENTOS PRESENTADOS</div>
+            <div class="form-row">
+                <div class="form-group">
+                    <label>Pasaporte vencido</label>
+                    <div class="form-row">
+                        <input type="text" placeholder="Número" style="flex: 1;">
+                        <input type="text" placeholder="Fecha expedición" style="flex: 1;">
+                        <input type="text" placeholder="Lugar" style="flex: 1;">
+                    </div>
+                </div>
+            </div>
+
+            <div class="form-row">
+                <div class="form-group">
+                    <label>Certificación de Nacimiento</label>
+                    <div class="form-row">
+                        <input type="text" placeholder="Tomo" style="flex: 1;">
+                        <input type="text" placeholder="Folio" style="flex: 1;">
+                        <input type="text" placeholder="Registro Civil" style="flex: 1;">
+                    </div>
+                </div>
+            </div>
+
+            <div class="form-row">
+                <div class="form-group">
+                    <label>Inscripción Consular</label>
+                    <div class="form-row">
+                        <input type="text" placeholder="Número" style="flex: 1;">
+                        <input type="text" placeholder="De Fecha" style="flex: 1;">
+                        <input type="text" placeholder="Arancel $" style="flex: 1;">
+                    </div>
+                </div>
+            </div>
+
+            <div class="form-row">
+                <div class="form-group">
+                    <label>Valoración Consular</label>
+                    <textarea rows="4"></textarea>
+                </div>
+            </div>
+        </div>
+        
+        <div class="qr-container" id="qrCode" style="margin-top: 20px; text-align: center;">
+            <div style="font-weight: bold; margin-bottom: 5px;">Código de verificación del documento</div>
+        </div>
+    </div>
+
+    <div class="btn-container">
+        <button type="button" onclick="generatePDF()">Finalizar y Generar PDF</button>
+        <button type="button" onclick="generateOnlyQR()">Generar solo QR</button>
+    </div>
+
+    <script>
+        // Establecer fecha actual por defecto al cargar la página
+        window.addEventListener('DOMContentLoaded', function() {
+            // Obtener fecha actual
+            const fechaActual = new Date();
+            const dia = fechaActual.getDate();
+            const mes = fechaActual.getMonth() + 1; // getMonth() retorna 0-11
+            const ano = fechaActual.getFullYear();
+            
+            // Establecer valores por defecto
+            document.getElementById('diaSolicitud').value = dia;
+            document.getElementById('mesSolicitud').value = mes;
+            document.getElementById('anoSolicitud').value = ano;
+            
+            // Añadir validadores de evento para los campos de fecha
+            document.getElementById('diaSolicitud').addEventListener('change', validarFechaSolicitud);
+            document.getElementById('mesSolicitud').addEventListener('change', validarFechaSolicitud);
+            document.getElementById('anoSolicitud').addEventListener('change', validarFechaSolicitud);
+        });
+        
+        // Función para validar la fecha de solicitud
+        function validarFechaSolicitud() {
+            const diaInput = document.getElementById('diaSolicitud');
+            const mesInput = document.getElementById('mesSolicitud');
+            const anoInput = document.getElementById('anoSolicitud');
+            
+            // Verificar que todos los campos tengan valor antes de continuar
+            if (!diaInput.value || !mesInput.value || !anoInput.value) {
+                return;
+            }
+            
+            const dia = parseInt(diaInput.value);
+            const mes = parseInt(mesInput.value);
+            const ano = parseInt(anoInput.value);
+            
+            // Crear objeto fecha con los valores ingresados
+            const fechaIngresada = new Date(ano, mes - 1, dia);
+            
+            // Fecha actual
+            const fechaActual = new Date();
+            
+            // Calcular fecha límite (5 días antes)
+            const fechaLimite = new Date();
+            fechaLimite.setDate(fechaActual.getDate() - 5);
+            
+            // Validar que la fecha no sea posterior a la actual ni anterior a 5 días
+            if (fechaIngresada > fechaActual) {
+                alert("La fecha de solicitud no puede ser posterior a la fecha actual");
+                
+                // Restablecer a fecha actual
+                diaInput.value = fechaActual.getDate();
+                mesInput.value = fechaActual.getMonth() + 1;
+                anoInput.value = fechaActual.getFullYear();
+                
+            } else if (fechaIngresada < fechaLimite) {
+                alert("La fecha de solicitud no puede ser anterior a 5 días desde hoy");
+                
+                // Restablecer a fecha límite
+                diaInput.value = fechaLimite.getDate();
+                mesInput.value = fechaLimite.getMonth() + 1;
+                anoInput.value = fechaLimite.getFullYear();
+            }
+        }
+
+        // Función para validar campos requeridos
+        function validateForm() {
+            const requiredFields = document.querySelectorAll('[required]');
+            let isValid = true;
+
+            requiredFields.forEach(field => {
+                if ((field.tagName === 'SELECT' && field.value === '') || 
+                   (field.tagName === 'INPUT' && !field.value.trim())) {
+                    field.classList.add('error-field');
+                    isValid = false;
+                } else {
+                    field.classList.remove('error-field');
+                }
+            });
+
+            // Mensajes específicos para campos principales
+            if (document.getElementById('tramite').value === '') {
+                alert("Por favor seleccione un tipo de trámite");
+                return false;
+            }
+            
+            if (document.getElementById('sexo').value === '') {
+                alert("Por favor seleccione el sexo");
+                return false;
+            }
+
+            return isValid;
+        }
+
+        // Función para recolectar datos del formulario
+        function collectFormData() {
+            const formData = {};
+            
+            // Capturar datos de todas las secciones excepto la de documentos presentados
+            document.querySelectorAll('.form-section').forEach(section => {
+                const sectionTitle = section.querySelector('.form-title').textContent;
+                
+                // Excluir la sección de documentos presentados
+                if (sectionTitle !== 'DOCUMENTOS PRESENTADOS') {
+                    // Procesar todos los inputs de esta sección
+                    section.querySelectorAll('input, select, textarea').forEach(field => {
+                        // Intentar obtener una etiqueta/nombre para este campo
+                        let fieldName = '';
+                        const label = field.previousElementSibling;
+                        
+                        if (field.id) {
+                            fieldName = field.id;
+                        } else if (field.name) {
+                            fieldName = field.name;
+                        } else if (label && label.tagName === 'LABEL') {
+                            fieldName = label.textContent.trim();
+                        } else if (field.placeholder) {
+                            fieldName = field.placeholder;
+                        } else {
+                            // Generar un nombre basado en la sección y tipo
+                            fieldName = `${sectionTitle}_${field.tagName.toLowerCase()}_${Math.random().toString(36).substring(2, 8)}`;
+                        }
+                        
+                        // Almacenar el valor
+                        if (field.tagName === 'SELECT') {
+                            formData[fieldName] = field.value;
+                        } else if (field.type === 'checkbox') {
+                            formData[fieldName] = field.checked;
+                        } else if (field.type === 'radio') {
+                            if (field.checked) {
+                                formData[field.name] = field.value;
+                            }
+                        } else {
+                            formData[fieldName] = field.value || '';
+                        }
+                    });
+                }
+            });
+            
+            // Capturar también los campos que pudieron haber quedado fuera
+            document.querySelectorAll('input:not([type="button"]):not([type="submit"]), select, textarea').forEach(field => {
+                if (field.id && !formData[field.id]) {
+                    formData[field.id] = field.value || '';
+                }
+                if (field.name && !formData[field.name]) {
+                    formData[field.name] = field.value || '';
+                }
+            });
+            
+            return formData;
+        }
+
+        // Función para compactar datos del formulario
+        function compactFormData(data) {
+            // Objeto para almacenar todos los datos del formulario
+            const compact = {};
+            
+            // Recorrer todas las claves en el objeto de datos
+            for (const key in data) {
+                // Ignorar campos de la sección de documentos presentados
+                if (!key.toLowerCase().includes('pasaporte_vencido') && 
+                    !key.toLowerCase().includes('certificacion') && 
+                    !key.toLowerCase().includes('inscripcion_consular') && 
+                    !key.toLowerCase().includes('valoracion_consular') &&
+                    !key.toLowerCase().includes('tomo') &&
+                    !key.toLowerCase().includes('folio') &&
+                    !key.toLowerCase().includes('registro') &&
+                    !key.toLowerCase().includes('arancel') &&
+                    !key.toLowerCase().includes('documento')) {
+                    
+                    // Mantener algunos campos con nombres cortos para ahorrar espacio
+                    if (key === 'tramite') compact.t = data[key];
+                    else if (key === 'sexo') compact.s = data[key];
+                    else if (key === 'primerApellido') compact.a1 = data[key];
+                    else if (key === 'segundoApellido') compact.a2 = data[key];
+                    else if (key === 'primerNombre') compact.n1 = data[key];
+                    else if (key === 'segundoNombre') compact.n2 = data[key];
+                    else {
+                        // Para el resto de campos, usar la clave completa pero sin caracteres especiales
+                        const cleanKey = key.replace(/[^\w]/g, '_').substring(0, 20);
+                        compact[cleanKey] = data[key];
+                    }
+                }
+            }
+            
+            // Manejar fechas especiales en formato compacto
+            if ('diaNacimiento' in data || 'mesNacimiento' in data || 'anoNacimiento' in data) {
+                const ano = data.anoNacimiento ? String(data.anoNacimiento).slice(-2) : '';
+                compact.fn = [data.diaNacimiento || '', data.mesNacimiento || '', ano].join('/');
+            }
+            
+            if ('diaSolicitud' in data || 'mesSolicitud' in data || 'anoSolicitud' in data) {
+                const ano = data.anoSolicitud ? String(data.anoSolicitud).slice(-2) : '';
+                compact.fs = [data.diaSolicitud || '', data.mesSolicitud || '', ano].join('/');
+            }
+            
+            if ('diaSalida' in data || 'mesSalida' in data || 'anoSalida' in data) {
+                const ano = data.anoSalida ? String(data.anoSalida).slice(-2) : '';
+                compact.fsc = [data.diaSalida || '', data.mesSalida || '', ano].join('/');
+            }
+            
+            // Marca temporal de generación
+            compact.g = new Date().toISOString().split('T')[0];
+            
+            return compact;
+        }
+
+        // Función para generar QR con todos los datos
+        function generateQRWithLimitedData(data) {
+            // Comprimir datos
+            const compactData = compactFormData(data);
+            
+            // Convertir a JSON y mostrar en consola para depuración
+            const jsonStr = JSON.stringify(compactData);
+            console.log("Datos para QR:", jsonStr);
+            
+            const qrContainer = document.getElementById('qrCode');
+            qrContainer.innerHTML = '<div style="font-weight: bold; margin-bottom: 5px;">Código de verificación del documento</div>';
+            
+            try {
+                new QRCode(qrContainer, {
+                    text: jsonStr,
+                    width: 250,
+                    height: 250,
+                    correctLevel: QRCode.CorrectLevel.L  // Usar nivel L (menor corrección) para permitir más datos
+                });
+                
+                return true;
+            } catch (error) {
+                console.error("Error al generar QR completo:", error);
+                // Si falla, intentar con datos mínimos
+                return generateMinimalQR(data);
+            }
+        }
+        
+        // Función para generar QR con datos mínimos si el completo falla
+        function generateMinimalQR(data) {
+            // Intentar versión progresivamente reducida si la original falla
+            let qrText = '';
+            let qrSize = 250;
+            let attempts = 0;
+            const maxAttempts = 3;
+            
+            // Función para intentar con diferentes niveles de compresión
+            function tryGenerate(dataObj, size) {
+                try {
+                    const qrContainer = document.getElementById('qrCode');
+                    qrContainer.innerHTML = '<div style="font-weight: bold; margin-bottom: 5px;">Código de verificación del documento</div>';
+                    
+                    new QRCode(qrContainer, {
+                        text: JSON.stringify(dataObj),
+                        width: size,
+                        height: size,
+                        correctLevel: QRCode.CorrectLevel.L
+                    });
+                    
+                    return true;
+                } catch (e) {
+                    console.error(`Intento ${attempts+1} fallido:`, e);
+                    return false;
+                }
+            }
+            
+            // Primer intento: datos principales y secundarios
+            const mainData = {
+                t: data.tramite || '',
+                a1: data.primerApellido || '',
+                a2: data.segundoApellido || '',
+                n1: data.primerNombre || '',
+                n2: data.segundoNombre || '',
+                s: data.sexo || '',
+                fn: data.fn || '',
+                fs: data.fs || '',
+                g: new Date().toISOString().split('T')[0]
+            };
+            
+            if (tryGenerate(mainData, 230)) {
+                console.log("QR generado con datos principales");
+                return true;
+            }
+            
+            attempts++;
+            
+            // Segundo intento: solo datos esenciales
+            const essentialData = {
+                a1: data.primerApellido || '',
+                n1: data.primerNombre || '',
+                t: data.tramite || '',
+                s: data.sexo || '',
+                fs: data.fs || ''
+            };
+            
+            if (tryGenerate(essentialData, 200)) {
+                console.log("QR generado con datos esenciales");
+                return true;
+            }
+            
+            attempts++;
+            
+            // Tercer intento: mínimo absoluto
+            const minimalData = {
+                a1: data.primerApellido || '',
+                n1: data.primerNombre || '',
+                g: new Date().toISOString().split('T')[0].replace(/-/g, '')
+            };
+            
+            if (tryGenerate(minimalData, 180)) {
+                console.log("QR generado con datos mínimos");
+                return true;
+            }
+            
+            // Si todos los intentos fallan
+            alert("Error al generar el código QR. El formulario contiene demasiados datos.");
+            return false;
+        }
+
+        // Función principal para generar el PDF
+        function generatePDF() {
+            // 1. Validar formulario antes de proceder
+            if (!validateForm()) {
+                alert("Por favor complete todos los campos requeridos");
+                return;
+            }
+
+            // 2. Mostrar loader mientras se procesa
+            document.getElementById('loader').style.display = 'flex';
+
+            // 3. Recolectar todos los datos del formulario
+            const formData = collectFormData();
+            console.log("Datos del formulario recolectados:", formData);
+
+            // 4. Generar código QR con datos limitados
+            const qrSuccess = generateQRWithLimitedData(formData);
+            if (!qrSuccess) {
+                document.getElementById('loader').style.display = 'none';
+                alert("Error al generar el código QR. Intente con menos datos.");
+                return;
+            }
+            
+            // 5. Opciones básicas para el PDF
+            const element = document.getElementById('form-to-print');
+            
+            // 6. Dar tiempo para que se renderice el QR antes de generar el PDF
+            setTimeout(() => {
+                try {
+                    const opt = {
+                        margin: 10,
+                        filename: `solicitud_pasaporte_${formData.primerApellido || 'cuba'}.pdf`,
+                        image: { type: 'jpeg', quality: 0.95 },
+                        html2canvas: { 
+                            scale: 2,
+                            logging: false,
+                            useCORS: true
+                        },
+                        jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' }
+                    };
+                    
+                    html2pdf().set(opt).from(element).save();
+                    
+                    // Mostrar mensaje de éxito después de un tiempo
+                    setTimeout(() => {
+                        document.getElementById('loader').style.display = 'none';
+                        alert("PDF generado con éxito");
+                    }, 2000);
+                } catch (error) {
+                    console.error("Error al generar PDF:", error);
+                    document.getElementById('loader').style.display = 'none';
+                    alert("Ocurrió un error al generar el PDF. Por favor intente nuevamente.");
+                }
+            }, 800); // Aumentar el tiempo para asegurar que el QR se renderice completamente
+        }
+
+        // Lista de países según ISO en español
+        const paisesISO = [
+            { codigo: "CU", nombre: "Cuba" },
+            { codigo: "US", nombre: "Estados Unidos" },
+            { codigo: "ES", nombre: "España" },
+            // Agregar todos los países según ISO
+        ];
+
+        // Provincias y municipios de Cuba
+        const provinciasCuba = {
+            "Pinar del Río": ["Consolación del Sur", "Guane", "La Palma", "Los Palacios", "Mantua", "Minas de Matahambre", "Pinar del Río", "San Juan y Martínez", "San Luis", "Sandino", "Viñales"],
+            "Artemisa": ["Alquízar", "Artemisa", "Bauta", "Caimito", "Guanajay", "Güira de Melena", "Mariel", "San Antonio de los Baños", "Bahía Honda", "Candelaria", "San Cristóbal"],
+            "La Habana": ["Arroyo Naranjo", "Boyeros", "Centro Habana", "Cerro", "Cotorro", "Diez de Octubre", "Guanabacoa", "Habana del Este", "Habana Vieja", "La Lisa", "Marianao", "Playa", "Plaza de la Revolución", "Regla", "San Miguel del Padrón"],
+            "Mayabeque": ["Batabanó", "Bejucal", "Güines", "Jaruco", "Madruga", "Melena del Sur", "Nueva Paz", "Quivicán", "San José de las Lajas", "Santa Cruz del Norte"],
+            "Matanzas": ["Calimete", "Cárdenas", "Ciénaga de Zapata", "Colón", "Jagüey Grande", "Jovellanos", "Limonar", "Los Arabos", "Martí", "Matanzas", "Pedro Betancourt", "Perico", "Unión de Reyes"],
+            "Cienfuegos": ["Aguada de Pasajeros", "Cienfuegos", "Cruces", "Cumanayagua", "Palmira", "Rodas", "Abreus", "Lajas"],
+            "Villa Clara": ["Caibarién", "Camajuaní", "Cifuentes", "Corralillo", "Encrucijada", "Manicaragua", "Placetas", "Quemado de Güines", "Ranchuelo", "Remedios", "Sagua la Grande", "Santa Clara", "Santo Domingo"],
+            "Sancti Spíritus": ["Cabaiguán", "Fomento", "Jatibonico", "La Sierpe", "Sancti Spíritus", "Taguasco", "Trinidad", "Yaguajay"],
+            "Ciego de Ávila": ["Baraguá", "Bolivia", "Ciego de Ávila", "Chambas", "Ciro Redondo", "Florencia", "Majagua", "Morón", "Primero de Enero", "Venezuela"],
+            "Camagüey": ["Camagüey", "Carlos Manuel de Céspedes", "Esmeralda", "Florida", "Guaimaro", "Jimaguayú", "Minas", "Najasa", "Nuevitas", "Santa Cruz del Sur", "Sibanicú", "Sierra de Cubitas", "Vertientes"],
+            "Las Tunas": ["Amancio", "Colombia", "Jesús Menéndez", "Jobabo", "Majibacoa", "Manatí", "Puerto Padre", "Las Tunas"],
+            "Holguín": ["Antilla", "Báguanos", "Banes", "Cacocum", "Calixto García", "Cueto", "Frank País", "Gibara", "Holguín", "Mayarí", "Moa", "Rafael Freyre", "Sagua de Tánamo", "Urbano Noris"],
+            "Granma": ["Bartolomé Masó", "Bayamo", "Buey Arriba", "Campechuela", "Cauto Cristo", "Guisa", "Jiguaní", "Manzanillo", "Media Luna", "Niquero", "Pilón", "Río Cauto", "Yara"],
+            "Santiago de Cuba": ["Contramaestre", "Guamá", "Mella", "Palma Soriano", "San Luis", "Santiago de Cuba", "Segundo Frente", "Songo-La Maya", "Tercer Frente"],
+            "Guantánamo": ["Baracoa", "Caimanera", "El Salvador", "Guantánamo", "Imías", "Maisí", "Manuel Tames", "Niceto Pérez", "San Antonio del Sur", "Yateras"],
+            "Isla de la Juventud": ["Isla de la Juventud"]
+        };
+
+        function llenarPaises(selectId) {
+    const select = document.getElementById(selectId);
+    paisesISO.forEach(pais => {
+        const option = document.createElement("option");
+        option.value = pais.codigo;
+        option.textContent = pais.nombre;
+        select.appendChild(option);
+    });
+}
+
+// Detectar país por IP y establecer como predeterminado
+async function detectarPaisPorIP(selectId) {
+    try {
+        const response = await fetch("https://ipapi.co/json/");
+        const data = await response.json();
+        const paisUsuario = data.country_code;
+        const select = document.getElementById(selectId);
+        select.value = paisUsuario;
+    } catch (error) {
+        console.error("Error al detectar país por IP:", error);
+    }
+}
+
+        // Manejar cambio en el país de nacimiento
+       // Manejar cambio en el país de nacimiento
+// Manejar cambio en el país de nacimiento
+document.getElementById("paisNacimiento").addEventListener("change", function () {
+    const pais = this.value;
+    const provinciaContainer = document.getElementById("provincia-container");
+    const municipioContainer = document.getElementById("municipio-container");
+
+    // Limpiar contenedores
+    provinciaContainer.innerHTML = '';
+    municipioContainer.innerHTML = '';
+
+    if (pais === "CU") {
+        // Si el país es Cuba, crear selects para provincia y municipio
+        const provinciaSelect = createSelect('provinciaNacimiento', 'Seleccione provincia');
+        const municipioSelect = createSelect('municipioNacimiento', 'Seleccione municipio');
+        municipioSelect.disabled = true;
+
+        // Llenar provincias
+        Object.keys(provinciasCuba).forEach(provincia => {
+            const option = document.createElement("option");
+            option.value = provincia;
+            option.textContent = provincia;
+            provinciaSelect.appendChild(option);
+        });
+
+        // Evento para llenar municipios cuando cambia la provincia
+        provinciaSelect.addEventListener("change", function () {
+            const provinciaSeleccionada = this.value;
+            if (provinciaSeleccionada) {
+                municipioSelect.disabled = false;
+                municipioSelect.innerHTML = '<option value="">Seleccione municipio</option>';
+                provinciasCuba[provinciaSeleccionada].forEach(municipio => {
+                    const option = document.createElement("option");
+                    option.value = municipio;
+                    option.textContent = municipio;
+                    municipioSelect.appendChild(option);
+                });
+            } else {
+                municipioSelect.disabled = true;
+                municipioSelect.innerHTML = '<option value="">Seleccione municipio</option>';
+            }
+        });
+
+        // Agregar al DOM
+        provinciaContainer.appendChild(provinciaSelect);
+        municipioContainer.appendChild(municipioSelect);
+
+    } else {
+        // Si no es Cuba, crear inputs para provincia y municipio
+        const provinciaInput = createInput('provinciaNacimiento', 'Escriba la provincia');
+        const municipioInput = createInput('municipioNacimiento', 'Escriba el municipio');
+
+        // Agregar al DOM
+        provinciaContainer.appendChild(provinciaInput);
+        municipioContainer.appendChild(municipioInput);
+    }
+});
+
+// Función auxiliar para crear select
+function createSelect(id, placeholderText) {
+    const select = document.createElement("select");
+    select.id = id;
+    select.name = id;
+    select.required = true;
+    const placeholder = document.createElement("option");
+    placeholder.value = "";
+    placeholder.textContent = placeholderText;
+    placeholder.disabled = true;
+    placeholder.selected = true;
+    select.appendChild(placeholder);
+    return select;
+}
+
+// Función auxiliar para crear input
+function createInput(id, placeholderText) {
+    const input = document.createElement("input");
+    input.type = "text";
+    input.id = id;
+    input.name = id;
+    input.placeholder = placeholderText;
+    input.required = true;
+    return input;
+}
+
+        // Validar que los nombres solo contengan letras y guiones
+        document.querySelectorAll("#primerNombre, #segundoNombre, #primerApellido, #segundoApellido").forEach(input => {
+            input.addEventListener("input", function () {
+                this.value = this.value.replace(/[^a-zA-ZáéíóúÁÉÍÓÚñÑ\s-]/g, "");
+            });
+        });
+
+        // Inicializar países al cargar la página
+        window.addEventListener("DOMContentLoaded", function () {
+            llenarPaises("paisResidencia");
+            llenarPaises("paisNacimiento");
+            detectarPaisPorIP("paisResidencia");
+        });
+
+        // Función para convertir formulario a JSON
+        function formToJSON() {
+            const formData = {};
+            
+            // Capturar todos los campos del formulario
+            document.querySelectorAll('input, select, textarea').forEach(field => {
+                if (field.name) {
+                    if (field.type === 'checkbox') {
+                        formData[field.name] = field.checked;
+                    } else if (field.type === 'radio') {
+                        if (field.checked) {
+                            formData[field.name] = field.value;
+                        }
+                    } else {
+                        formData[field.name] = field.value;
+                    }
+                }
+            });
+
+            // Formatear fechas
+            formData.fechaNacimiento = [
+                document.getElementById('diaNacimiento').value,
+                document.getElementById('mesNacimiento').value,
+                document.getElementById('anoNacimiento').value
+            ].join('/');
+
+            formData.fechaSolicitud = [
+                document.getElementById('diaSolicitud').value,
+                document.getElementById('mesSolicitud').value,
+                document.getElementById('anoSolicitud').value
+            ].join('/');
+
+            return formData;
+        }
+
+        // Función para generar solo el QR
+        function generateOnlyQR() {
+            if (!validateForm()) {
+                alert("Por favor complete todos los campos requeridos");
+                return;
+            }
+
+            const jsonData = formToJSON();
+            generateQRWithJSON(jsonData);
+        }
+
+        // Función para generar QR con JSON
+        function generateQRWithJSON(data) {
+            const qrContainer = document.getElementById('qrCode');
+            qrContainer.innerHTML = '<div style="font-weight: bold; margin-bottom: 5px;">Código de verificación del documento</div>';
+            
+            try {
+                const jsonStr = JSON.stringify(data);
+                new QRCode(qrContainer, {
+                    text: jsonStr,
+                    width: 250,
+                    height: 250,
+                    correctLevel: QRCode.CorrectLevel.L
+                });
+                return true;
+            } catch (error) {
+                console.error("Error al generar QR:", error);
+                alert("Error al generar el código QR. Intente con menos datos.");
+                return false;
+            }
+        }
+
+        // Modificar la función generatePDF para usar el nuevo sistema JSON
+        function generatePDF() {
+            if (!validateForm()) {
+                alert("Por favor complete todos los campos requeridos");
+                return;
+            }
+
+            document.getElementById('loader').style.display = 'flex';
+            
+            const jsonData = formToJSON();
+            const qrSuccess = generateQRWithJSON(jsonData);
+            
+            if (!qrSuccess) {
+                document.getElementById('loader').style.display = 'none';
+                return;
+            }
+            
+            // Continuar con la generación del PDF
+            setTimeout(() => {
+                const element = document.getElementById('form-to-print');
+                try {
+                    const opt = {
+                        margin: 10,
+                        filename: `solicitud_pasaporte_${jsonData.primerApellido || 'cuba'}.pdf`,
+                        image: { type: 'jpeg', quality: 0.95 },
+                        html2canvas: { scale: 2, logging: false, useCORS: true },
+                        jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' }
+                    };
+                    
+                    html2pdf().set(opt).from(element).save();
+                    
+                    setTimeout(() => {
+                        document.getElementById('loader').style.display = 'none';
+                        alert("PDF generado con éxito");
+                    }, 2000);
+                } catch (error) {
+                    console.error("Error al generar PDF:", error);
+                    document.getElementById('loader').style.display = 'none';
+                    alert("Ocurrió un error al generar el PDF. Por favor intente nuevamente.");
+                }
+            }, 800);
+        }
+    </script>
+</body>
+</html>
