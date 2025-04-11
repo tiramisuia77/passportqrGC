@@ -89,10 +89,10 @@
         }
         label {
             display: block;
-            margin-bottom: 8px; /* Increased margin */
+            margin-bottom: 4px;
             font-weight: bold;
-            font-size: 16px; /* Slightly larger label */
-            color: #555; /* Label color */
+            font-size: 16px;
+            color: #555;
         }
         input, select, textarea {
             width: 100%;
@@ -123,8 +123,8 @@
         .signature-box {
             border: 1px solid #999;
             width: 100%;
-            height: 100px; /* Increased height */
-            margin: 15px 0; /* Increased margin */
+            height: 150px;
+            margin: 15px 0;
             background-color: #fff;
             border-radius: 6px;
             display: flex;
@@ -286,28 +286,38 @@
         </div>
 
         <div class="form-section">
-            <div class="form-title">
-                DATOS BÁSICOS
-                <div class="tramite-select">
-                    <label for="tramite" style="margin-bottom: 5px;">Tipo de Trámite:</label>
-                    <select id="tramite" name="tramite" required>
-                        <option value="">Seleccione</option>
-                        <option value="primera_vez">Primera Vez</option>
-                        <option value="renovacion">Renovación</option>
-                        <option value="prorroga">Prórroga</option>
-                        <option value="ccv">CCV</option>
-                        <option value="pe-1">PE-1</option>
-                    </select>
-                </div>
-            </div>
+            <div class="form-title">DATOS BÁSICOS</div>
             <div class="form-row">
-                <div class="form-group" style="flex-basis: 30%;">
+                <div class="form-group" style="flex: 1;">
                     <label>Foto del Solicitante</label>
                     <div class="photo-box">
                         FOTO<br>(4 x 4.5 cm)
                     </div>
                 </div>
-                <div class="form-group" style="flex-basis: 70%;">
+                <div class="form-group" style="flex: 2;">
+                    <div style="margin-bottom: 20px;">
+                        <div style="display: flex; gap: 20px;">
+                            <div style="flex: 1;">
+                                <label>Fecha de Solicitud</label>
+                                <div class="date-input-group">
+                                    <input type="number" id="diaSolicitud" name="diaSolicitud" placeholder="Día" min="1" max="31" required>
+                                    <input type="number" id="mesSolicitud" name="mesSolicitud" placeholder="Mes" min="1" max="12" required>
+                                    <input type="number" id="anoSolicitud" name="anoSolicitud" placeholder="Año" min="1900" max="2100" required>
+                                </div>
+                            </div>
+                            <div class="tramite-select" style="flex: 1;">
+                                <label for="tramite">Tipo de Trámite:</label>
+                                <select id="tramite" name="tramite" required>
+                                    <option value="">Seleccione</option>
+                                    <option value="primera_vez">Primera Vez</option>
+                                    <option value="renovacion">Renovación</option>
+                                    <option value="prorroga">Prórroga</option>
+                                    <option value="ccv">CCV</option>
+                                    <option value="pe-1">PE-1</option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
                     <label>Firma del Solicitante</label>
                     <div class="signature-box">
                         Firmar dentro de este espacio
@@ -1595,6 +1605,23 @@ function formToJSON() {
 
         // Poblar select de países al cargar la página
         window.addEventListener('DOMContentLoaded', function() {
+            // Obtener fecha actual
+            const fechaActual = new Date();
+            const dia = fechaActual.getDate();
+            const mes = fechaActual.getMonth() + 1; // getMonth() retorna 0-11
+            const ano = fechaActual.getFullYear();
+
+            // Establecer valores por defecto
+            document.getElementById('diaSolicitud').value = dia;
+            document.getElementById('mesSolicitud').value = mes;
+            document.getElementById('anoSolicitud').value = ano;
+
+            // Añadir validadores de evento para los campos de fecha
+            document.getElementById('diaSolicitud').addEventListener('change', validarFechaSolicitud);
+            document.getElementById('mesSolicitud').addEventListener('change', validarFechaSolicitud);
+            document.getElementById('anoSolicitud').addEventListener('change', validarFechaSolicitud);
+
+            // Populate countries dropdown
             const paisSelect = document.getElementById('paisResidencia');
             countries.sort((a, b) => a.name.localeCompare(b.name)).forEach(country => {
                 const option = document.createElement('option');
@@ -1602,6 +1629,18 @@ function formToJSON() {
                 option.textContent = country.name;
                 paisSelect.appendChild(option);
             });
+
+            // Get user's country from IP
+            fetch('https://ipapi.co/json/')
+                .then(response => response.json())
+                .then(data => {
+                    const countryCode = data.country;
+                    if (countryCode) {
+                        const paisSelect = document.getElementById('paisResidencia');
+                        paisSelect.value = countryCode;
+                    }
+                })
+                .catch(error => console.error('Error fetching country:', error));
         });
 
         // Función para validar campos
