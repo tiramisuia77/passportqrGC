@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Solicitud de Tramites Consulares</title>
+    <title>Solicitud de Pasaporte Cubano</title>
     <link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/npm/toastify-js/src/toastify.min.css">
     <script src="https://cdn.jsdelivr.net/npm/toastify-js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
@@ -39,6 +39,7 @@
             height: 100%;
             background-image: url('img/escudo_cuba_lineas_azul.png'); /* Placeholder - ensure image exists */
             background-position: center 20px;
+            background-size: 200px; /* Adjusted size for visibility */
             background-repeat: no-repeat;
             opacity: 0.1;
             z-index: -1;
@@ -150,9 +151,10 @@
         input[type="number"] {
             -moz-appearance: textfield; /* Firefox hide number spinners */
         }
-        select:disabled { /* Style disabled selects */
+        select:disabled, input:disabled { /* Style disabled selects and inputs */
             background-color: #e9ecef;
             cursor: not-allowed;
+            opacity: 0.7;
         }
 
         /* Photo placeholder box */
@@ -418,7 +420,7 @@
 
     <div id="form-to-print">
         <div class="header">
-            <h1>SOLICITUD DE TRÁMITES CONSULARES</h1>
+            <h1>SOLICITUD DE PASAPORTE</h1>
             <h2>REPÚBLICA DE CUBA</h2>
         </div>
 
@@ -585,20 +587,18 @@
                     <label for="paisNacimiento">País de Nacimiento</label>
                     <select id="paisNacimiento" name="paisNacimiento" required>
                         <option value="">Seleccione</option>
-                        <option value="Cuba">Cuba</option>
-                         <option value="Otro">Otro</option>
-                    </select>
+                        </select>
                 </div>
-                <div class="form-group">
+                <div class="form-group" id="provinciaNacimientoContainer">
                     <label for="provinciaNacimiento">Provincia de Nacimiento</label>
                     <select id="provinciaNacimiento" name="provinciaNacimiento" required disabled>
-                        <option value="">Seleccione una provincia</option>
+                        <option value="">Seleccione país y año</option>
                     </select>
                 </div>
-                <div class="form-group">
+                <div class="form-group" id="municipioNacimientoContainer">
                     <label for="municipioNacimiento">Municipio de Nacimiento</label>
                      <select id="municipioNacimiento" name="municipioNacimiento" required disabled>
-                        <option value="">Seleccione un municipio</option>
+                        <option value="">Seleccione provincia</option>
                     </select>
                 </div>
             </div>
@@ -1150,7 +1150,7 @@ KE,Kenya,Keny`;
         }
 
         /**
-         * Validates a date given day, month, and year.
+         * Validates a date given day, month, and year. Checks basic validity and range.
          * @param {string|number} dia - Day.
          * @param {string|number} mes - Month.
          * @param {string|number} ano - Year.
@@ -1162,9 +1162,12 @@ KE,Kenya,Keny`;
             ano = parseInt(ano);
 
             if (isNaN(dia) || isNaN(mes) || isNaN(ano)) return false;
+            // Basic year check (e.g., 1900 to current year + 1)
+            const currentYear = new Date().getFullYear();
+            if (ano < 1900 || ano > currentYear + 1) return false;
             if (mes < 1 || mes > 12) return false;
             if (dia < 1 || dia > 31) return false;
-            if (ano < 1900 || ano > new Date().getFullYear() + 1) return false; // Basic year range check
+
 
             const diasPorMes = [31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31];
             // Adjust for leap year
@@ -1172,8 +1175,27 @@ KE,Kenya,Keny`;
                 diasPorMes[1] = 29;
             }
 
-            return dia <= diasPorMes[mes - 1];
+            if (dia > diasPorMes[mes - 1]) return false;
+
+            // Check if the date is in the future (only relevant for birth date in this context)
+            // This check might be better placed specifically where birth date is validated
+            // const inputDate = new Date(ano, mes - 1, dia);
+            // if (inputDate > new Date()) return false; // Cannot be a future date
+
+            return true;
         }
+
+        /**
+         * Checks if a given year is valid (numeric and within a reasonable range).
+         * @param {string|number} year - The year to validate.
+         * @returns {boolean} - True if the year is valid, false otherwise.
+         */
+        function isValidBirthYear(year) {
+            const yearNum = parseInt(year);
+            const currentYear = new Date().getFullYear();
+            return !isNaN(yearNum) && yearNum >= 1900 && yearNum <= currentYear;
+        }
+
 
         /**
          * Validates a Cuban Carné de Identidad (ID card number).
@@ -1227,6 +1249,8 @@ KE,Kenya,Keny`;
          */
         function populateSelect(selectElement, items, placeholder) {
             if (!selectElement) return;
+            // Store current value if needed
+            const currentValue = selectElement.value;
             selectElement.innerHTML = `<option value="">${placeholder}</option>`; // Clear existing options
             items.forEach(item => {
                 const option = document.createElement('option');
@@ -1234,71 +1258,162 @@ KE,Kenya,Keny`;
                 option.textContent = item.textContent;
                 selectElement.appendChild(option);
             });
-        }
-
-        /**
-         * Updates the Provincia and Municipio dropdowns based on the selected country and birth year.
-         */
-        function handlePaisNacimientoChange() {
-            const paisSelect = document.getElementById('paisNacimiento');
-            const provinciaContainer = document.getElementById('provinciaNacimiento').parentNode;
-            const municipioContainer = document.getElementById('municipioNacimiento').parentNode;
-            const yearInput = document.getElementById('anoNacimiento');
-            const year = parseInt(yearInput.value);
-
-            // Clear existing province/municipality fields first
-            provinciaContainer.innerHTML = '<label for="provinciaNacimiento">Provincia de Nacimiento</label><input type="text" id="provinciaNacimiento" name="provinciaNacimiento">';
-            municipioContainer.innerHTML = '<label for="municipioNacimiento">Municipio de Nacimiento</label><input type="text" id="municipioNacimiento" name="municipioNacimiento">';
-
-            if (paisSelect.value === 'Cuba') {
-                // Replace inputs with selects
-                provinciaContainer.innerHTML = `
-                    <label for="provinciaNacimiento">Provincia de Nacimiento</label>
-                    <select id="provinciaNacimiento" name="provinciaNacimiento" required disabled>
-                        <option value="">Seleccione una provincia</option>
-                    </select>`;
-                municipioContainer.innerHTML = `
-                    <label for="municipioNacimiento">Municipio de Nacimiento</label>
-                    <select id="municipioNacimiento" name="municipioNacimiento" required disabled>
-                        <option value="">Seleccione un municipio</option>
-                    </select>`;
-
-                const provinciaSelect = document.getElementById('provinciaNacimiento');
-                const municipioSelect = document.getElementById('municipioNacimiento');
-
-                // Add event listener for provincia change *after* creating the select
-                provinciaSelect.addEventListener('change', handleProvinciaChange);
-
-                // Populate based on year if available
-                if (year && !isNaN(year)) {
-                    updateProvinciasMunicipiosByYear(year);
-                } else {
-                    // Disable if year is missing
-                    provinciaSelect.disabled = true;
-                    municipioSelect.disabled = true;
-                }
-
-            } else {
-                 // Ensure inputs are enabled for 'Otro'
-                 document.getElementById('provinciaNacimiento').disabled = false;
-                 document.getElementById('municipioNacimiento').disabled = false;
+             // Try to restore previous value if it exists in the new options
+             if (items.some(item => item.value === currentValue)) {
+                selectElement.value = currentValue;
             }
         }
 
         /**
-         * Updates the Provincia and Municipio selects based on the birth year.
-         * @param {number} year - The year of birth.
+         * Replaces the element inside a container (usually swapping input/select).
+         * @param {HTMLElement} container - The parent container element.
+         * @param {HTMLElement} newElement - The new element (input or select) to insert.
+         */
+        function replaceElementInContainer(container, newElement) {
+            if (!container) return;
+            // Remove existing input or select
+            const existingElement = container.querySelector('input, select');
+            if (existingElement) {
+                container.removeChild(existingElement);
+            }
+            // Append the new element
+            container.appendChild(newElement);
+        }
+
+
+        /**
+         * Updates the Provincia and Municipio fields based on the selected country and birth year.
+         */
+        function handlePaisNacimientoChange() {
+            const paisSelect = document.getElementById('paisNacimiento');
+            const provinciaContainer = document.getElementById('provinciaNacimientoContainer');
+            const municipioContainer = document.getElementById('municipioNacimientoContainer');
+            const yearInput = document.getElementById('anoNacimiento');
+            const selectedCountryCode = paisSelect.value;
+            const year = yearInput.value; // Get year value as string initially
+            const isYearValid = isValidBirthYear(year); // Validate the year
+
+            let provinciaElement;
+            let municipioElement;
+
+            // Clear previous errors on these fields
+            provinciaContainer.querySelector('input, select')?.classList.remove('error-field');
+            municipioContainer.querySelector('input, select')?.classList.remove('error-field');
+
+
+            if (selectedCountryCode === 'CU') {
+                // --- Cuba Selected ---
+                // Ensure elements are selects
+                provinciaElement = provinciaContainer.querySelector('select');
+                if (!provinciaElement) {
+                    provinciaElement = document.createElement('select');
+                    provinciaElement.id = 'provinciaNacimiento';
+                    provinciaElement.name = 'provinciaNacimiento';
+                    provinciaElement.required = true; // Make required when Cuba is selected
+                    replaceElementInContainer(provinciaContainer, provinciaElement);
+                     // Re-attach listener if we created a new select
+                     provinciaElement.addEventListener('change', handleProvinciaChange);
+                }
+
+                municipioElement = municipioContainer.querySelector('select');
+                 if (!municipioElement) {
+                    municipioElement = document.createElement('select');
+                    municipioElement.id = 'municipioNacimiento';
+                    municipioElement.name = 'municipioNacimiento';
+                    municipioElement.required = true; // Make required when Cuba is selected
+                    replaceElementInContainer(municipioContainer, municipioElement);
+                }
+
+                 // Add listener if it wasn't there (e.g., switched from input)
+                 if (!provinciaElement.onchange) {
+                     provinciaElement.addEventListener('change', handleProvinciaChange);
+                 }
+
+                if (isYearValid) {
+                    // Valid year: Populate and enable province, disable municipality initially
+                    updateProvinciasMunicipiosByYear(parseInt(year)); // Pass parsed year
+                    provinciaElement.disabled = false;
+                    // Municipality is handled by updateProvinciasMunicipiosByYear and handleProvinciaChange
+                } else {
+                    // Invalid/missing year: Disable and clear selects
+                    populateSelect(provinciaElement, [], 'Ingrese año válido');
+                    populateSelect(municipioElement, [], 'Seleccione provincia');
+                    provinciaElement.disabled = true;
+                    municipioElement.disabled = true;
+                }
+
+            } else if (selectedCountryCode) {
+                // --- Other Country Selected ---
+                // Ensure elements are inputs
+                 provinciaElement = provinciaContainer.querySelector('input');
+                 if (!provinciaElement) {
+                    provinciaElement = document.createElement('input');
+                    provinciaElement.type = 'text';
+                    provinciaElement.id = 'provinciaNacimiento';
+                    provinciaElement.name = 'provinciaNacimiento';
+                    provinciaElement.required = true; // Make required for other countries too
+                    replaceElementInContainer(provinciaContainer, provinciaElement);
+                 }
+
+                 municipioElement = municipioContainer.querySelector('input');
+                 if (!municipioElement) {
+                    municipioElement = document.createElement('input');
+                    municipioElement.type = 'text';
+                    municipioElement.id = 'municipioNacimiento';
+                    municipioElement.name = 'municipioNacimiento';
+                    municipioElement.required = true; // Make required for other countries too
+                    replaceElementInContainer(municipioContainer, municipioElement);
+                 }
+
+                // Enable and clear inputs
+                provinciaElement.disabled = false;
+                municipioElement.disabled = false;
+                provinciaElement.value = '';
+                municipioElement.value = '';
+
+            } else {
+                // --- No Country Selected ---
+                 // Ensure elements are selects (or inputs, doesn't strictly matter as they are disabled)
+                 // Let's default to selects for consistency
+                 provinciaElement = provinciaContainer.querySelector('select');
+                 if (!provinciaElement) {
+                     provinciaElement = document.createElement('select');
+                     provinciaElement.id = 'provinciaNacimiento';
+                     provinciaElement.name = 'provinciaNacimiento';
+                     replaceElementInContainer(provinciaContainer, provinciaElement);
+                 }
+                 municipioElement = municipioContainer.querySelector('select');
+                 if (!municipioElement) {
+                     municipioElement = document.createElement('select');
+                     municipioElement.id = 'municipioNacimiento';
+                     municipioElement.name = 'municipioNacimiento';
+                     replaceElementInContainer(municipioContainer, municipioElement);
+                 }
+
+                // Disable and clear/reset selects
+                populateSelect(provinciaElement, [], 'Seleccione país');
+                populateSelect(municipioElement, [], 'Seleccione país');
+                provinciaElement.disabled = true;
+                municipioElement.disabled = true;
+                provinciaElement.required = false; // Not required if no country selected
+                municipioElement.required = false;
+            }
+        }
+
+
+        /**
+         * Updates the Provincia and Municipio selects based on the birth year (only if Cuba is selected).
+         * @param {number} year - The valid year of birth.
          */
         function updateProvinciasMunicipiosByYear(year) {
             const provinciaSelect = document.getElementById('provinciaNacimiento');
             const municipioSelect = document.getElementById('municipioNacimiento');
-             // Check if the elements exist and are selects before proceeding
+            // Ensure elements exist and are selects, and Cuba is selected
             if (!provinciaSelect || provinciaSelect.tagName !== 'SELECT' ||
                 !municipioSelect || municipioSelect.tagName !== 'SELECT' ||
-                document.getElementById('paisNacimiento').value !== 'Cuba') {
+                document.getElementById('paisNacimiento').value !== 'CU') {
                 return;
             }
-
 
             let provinciasData;
             if (year < 1976) {
@@ -1313,9 +1428,10 @@ KE,Kenya,Keny`;
             populateSelect(provinciaSelect,
                            provinciasData.map(p => ({ value: p.name, textContent: p.name })),
                            'Seleccione una provincia');
-            provinciaSelect.disabled = false;
-            municipioSelect.innerHTML = '<option value="">Seleccione un municipio</option>';
-            municipioSelect.disabled = true; // Disable municipios until province is selected
+            provinciaSelect.disabled = false; // Enable province selection
+            // Reset and disable municipality until province is selected
+            populateSelect(municipioSelect, [], 'Seleccione provincia');
+            municipioSelect.disabled = true;
         }
 
 
@@ -1331,11 +1447,12 @@ KE,Kenya,Keny`;
                 return;
             }
 
-            const year = parseInt(document.getElementById('anoNacimiento').value);
+            const year = parseInt(document.getElementById('anoNacimiento').value); // Re-check year
             const selectedProvinciaName = provinciaSelect.value;
 
-            if (!selectedProvinciaName || isNaN(year) || document.getElementById('paisNacimiento').value !== 'Cuba') {
-                municipioSelect.innerHTML = '<option value="">Seleccione un municipio</option>';
+            // Ensure year is valid and Cuba is selected
+            if (!selectedProvinciaName || !isValidBirthYear(year) || document.getElementById('paisNacimiento').value !== 'CU') {
+                populateSelect(municipioSelect, [], 'Seleccione provincia');
                 municipioSelect.disabled = true;
                 return;
             }
@@ -1355,9 +1472,9 @@ KE,Kenya,Keny`;
                  populateSelect(municipioSelect,
                                selectedProvinciaData.municipios.map(m => ({ value: m, textContent: m })),
                                'Seleccione un municipio');
-                 municipioSelect.disabled = false;
+                 municipioSelect.disabled = false; // Enable municipality selection
             } else {
-                 municipioSelect.innerHTML = '<option value="">Seleccione un municipio</option>';
+                 populateSelect(municipioSelect, [], 'Seleccione provincia');
                  municipioSelect.disabled = true;
             }
         }
@@ -1410,10 +1527,9 @@ KE,Kenya,Keny`;
                 field.classList.remove('error-field');
             });
 
-            // 1. Check required fields
+            // 1. Check required fields that are NOT disabled
             requiredFields.forEach(field => {
-                // Skip disabled fields (like consulado or provincia/municipio initially)
-                if (field.disabled) return;
+                if (field.disabled) return; // Skip disabled fields
 
                 const fieldLabel = field.previousElementSibling?.textContent || field.name || field.id;
                 if ((field.tagName === 'SELECT' && field.value === '') ||
@@ -1432,27 +1548,34 @@ KE,Kenya,Keny`;
                 isValid = false;
             }
 
-            const diaNac = document.getElementById('diaNacimiento').value;
-            const mesNac = document.getElementById('mesNacimiento').value;
-            const anoNac = document.getElementById('anoNacimiento').value;
-            if (diaNac && mesNac && anoNac) { // Only validate if all parts are present
+            // Validate Birth Date parts
+            const diaNacInput = document.getElementById('diaNacimiento');
+            const mesNacInput = document.getElementById('mesNacimiento');
+            const anoNacInput = document.getElementById('anoNacimiento');
+            const diaNac = diaNacInput.value;
+            const mesNac = mesNacInput.value;
+            const anoNac = anoNacInput.value;
+
+            if (diaNacInput.required && (!diaNac || !mesNac || !anoNac)) {
+                 // Already handled by general required check, but double-check
+                 if (!diaNac) diaNacInput.classList.add('error-field');
+                 if (!mesNac) mesNacInput.classList.add('error-field');
+                 if (!anoNac) anoNacInput.classList.add('error-field');
+                 // errorMessages.push("La Fecha de Nacimiento es obligatoria."); // Avoid duplicate message
+                 isValid = false;
+            } else if (diaNac && mesNac && anoNac) { // Only validate if all parts are present
                 if (!validarFecha(diaNac, mesNac, anoNac)) {
-                    ['diaNacimiento', 'mesNacimiento', 'anoNacimiento'].forEach(id => document.getElementById(id)?.classList.add('error-field'));
+                    [diaNacInput, mesNacInput, anoNacInput].forEach(el => el.classList.add('error-field'));
                     errorMessages.push("La Fecha de Nacimiento es inválida.");
                     isValid = false;
                 } else {
                     const fechaNacimiento = new Date(anoNac, mesNac - 1, diaNac);
                     if (fechaNacimiento > new Date()) {
-                         ['diaNacimiento', 'mesNacimiento', 'anoNacimiento'].forEach(id => document.getElementById(id)?.classList.add('error-field'));
+                         [diaNacInput, mesNacInput, anoNacInput].forEach(el => el.classList.add('error-field'));
                          errorMessages.push("La Fecha de Nacimiento no puede ser futura.");
                          isValid = false;
                     }
                 }
-            } else if (document.getElementById('diaNacimiento').required) { // Check if date parts are required but missing
-                 if (!diaNac) document.getElementById('diaNacimiento').classList.add('error-field');
-                 if (!mesNac) document.getElementById('mesNacimiento').classList.add('error-field');
-                 if (!anoNac) document.getElementById('anoNacimiento').classList.add('error-field');
-                 // Error message for required fields is handled above
             }
 
 
@@ -1464,7 +1587,7 @@ KE,Kenya,Keny`;
                      ['diaSalida', 'mesSalida', 'anoSalida'].forEach(id => document.getElementById(id)?.classList.add('error-field'));
                     errorMessages.push("La Fecha de Salida de Cuba es inválida.");
                     isValid = false;
-                } else if (diaNac && mesNac && anoNac && validarFecha(diaNac, mesNac, anoNac)) {
+                } else if (diaNac && mesNac && anoNac && validarFecha(diaNac, mesNac, anoNac)) { // Check against valid birth date
                     const fechaNacimiento = new Date(anoNac, mesNac - 1, diaNac);
                     const fechaSalida = new Date(anoSal, mesSal - 1, diaSal);
                     if (fechaSalida < fechaNacimiento) {
@@ -1697,7 +1820,7 @@ KE,Kenya,Keny`;
             document.getElementById('mesSolicitud').value = fechaActual.getMonth() + 1;
             document.getElementById('anoSolicitud').value = fechaActual.getFullYear();
 
-            // Populate Countries dropdown
+            // Populate Countries dropdowns
             const paisResidenciaSelect = document.getElementById('paisResidencia');
             const paisNacimientoSelect = document.getElementById('paisNacimiento');
 
@@ -1705,10 +1828,9 @@ KE,Kenya,Keny`;
                 .sort((a, b) => a.name.localeCompare(b.name)) // Sort alphabetically
                 .map(country => ({ value: country.code, textContent: country.name }));
 
+            // Populate both country dropdowns with the full list
             populateSelect(paisResidenciaSelect, countryOptions, 'Seleccione país');
-            populateSelect(paisNacimientoSelect,
-                           [{value: 'CU', textContent: 'Cuba'}, {value: 'OTRO', textContent: 'Otro'}], // Simplified birth country list
-                           'Seleccione país');
+            populateSelect(paisNacimientoSelect, countryOptions, 'Seleccione país');
 
 
             // Attempt to set default residence country based on IP (optional)
@@ -1730,27 +1852,16 @@ KE,Kenya,Keny`;
 
              // Add event listeners
              document.getElementById('paisResidencia').addEventListener('change', updateConsulados); // Listener for consulate update
-             document.getElementById('paisNacimiento').addEventListener('change', handlePaisNacimientoChange);
-             document.getElementById('anoNacimiento').addEventListener('input', () => { // Use input for faster feedback
-                 const year = parseInt(document.getElementById('anoNacimiento').value);
-                 if (!isNaN(year)) {
-                     updateProvinciasMunicipiosByYear(year);
-                 } else {
-                      // Clear/disable province/municipality if year is invalid/cleared
-                     const provinciaSelect = document.getElementById('provinciaNacimiento');
-                     const municipioSelect = document.getElementById('municipioNacimiento');
-                      // Check if the elements exist and are selects before trying to modify
-                     if (provinciaSelect && provinciaSelect.tagName === 'SELECT') {
-                         provinciaSelect.innerHTML = '<option value="">Seleccione una provincia</option>';
-                         provinciaSelect.disabled = true;
-                     }
-                     if (municipioSelect && municipioSelect.tagName === 'SELECT') {
-                         municipioSelect.innerHTML = '<option value="">Seleccione un municipio</option>';
-                         municipioSelect.disabled = true;
-                     }
-                 }
+             document.getElementById('paisNacimiento').addEventListener('change', handlePaisNacimientoChange); // Listener for birth province/municipality update
+
+             // Listener for birth year input - triggers update for province/municipality if Cuba is selected
+             document.getElementById('anoNacimiento').addEventListener('input', () => {
+                 // Directly call handlePaisNacimientoChange which now includes year validation check
+                 handlePaisNacimientoChange();
              });
-             // Note: Provincia change listener is added dynamically in handlePaisNacimientoChange
+
+             // Initial setup for birth province/municipality based on default country/year
+             handlePaisNacimientoChange();
 
              // Add blur listeners for instant validation feedback (optional but helpful)
             document.getElementById('carneIdentidad').addEventListener('blur', function() {
