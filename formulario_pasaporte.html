@@ -4,6 +4,8 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Solicitud de Pasaporte Cubano</title>
+    <link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/npm/toastify-js/src/toastify.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/toastify-js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
@@ -12,133 +14,173 @@
         body {
             font-family: Arial, sans-serif;
             line-height: 1.6;
-            max-width: 800px;
-            margin: 0 auto;
+            margin: 0;
             padding: 20px;
             color: #333;
+            background-color: #f4f4f4;
+            position: relative;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+        
+        body::before {
+            content: '';
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            width: 100%;
+            height: 100%;
+            background-image: url('img/escudo_cuba_lineas_azul.png');
+            background-position: center 20px;
+            /* background-size: 200px; */
+            background-repeat: no-repeat;
+            opacity: 0.1;
+            z-index: -1;
+            pointer-events: none;
         }
         .header {
             text-align: center;
-            margin-bottom: 20px;
+            margin-bottom: 30px; /* Increased margin */
         }
         .header h1 {
             margin: 5px 0;
-            font-size: 18px;
+            font-size: 24px; /* Slightly larger title */
         }
         .header h2 {
             margin: 5px 0;
-            font-size: 16px;
+            font-size: 18px;
             font-weight: normal;
+            color: #777; /* Subtitle color */
         }
         .form-section {
-            margin-bottom: 25px;
-            border: 1px solid #ccc;
-            padding: 15px;
-            border-radius: 5px;
+            margin-bottom: 30px;
+            border: 1px solid rgba(221, 221, 221, 0.6);
+            padding: 20px;
+            border-radius: 8px;
+            /* background-color: rgba(255, 255, 255, 0.85); */
+            backdrop-filter: blur(5px);
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
         }
         .form-title {
-            background-color: #f0f0f0;
-            padding: 5px 10px;
-            margin: -15px -15px 15px -15px;
-            border-bottom: 1px solid #ccc;
+            background-color: rgba(224, 224, 224, 0.9);
+            color: #333;
+            padding: 10px 15px;
+            margin: -20px -20px 20px -20px;
+            border-bottom: 1px solid rgba(204, 204, 204, 0.6);
             font-weight: bold;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
-        .title-container {
-            display: flex;
-            align-items: center;
+            font-size: 18px;
+            border-radius: 8px 8px 0 0;
         }
         .form-row {
             display: flex;
             flex-wrap: wrap;
-            gap: 15px;
-            margin-bottom: 15px;
+            gap: 20px; /* Increased gap */
+            margin-bottom: 20px; /* Increased margin */
+            align-items: center; /* Vertically align items in a row */
         }
         .form-group {
             flex: 1;
-            min-width: 200px;
+            min-width: 250px; /* Increased min-width for better layout */
         }
         label {
             display: block;
-            margin-bottom: 5px;
+            margin-bottom: 8px; /* Increased margin */
             font-weight: bold;
-            font-size: 14px;
+            font-size: 16px; /* Slightly larger label */
+            color: #555; /* Label color */
         }
         input, select, textarea {
             width: 100%;
-            padding: 8px;
-            border: 1px solid #999;
-            border-radius: 4px;
+            padding: 10px; /* Increased padding */
+            border: 1px solid #ccc;
+            border-radius: 6px; /* More rounded corners */
             box-sizing: border-box;
+            font-size: 16px; /* Slightly larger input text */
         }
         input[type="text"], input[type="email"], input[type="tel"], textarea {
             text-transform: uppercase;
         }
         .photo-box {
-            border: 2px dashed #999;
-            width: 150px;
-            height: 180px;
-            margin: 10px auto;
+            border: 2px dashed #bbb; /* Lighter dashed border */
+            width: 180px; /* Increased size */
+            height: 220px; /* Increased size */
+            margin: 15px auto; /* Increased margin */
             display: flex;
             align-items: center;
             justify-content: center;
             text-align: center;
-            padding: 10px;
+            padding: 15px; /* Increased padding */
             background-color: #f9f9f9;
+            border-radius: 6px;
+            color: #777;
+            font-size: 14px;
         }
         .signature-box {
-            border: 1px solid #000;
+            border: 1px solid #999;
             width: 100%;
-            height: 80px;
-            margin: 10px 0;
+            height: 100px; /* Increased height */
+            margin: 15px 0; /* Increased margin */
             background-color: #fff;
+            border-radius: 6px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #999;
+            font-style: italic;
         }
         .qr-container {
-            margin: 20px auto;
+            margin: 30px auto; /* Increased margin */
             text-align: center;
-            padding: 15px;
+            padding: 20px; /* Increased padding */
             border: 1px solid #ddd;
             background-color: #f9f9f9;
             display: block;
-            width: 280px;
+            width: fit-content; /* Increased width */
+            border-radius: 6px;
         }
         .btn-container {
             text-align: center;
-            margin: 30px 0;
+            margin: 10px 0; /* Increased margin */
         }
         button {
-            padding: 10px 20px;
-            background-color: #0066cc;
+            padding: 12px 25px; /* Increased padding */
+            background-color: #007bff; /* More modern button color */
             color: white;
             border: none;
-            border-radius: 4px;
+            border-radius: 6px; /* More rounded corners */
             cursor: pointer;
-            font-size: 16px;
+            font-size: 18px; /* Slightly larger button text */
+            transition: background-color 0.3s ease; /* Smooth hover effect */
         }
         button:hover {
-            background-color: #0055aa;
+            background-color: #0056b3;
         }
         .residence-table {
             width: 100%;
             border-collapse: collapse;
-            margin: 10px 0;
+            margin: 15px 0; /* Increased margin */
+            font-size: 16px;
         }
         .residence-table th, .residence-table td {
             border: 1px solid #ddd;
-            padding: 8px;
+            padding: 10px; /* Increased padding */
             text-align: left;
         }
         .residence-table th {
             background-color: #f2f2f2;
+            font-weight: bold;
         }
         .declaration {
             font-style: italic;
-            margin: 15px 0;
-            padding: 10px;
-            background-color: #f5f5f5;
-            border-left: 3px solid #ccc;
+            margin: 20px 0; /* Increased margin */
+            padding: 15px; /* Increased padding */
+            background-color: #f9f9f9;
+            border-left: 5px solid #ccc; /* Thicker border */
+            border-radius: 4px;
+            color: #555;
         }
         #loader {
             position: fixed;
@@ -156,8 +198,8 @@
             border: 5px solid #f3f3f3;
             border-top: 5px solid #3498db;
             border-radius: 50%;
-            width: 50px;
-            height: 50px;
+            width: 60px; /* Increased size */
+            height: 60px; /* Increased size */
             animation: spin 1s linear infinite;
             margin: 20px auto;
         }
@@ -166,9 +208,13 @@
             100% { transform: rotate(360deg); }
         }
         .error-field {
-            border: 1px solid red !important;
+            border: 2px solid #ff4444 !important;
+            background-color: #fff3f3 !important;
         }
         @media print {
+            body {
+                background-color: #fff;
+            }
             button, .no-print {
                 display: none;
             }
@@ -184,37 +230,65 @@
             height: 100%;
         }
         .tramite-select {
-            height: 180px;
+            height: auto; /* Adjust height */
             display: flex;
             flex-direction: column;
             justify-content: center;
         }
         .tramite-select select {
-            height: 50px;
+            height: 40px; /* Adjusted height */
             font-size: 16px;
+        }
+        .date-input-group {
+            display: flex;
+            gap: 10px;
+            align-items: center;
+        }
+        .date-input-group input[type="number"] {
+            width: max-content;
+        }
+        #form-to-print {
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+            box-sizing: border-box;
+            position: relative;
+        }
+        .toastify {
+            font-family: Arial, sans-serif;
+            padding: 12px 20px;
+            color: #ffffff;
+            border-radius: 4px;
+            font-size: 14px;
+        }
+        .toastify.error {
+            background: linear-gradient(135deg, #ff4444, #cc0000);
+        }
+        .toastify.success {
+            background: linear-gradient(135deg, #00C851, #007E33);
         }
     </style>
 </head>
 <body>
     <div id="loader">
-        <div style="background: white; padding: 20px; border-radius: 5px; text-align: center;">
-            <p>Generando PDF, por favor espere...</p>
+        <div style="background: white; padding: 30px; border-radius: 8px; text-align: center;">
+            <p style="font-size: 18px; margin-bottom: 15px;">Generando PDF, por favor espere...</p>
             <div class="spinner"></div>
         </div>
     </div>
 
     <div id="form-to-print">
         <div class="header">
-           
             <h1>SOLICITUD DE PASAPORTE</h1>
+            <h2>REPÚBLICA DE CUBA</h2>
         </div>
 
         <div class="form-section">
             <div class="form-title">
-                <span>DATOS BÁSICOS</span>
-                <div style="display: flex; align-items: center; gap: 10px;">
-                    <label for="tramite" style="margin: 0; white-space: nowrap;">Tipo de Trámite:</label>
-                    <select id="tramite" name="tramite" required style="width: 150px; margin: 0;">
+                DATOS BÁSICOS
+                <div class="tramite-select">
+                    <label for="tramite" style="margin-bottom: 5px;">Tipo de Trámite:</label>
+                    <select id="tramite" name="tramite" required>
                         <option value="">Seleccione</option>
                         <option value="primera_vez">Primera Vez</option>
                         <option value="renovacion">Renovación</option>
@@ -225,16 +299,16 @@
                 </div>
             </div>
             <div class="form-row">
-                <div class="form-group" style="flex: 1;">
+                <div class="form-group" style="flex-basis: 30%;">
                     <label>Foto del Solicitante</label>
                     <div class="photo-box">
-                        FOTO PEGADA (4 x 4.5 cm)
+                        FOTO<br>(4 x 4.5 cm)
                     </div>
                 </div>
-                <div class="form-group" style="flex: 2;">
+                <div class="form-group" style="flex-basis: 70%;">
                     <label>Firma del Solicitante</label>
-                    <div class="signature-box" style="height: 180px; display: flex; align-items: center; justify-content: center;">
-                        <span style="color: #999; font-style: italic;">Firmar dentro de este espacio</span>
+                    <div class="signature-box">
+                        Firmar dentro de este espacio
                     </div>
                 </div>
             </div>
@@ -248,42 +322,43 @@
             <div class="form-row">
                 <div class="form-group">
                     <label>Fecha de Solicitud</label>
-                    <div class="form-row">
-                        <input type="number" id="diaSolicitud" name="diaSolicitud" placeholder="Día" min="1" max="31" style="width: 50px;" required>
-                        <input type="number" id="mesSolicitud" name="mesSolicitud" placeholder="Mes" min="1" max="12" style="width: 50px;" required>
-                        <input type="number" id="anoSolicitud" name="anoSolicitud" placeholder="Año" min="1900" max="2100" style="width: 70px;" required>
+                    <div class="date-input-group">
+                        <input type="number" id="diaSolicitud" name="diaSolicitud" placeholder="Día" min="1" max="31" required>
+                        <input type="number" id="mesSolicitud" name="mesSolicitud" placeholder="Mes" min="1" max="12" required>
+                        <input type="number" id="anoSolicitud" name="anoSolicitud" placeholder="Año" min="1900" max="2100" required>
                     </div>
                 </div>
                 <div class="form-group">
+                    <label>País de Residencia</label>
+                    <select id="paisResidencia" name="paisResidencia" required>
+                        <option value="">Seleccione</option>
+                    </select>
+                </div>
+                <div class="form-group">
                     <label>Número de Pasaporte</label>
-                    <input type="text" required>
+                    <input type="text" id="numeroPasaporte" name="numeroPasaporte">
                 </div>
                 <div class="form-group">
                     <label>Consulado</label>
-                    <input type="text" required>
+                    <input type="text" id="consulado" name="consulado">
                 </div>
             </div>
-
             <div class="form-row">
-                <!-- Campo Carné de Identidad -->
-                <div class="form-group">
+                <div class="form-group" style="flex: 2;">
                     <label>Carné de Identidad</label>
                     <input type="text" id="carneIdentidad" name="carneIdentidad" required>
                 </div>
-                <!-- Campo Número de Pasaporte -->
-                <div class="form-group">
-                    <label>Número de Pasaporte</label>
-                    <input type="text" id="numeroPasaporte" name="numeroPasaporte" required>
-                </div>
-            </div>
-
-            <div class="form-row">
-                <!-- Campo País de Residencia -->
-                <div class="form-group">
-                    <label>País de Residencia</label>
-                    <select id="paisResidencia" name="paisResidencia" required>
-                        <!-- Opciones de países se llenarán dinámicamente -->
+                <div class="form-group" style="flex: 1;">
+                    <label>Sexo</label>
+                    <select id="sexo" name="sexo" required>
+                        <option value="">Seleccione</option>
+                        <option value="masculino">Masculino</option>
+                        <option value="femenino">Femenino</option>
                     </select>
+                </div>
+                <div class="form-group" style="flex: 1;">
+                    <label>Estatura (cm)</label>
+                    <input type="number" id="estatura" name="estatura" min="100" max="250">
                 </div>
             </div>
 
@@ -305,40 +380,25 @@
                 </div>
                 <div class="form-group">
                     <label>Segundo Nombre</label>
-                    <input type="text">
+                    <input type="text" id="segundoNombre" name="segundoNombre">
                 </div>
             </div>
 
             <div class="form-row">
                 <div class="form-group">
                     <label>Hijo de: Padre</label>
-                    <input type="text">
+                    <input type="text" id="nombrePadre" name="nombrePadre">
                 </div>
                 <div class="form-group">
                     <label>y Madre</label>
-                    <input type="text">
-                </div>
-            </div>
-
-            <div class="form-row">
-                <div class="form-group">
-                    <label>Estatura (cm)</label>
-                    <input type="number" min="100" max="250">
-                </div>
-                <div class="form-group">
-                    <label for="sexo">Sexo</label>
-                    <select id="sexo" name="sexo" required>
-                        <option value="">Seleccione</option>
-                        <option value="masculino">Masculino</option>
-                        <option value="femenino">Femenino</option>
-                    </select>
+                    <input type="text" id="nombreMadre" name="nombreMadre">
                 </div>
             </div>
 
             <div class="form-row">
                 <div class="form-group">
                     <label>Color de Ojos</label>
-                    <select>
+                    <select id="colorOjos" name="colorOjos">
                         <option value="">Seleccione</option>
                         <option value="claros">Claros</option>
                         <option value="negros">Negros</option>
@@ -347,7 +407,7 @@
                 </div>
                 <div class="form-group">
                     <label>Color de Piel</label>
-                    <select>
+                    <select id="colorPiel" name="colorPiel">
                         <option value="">Seleccione</option>
                         <option value="blanca">Blanca</option>
                         <option value="negra">Negra</option>
@@ -361,7 +421,7 @@
             <div class="form-row">
                 <div class="form-group">
                     <label>Color de Cabello</label>
-                    <select>
+                    <select id="colorCabello" name="colorCabello">
                         <option value="">Seleccione</option>
                         <option value="negro">Negro</option>
                         <option value="canoso">Canoso</option>
@@ -373,45 +433,47 @@
                 </div>
                 <div class="form-group">
                     <label>Características Especiales</label>
-                    <input type="text" placeholder="Marcas, cicatrices, etc.">
+                    <input type="text" id="caracteristicasEspeciales" name="caracteristicasEspeciales" placeholder="Marcas, cicatrices, etc.">
                 </div>
             </div>
 
             <div class="form-row">
                 <div class="form-group">
                     <label>Fecha de Nacimiento</label>
-                    <div class="form-row">
-                        <input type="number" id="diaNacimiento" name="diaNacimiento" placeholder="Día" min="1" max="31" style="width: 50px;">
-                        <input type="number" id="mesNacimiento" name="mesNacimiento" placeholder="Mes" min="1" max="12" style="width: 50px;">
-                        <input type="number" id="anoNacimiento" name="anoNacimiento" placeholder="Año" min="1900" max="2100" style="width: 70px;">
+                    <div class="date-input-group">
+                        <input type="number" id="diaNacimiento" name="diaNacimiento" placeholder="Día" min="1" max="31" required>
+                        <input type="number" id="mesNacimiento" name="mesNacimiento" placeholder="Mes" min="1" max="12" required>
+                        <input type="number" id="anoNacimiento" name="anoNacimiento" placeholder="Año" min="1900" max="2100" required>
                     </div>
                 </div>
             </div>
 
             <div class="form-row">
-                <!-- Campo País de Nacimiento -->
-                <div class="form-group" style="flex: 1;">
+                <div class="form-group">
                     <label>País de Nacimiento</label>
                     <select id="paisNacimiento" name="paisNacimiento" required>
-                        <!-- Opciones de países se llenarán dinámicamente -->
+                        <option value="">Seleccione</option>
+                        <option value="Cuba">Cuba</option>
+                        <option value="Otro">Otro</option>
                     </select>
                 </div>
-                <!-- Contenedor dinámico para Provincia -->
-                <div class="form-group" id="provincia-container" style="flex: 1;">
-                    <label>Provincia</label>
-                    <!-- Aquí se insertará el select o input para provincia -->
+                <div class="form-group">
+                    <label>Provincia de Nacimiento</label>
+                    <select id="provinciaNacimiento" name="provinciaNacimiento" disabled required>
+                        <option value="">Seleccione una provincia</option>
+                    </select>
                 </div>
-                <!-- Contenedor dinámico para Municipio -->
-                <div class="form-group" id="municipio-container" style="flex: 1;">
-                    <label>Municipio</label>
-                    <!-- Aquí se insertará el select o input para municipio -->
+                <div class="form-group">
+                    <label>Municipio de Nacimiento</label>
+                    <select id="municipioNacimiento" name="municipioNacimiento" disabled required>
+                        <option value="">Seleccione un municipio</option>
+                    </select>
                 </div>
             </div>
-
             <div class="form-row">
                 <div class="form-group">
                     <label>Clasificación Migratoria al salir de Cuba</label>
-                    <select>
+                    <select id="clasificacionMigratoria" name="clasificacionMigratoria">
                         <option value="">Seleccione</option>
                         <option value="PVE">PVE</option>
                         <option value="PVT">PVT</option>
@@ -424,10 +486,10 @@
                 </div>
                 <div class="form-group">
                     <label>Fecha de salida de Cuba</label>
-                    <div class="form-row">
-                        <input type="number" id="diaSalida" name="diaSalida" placeholder="Día" min="1" max="31" style="width: 50px;">
-                        <input type="number" id="mesSalida" name="mesSalida" placeholder="Mes" min="1" max="12" style="width: 50px;">
-                        <input type="number" id="anoSalida" name="anoSalida" placeholder="Año" min="1900" max="2100" style="width: 70px;">
+                    <div class="date-input-group">
+                        <input type="number" id="diaSalida" name="diaSalida" placeholder="Día" min="1" max="31">
+                        <input type="number" id="mesSalida" name="mesSalida" placeholder="Mes" min="1" max="12">
+                        <input type="number" id="anoSalida" name="anoSalida" placeholder="Año" min="1900" max="2100">
                     </div>
                 </div>
             </div>
@@ -435,7 +497,7 @@
             <div class="form-row">
                 <div class="form-group">
                     <label>Estado Civil</label>
-                    <select>
+                    <select id="estadoCivil" name="estadoCivil">
                         <option value="">Seleccione</option>
                         <option value="soltero">Soltero</option>
                         <option value="casado">Casado</option>
@@ -443,47 +505,43 @@
                         <option value="divorciado">Divorciado</option>
                     </select>
                 </div>
-                <div class="form-group">
-                    <label>País de Residencia</label>
-                    <input type="text">
                 </div>
-            </div>
         </div>
 
         <div class="form-section">
             <div class="form-title">LUGAR DE RESIDENCIA ACTUAL</div>
             <div class="form-row">
-                <div class="form-group">
+                <div class="form-group" style="flex-basis: 60%;">
                     <label>Dirección (calle, Ave. Nro. Entre Calles)</label>
-                    <input type="text">
+                    <input type="text" id="direccionResidencia" name="direccionResidencia">
+                </div>
+                <div class="form-group" style="flex-basis: 40%;">
+                    <label>Código Postal</label>
+                    <input type="text" id="codigoPostalResidencia" name="codigoPostalResidencia">
                 </div>
             </div>
             <div class="form-row">
                 <div class="form-group">
-                    <label>Código Postal</label>
-                    <input type="text">
-                </div>
-                <div class="form-group">
                     <label>Provincia - Estado - Región</label>
-                    <input type="text">
+                    <input type="text" id="provinciaEstadoResidencia" name="provinciaEstadoResidencia">
                 </div>
                 <div class="form-group">
                     <label>País</label>
-                    <input type="text">
+                    <input type="text" id="paisResidenciaActual" name="paisResidenciaActual">
                 </div>
             </div>
             <div class="form-row">
                 <div class="form-group">
                     <label>Teléfono</label>
-                    <input type="tel">
-                </div>
-                <div class="form-group">
-                    <label>Fax</label>
-                    <input type="tel">
+                    <input type="tel" id="telefonoResidencia" name="telefonoResidencia">
                 </div>
                 <div class="form-group">
                     <label>E-Mail</label>
-                    <input type="email">
+                    <input type="email" id="emailResidencia" name="emailResidencia">
+                </div>
+                <div class="form-group">
+                    <label>Fax</label>
+                    <input type="tel" id="faxResidencia" name="faxResidencia">
                 </div>
             </div>
         </div>
@@ -493,51 +551,51 @@
             <div class="form-row">
                 <div class="form-group">
                     <label>Nombre del Centro de Trabajo/Estudio</label>
-                    <input type="text">
+                    <input type="text" id="nombreCentroTrabajo" name="nombreCentroTrabajo">
                 </div>
             </div>
             <div class="form-row">
                 <div class="form-group">
                     <label>Profesión</label>
-                    <input type="text">
+                    <input type="text" id="profesionTrabajo" name="profesionTrabajo">
                 </div>
                 <div class="form-group">
                     <label>Ocupación</label>
-                    <input type="text">
+                    <input type="text" id="ocupacionTrabajo" name="ocupacionTrabajo">
                 </div>
             </div>
             <div class="form-row">
                 <div class="form-group">
                     <label>Dirección (calle, Ave., Nro., Entre Calles)</label>
-                    <input type="text">
+                    <input type="text" id="direccionTrabajo" name="direccionTrabajo">
                 </div>
             </div>
             <div class="form-row">
                 <div class="form-group">
                     <label>Código Postal</label>
-                    <input type="text">
+                    <input type="text" id="codigoPostalTrabajo" name="codigoPostalTrabajo">
                 </div>
                 <div class="form-group">
                     <label>Provincia - Estado - Región</label>
-                    <input type="text">
+                    <input type="text" id="provinciaEstadoTrabajo" name="provinciaEstadoTrabajo">
                 </div>
                 <div class="form-group">
                     <label>País</label>
-                    <input type="text">
+                    <input type="text" id="paisTrabajo" name="paisTrabajo">
                 </div>
             </div>
             <div class="form-row">
                 <div class="form-group">
                     <label>Teléfono</label>
-                    <input type="tel">
-                </div>
-                <div class="form-group">
-                    <label>Fax</label>
-                    <input type="tel">
+                    <input type="tel" id="telefonoTrabajo" name="telefonoTrabajo">
                 </div>
                 <div class="form-group">
                     <label>E-Mail</label>
-                    <input type="email">
+                    <input type="email" id="emailTrabajo" name="emailTrabajo">
+                </div>
+                <div class="form-group">
+                    <label>Fax</label>
+                    <input type="tel" id="faxTrabajo" name="faxTrabajo">
                 </div>
             </div>
         </div>
@@ -547,29 +605,29 @@
             <div class="form-row">
                 <div class="form-group">
                     <label>Nivel Cultural</label>
-                    <input type="text">
+                    <input type="text" id="nivelCultural" name="nivelCultural">
                 </div>
                 <div class="form-group">
-                    <label>Ocupación</label>
-                    <input type="text">
+                    <label>Ocupación Actual</label>
+                    <input type="text" id="ocupacionActual" name="ocupacionActual">
                 </div>
                 <div class="form-group">
                     <label>Profesión u Oficio</label>
-                    <input type="text">
+                    <input type="text" id="profesionOficio" name="profesionOficio">
                 </div>
             </div>
 
             <div class="form-row">
                 <div class="form-group">
                     <label>Nombre y Apellidos de la Referencia en Cuba</label>
-                    <input type="text">
+                    <input type="text" id="referenciaNombre" name="referenciaNombre">
                 </div>
             </div>
 
             <div class="form-row">
                 <div class="form-group">
                     <label>Dirección de la Referencia (incluir el municipio y la provincia)</label>
-                    <input type="text">
+                    <input type="text" id="referenciaDireccion" name="referenciaDireccion">
                 </div>
             </div>
 
@@ -586,14 +644,14 @@
                         </thead>
                         <tbody>
                             <tr>
-                                <td><input type="text" style="width: 100%; border: none;"></td>
-                                <td><input type="text" style="width: 100%; border: none;"></td>
-                                <td><input type="text" style="width: 100%; border: none;"></td>
+                                <td><input type="text" style="width: 100%; border: none;" name="direccionCuba1"></td>
+                                <td><input type="text" style="width: 100%; border: none;" name="desdeCuba1"></td>
+                                <td><input type="text" style="width: 100%; border: none;" name="hastaCuba1"></td>
                             </tr>
                             <tr>
-                                <td><input type="text" style="width: 100%; border: none;"></td>
-                                <td><input type="text" style="width: 100%; border: none;"></td>
-                                <td><input type="text" style="width: 100%; border: none;"></td>
+                                <td><input type="text" style="width: 100%; border: none;" name="direccionCuba2"></td>
+                                <td><input type="text" style="width: 100%; border: none;" name="desdeCuba2"></td>
+                                <td><input type="text" style="width: 100%; border: none;" name="hastaCuba2"></td>
                             </tr>
                         </tbody>
                     </table>
@@ -607,9 +665,9 @@
                 <div class="form-group">
                     <label>Pasaporte vencido</label>
                     <div class="form-row">
-                        <input type="text" placeholder="Número" style="flex: 1;">
-                        <input type="text" placeholder="Fecha expedición" style="flex: 1;">
-                        <input type="text" placeholder="Lugar" style="flex: 1;">
+                        <input type="text" placeholder="Número" style="flex: 1;" name="pasaporteNumeroVencido">
+                        <input type="text" placeholder="Fecha expedición" style="flex: 1;" name="pasaporteFechaExpedicionVencido">
+                        <input type="text" placeholder="Lugar" style="flex: 1;" name="pasaporteLugarExpedicionVencido">
                     </div>
                 </div>
             </div>
@@ -618,9 +676,9 @@
                 <div class="form-group">
                     <label>Certificación de Nacimiento</label>
                     <div class="form-row">
-                        <input type="text" placeholder="Tomo" style="flex: 1;">
-                        <input type="text" placeholder="Folio" style="flex: 1;">
-                        <input type="text" placeholder="Registro Civil" style="flex: 1;">
+                        <input type="text" placeholder="Tomo" style="flex: 1;" name="certNacimientoTomo">
+                        <input type="text" placeholder="Folio" style="flex: 1;" name="certNacimientoFolio">
+                        <input type="text" placeholder="Registro Civil" style="flex: 1;" name="certNacimientoRegistroCivil">
                     </div>
                 </div>
             </div>
@@ -629,9 +687,9 @@
                 <div class="form-group">
                     <label>Inscripción Consular</label>
                     <div class="form-row">
-                        <input type="text" placeholder="Número" style="flex: 1;">
-                        <input type="text" placeholder="De Fecha" style="flex: 1;">
-                        <input type="text" placeholder="Arancel $" style="flex: 1;">
+                        <input type="text" placeholder="Número" style="flex: 1;" name="inscripcionConsularNumero">
+                        <input type="text" placeholder="De Fecha" style="flex: 1;" name="inscripcionConsularFecha">
+                        <input type="text" placeholder="Arancel $" style="flex: 1;" name="inscripcionConsularArancel">
                     </div>
                 </div>
             </div>
@@ -639,18 +697,20 @@
             <div class="form-row">
                 <div class="form-group">
                     <label>Valoración Consular</label>
-                    <textarea rows="4"></textarea>
+                    <textarea rows="4" name="valoracionConsular"></textarea>
                 </div>
             </div>
         </div>
-        
-        <div class="qr-container" id="qrCode" style="margin-top: 20px; text-align: center;">
-            <div style="font-weight: bold; margin-bottom: 5px;">Código de verificación del documento</div>
+
+        <div class="qr-container" id="qrCode" style="margin-top: 30px; text-align: center;">
+            <div style="font-weight: bold; margin-bottom: 8px;">Código de verificación del documento</div>
         </div>
     </div>
 
-    <div class="btn-container">
+    <div class="btn-container no-print">
         <button type="button" onclick="generatePDF()">Finalizar y Generar PDF</button>
+    </div>
+    <div class="no-print">
         <button type="button" onclick="generateOnlyQR()">Generar solo QR</button>
     </div>
 
@@ -662,55 +722,55 @@
             const dia = fechaActual.getDate();
             const mes = fechaActual.getMonth() + 1; // getMonth() retorna 0-11
             const ano = fechaActual.getFullYear();
-            
+
             // Establecer valores por defecto
             document.getElementById('diaSolicitud').value = dia;
             document.getElementById('mesSolicitud').value = mes;
             document.getElementById('anoSolicitud').value = ano;
-            
+
             // Añadir validadores de evento para los campos de fecha
             document.getElementById('diaSolicitud').addEventListener('change', validarFechaSolicitud);
             document.getElementById('mesSolicitud').addEventListener('change', validarFechaSolicitud);
             document.getElementById('anoSolicitud').addEventListener('change', validarFechaSolicitud);
         });
-        
+
         // Función para validar la fecha de solicitud
         function validarFechaSolicitud() {
             const diaInput = document.getElementById('diaSolicitud');
             const mesInput = document.getElementById('mesSolicitud');
             const anoInput = document.getElementById('anoSolicitud');
-            
+
             // Verificar que todos los campos tengan valor antes de continuar
             if (!diaInput.value || !mesInput.value || !anoInput.value) {
                 return;
             }
-            
+
             const dia = parseInt(diaInput.value);
             const mes = parseInt(mesInput.value);
             const ano = parseInt(anoInput.value);
-            
+
             // Crear objeto fecha con los valores ingresados
             const fechaIngresada = new Date(ano, mes - 1, dia);
-            
+
             // Fecha actual
             const fechaActual = new Date();
-            
+
             // Calcular fecha límite (5 días antes)
             const fechaLimite = new Date();
             fechaLimite.setDate(fechaActual.getDate() - 5);
-            
+
             // Validar que la fecha no sea posterior a la actual ni anterior a 5 días
             if (fechaIngresada > fechaActual) {
                 alert("La fecha de solicitud no puede ser posterior a la fecha actual");
-                
+
                 // Restablecer a fecha actual
                 diaInput.value = fechaActual.getDate();
                 mesInput.value = fechaActual.getMonth() + 1;
                 anoInput.value = fechaActual.getFullYear();
-                
+
             } else if (fechaIngresada < fechaLimite) {
                 alert("La fecha de solicitud no puede ser anterior a 5 días desde hoy");
-                
+
                 // Restablecer a fecha límite
                 diaInput.value = fechaLimite.getDate();
                 mesInput.value = fechaLimite.getMonth() + 1;
@@ -720,27 +780,120 @@
 
         // Función para validar campos requeridos
         function validateForm() {
-            const requiredFields = document.querySelectorAll('[required]');
             let isValid = true;
+            const requiredFields = document.querySelectorAll('[required]');
+            const errorFields = [];
 
+            // Limpiar errores previos
+            document.querySelectorAll('.error-field').forEach(field => {
+                field.classList.remove('error-field');
+            });
+
+            // Validar campos requeridos
             requiredFields.forEach(field => {
-                if ((field.tagName === 'SELECT' && field.value === '') || 
-                   (field.tagName === 'INPUT' && !field.value.trim())) {
+                if ((field.tagName === 'SELECT' && field.value === '') ||
+                    (field.tagName === 'INPUT' && !field.value.trim())) {
                     field.classList.add('error-field');
+                    // Safely get field label text
+                    const fieldLabel = field.previousElementSibling ? 
+                                     field.previousElementSibling.textContent : 
+                                     field.name || field.id || 'Campo requerido';
+                    errorFields.push(fieldLabel);
                     isValid = false;
-                } else {
-                    field.classList.remove('error-field');
                 }
             });
 
-            // Mensajes específicos para campos principales
-            if (document.getElementById('tramite').value === '') {
-                alert("Por favor seleccione un tipo de trámite");
+            // Obtener valores de fecha de nacimiento una sola vez
+            const diaNac = document.getElementById('diaNacimiento').value;
+            const mesNac = document.getElementById('mesNacimiento').value;
+            const anoNac = document.getElementById('anoNacimiento').value;
+
+            // Validar fecha de nacimiento
+            if (!diaNac || !mesNac || !anoNac || !validarFecha(diaNac, mesNac, anoNac)) {
+                document.getElementById('diaNacimiento').classList.add('error-field');
+                document.getElementById('mesNacimiento').classList.add('error-field');
+                document.getElementById('anoNacimiento').classList.add('error-field');
+                errorFields.push("Fecha de Nacimiento");
+                isValid = false;
+            }
+
+            // Validar provincia y municipio
+            const provincia = document.getElementById('provinciaNacimiento');
+            const municipio = document.getElementById('municipioNacimiento');
+            if (provincia && provincia.value === '') {
+                provincia.classList.add('error-field');
+                errorFields.push("Provincia de Nacimiento");
+                isValid = false;
+            }
+            if (municipio && municipio.value === '') {
+                municipio.classList.add('error-field');
+                errorFields.push("Municipio de Nacimiento");
+                isValid = false;
+            }
+
+            if (errorFields.length > 0) {
+                showNotification("Por favor complete los siguientes campos obligatorios:\n" + errorFields.join(", "));
+                scrollToFirstError();
+                return false;
+            }
+
+            // Validar Carné de Identidad
+            const ci = document.getElementById('carneIdentidad').value;
+            if (!validarCI(ci)) {
+                document.getElementById('carneIdentidad').classList.add('error-field');
+                showNotification("El carné de identidad es inválido");
+                scrollToFirstError();
+                return false;
+            }
+
+            // Validar fecha de nacimiento
+            if (!validarFecha(diaNac, mesNac, anoNac)) {
+                document.getElementById('diaNacimiento').classList.add('error-field');
+                showNotification("La fecha de nacimiento es inválida");
+                scrollToFirstError();
+                return false;
+            }
+
+            // Validar fecha de salida si está presente
+            const diaSal = document.getElementById('diaSalida').value;
+            const mesSal = document.getElementById('mesSalida').value;
+            const anoSal = document.getElementById('anoSalida').value;
+            if (diaSal && mesSal && anoSal) {
+                if (!validarFecha(diaSal, mesSal, anoSal)) {
+                    document.getElementById('diaSalida').classList.add('error-field');
+                    showNotification("La fecha de salida es inválida");
+                    scrollToFirstError();
+                    return false;
+                }
+
+                // Usar las variables ya declaradas de fecha de nacimiento
+                if (diaNac && mesNac && anoNac) {
+                    const fechaNacimiento = new Date(anoNac, mesNac - 1, diaNac);
+                    const fechaSalida = new Date(anoSal, mesSal - 1, diaSal);
+                    if (fechaSalida < fechaNacimiento) {
+                        document.getElementById('diaSalida').classList.add('error-field');
+                        showNotification("La fecha de salida debe ser posterior a la fecha de nacimiento");
+                        return false;
+                    }
+                }
+            }
+
+            // Validar que los emails sean válidos si están presentes
+            const emailResidencia = document.getElementById('emailResidencia').value;
+            const emailTrabajo = document.getElementById('emailTrabajo').value;
+            const emailRegex = /^[a-zA-Z0-9._-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,6}$/;
+            
+            if (emailResidencia && !emailRegex.test(emailResidencia)) {
+                document.getElementById('emailResidencia').classList.add('error-field');
+                showNotification("El email de residencia es inválido");
+                scrollToFirstError();
                 return false;
             }
             
-            if (document.getElementById('sexo').value === '') {
-                alert("Por favor seleccione el sexo");
+            if (emailTrabajo && !emailRegex.test(emailTrabajo)) {
+                document.getElementById('emailTrabajo').classList.add('error-field');
+                showNotification("El email de trabajo es inválido");
+                scrollToFirstError();
                 return false;
             }
 
@@ -750,502 +903,38 @@
         // Función para recolectar datos del formulario
         function collectFormData() {
             const formData = {};
-            
-            // Capturar datos de todas las secciones excepto la de documentos presentados
+
+            // Capturar datos de todas las secciones
             document.querySelectorAll('.form-section').forEach(section => {
-                const sectionTitle = section.querySelector('.form-title').textContent;
-                
-                // Excluir la sección de documentos presentados
-                if (sectionTitle !== 'DOCUMENTOS PRESENTADOS') {
-                    // Procesar todos los inputs de esta sección
-                    section.querySelectorAll('input, select, textarea').forEach(field => {
-                        // Intentar obtener una etiqueta/nombre para este campo
-                        let fieldName = '';
+                const sectionTitle = section.querySelector('.form-title')?.textContent.trim() || section.id;
+
+                section.querySelectorAll('input, select, textarea').forEach(field => {
+                    let fieldName = field.id || field.name;
+                    if (!fieldName) {
                         const label = field.previousElementSibling;
-                        
-                        if (field.id) {
-                            fieldName = field.id;
-                        } else if (field.name) {
-                            fieldName = field.name;
-                        } else if (label && label.tagName === 'LABEL') {
-                            fieldName = label.textContent.trim();
-                        } else if (field.placeholder) {
-                            fieldName = field.placeholder;
-                        } else {
-                            // Generar un nombre basado en la sección y tipo
-                            fieldName = `${sectionTitle}_${field.tagName.toLowerCase()}_${Math.random().toString(36).substring(2, 8)}`;
-                        }
-                        
-                        // Almacenar el valor
-                        if (field.tagName === 'SELECT') {
-                            formData[fieldName] = field.value;
-                        } else if (field.type === 'checkbox') {
+                        fieldName = label?.textContent.trim().replace(/\s+/g, '_').toLowerCase();
+                    }
+
+                    if (fieldName) {
+                        if (field.type === 'checkbox') {
                             formData[fieldName] = field.checked;
                         } else if (field.type === 'radio') {
                             if (field.checked) {
                                 formData[field.name] = field.value;
                             }
                         } else {
-                            formData[fieldName] = field.value || '';
+                            formData[fieldName] = field.value;
                         }
-                    });
-                }
-            });
-            
-            // Capturar también los campos que pudieron haber quedado fuera
-            document.querySelectorAll('input:not([type="button"]):not([type="submit"]), select, textarea').forEach(field => {
-                if (field.id && !formData[field.id]) {
-                    formData[field.id] = field.value || '';
-                }
-                if (field.name && !formData[field.name]) {
-                    formData[field.name] = field.value || '';
-                }
-            });
-            
-            return formData;
-        }
-
-        // Función para compactar datos del formulario
-        function compactFormData(data) {
-            // Objeto para almacenar todos los datos del formulario
-            const compact = {};
-            
-            // Recorrer todas las claves en el objeto de datos
-            for (const key in data) {
-                // Ignorar campos de la sección de documentos presentados
-                if (!key.toLowerCase().includes('pasaporte_vencido') && 
-                    !key.toLowerCase().includes('certificacion') && 
-                    !key.toLowerCase().includes('inscripcion_consular') && 
-                    !key.toLowerCase().includes('valoracion_consular') &&
-                    !key.toLowerCase().includes('tomo') &&
-                    !key.toLowerCase().includes('folio') &&
-                    !key.toLowerCase().includes('registro') &&
-                    !key.toLowerCase().includes('arancel') &&
-                    !key.toLowerCase().includes('documento')) {
-                    
-                    // Mantener algunos campos con nombres cortos para ahorrar espacio
-                    if (key === 'tramite') compact.t = data[key];
-                    else if (key === 'sexo') compact.s = data[key];
-                    else if (key === 'primerApellido') compact.a1 = data[key];
-                    else if (key === 'segundoApellido') compact.a2 = data[key];
-                    else if (key === 'primerNombre') compact.n1 = data[key];
-                    else if (key === 'segundoNombre') compact.n2 = data[key];
-                    else {
-                        // Para el resto de campos, usar la clave completa pero sin caracteres especiales
-                        const cleanKey = key.replace(/[^\w]/g, '_').substring(0, 20);
-                        compact[cleanKey] = data[key];
                     }
-                }
-            }
-            
-            // Manejar fechas especiales en formato compacto
-            if ('diaNacimiento' in data || 'mesNacimiento' in data || 'anoNacimiento' in data) {
-                const ano = data.anoNacimiento ? String(data.anoNacimiento).slice(-2) : '';
-                compact.fn = [data.diaNacimiento || '', data.mesNacimiento || '', ano].join('/');
-            }
-            
-            if ('diaSolicitud' in data || 'mesSolicitud' in data || 'anoSolicitud' in data) {
-                const ano = data.anoSolicitud ? String(data.anoSolicitud).slice(-2) : '';
-                compact.fs = [data.diaSolicitud || '', data.mesSolicitud || '', ano].join('/');
-            }
-            
-            if ('diaSalida' in data || 'mesSalida' in data || 'anoSalida' in data) {
-                const ano = data.anoSalida ? String(data.anoSalida).slice(-2) : '';
-                compact.fsc = [data.diaSalida || '', data.mesSalida || '', ano].join('/');
-            }
-            
-            // Marca temporal de generación
-            compact.g = new Date().toISOString().split('T')[0];
-            
-            return compact;
-        }
-
-        // Función para generar QR con todos los datos
-        function generateQRWithLimitedData(data) {
-            // Comprimir datos
-            const compactData = compactFormData(data);
-            
-            // Convertir a JSON y mostrar en consola para depuración
-            const jsonStr = JSON.stringify(compactData);
-            console.log("Datos para QR:", jsonStr);
-            
-            const qrContainer = document.getElementById('qrCode');
-            qrContainer.innerHTML = '<div style="font-weight: bold; margin-bottom: 5px;">Código de verificación del documento</div>';
-            
-            try {
-                new QRCode(qrContainer, {
-                    text: jsonStr,
-                    width: 250,
-                    height: 250,
-                    correctLevel: QRCode.CorrectLevel.L  // Usar nivel L (menor corrección) para permitir más datos
                 });
-                
-                return true;
-            } catch (error) {
-                console.error("Error al generar QR completo:", error);
-                // Si falla, intentar con datos mínimos
-                return generateMinimalQR(data);
-            }
-        }
-        
-        // Función para generar QR con datos mínimos si el completo falla
-        function generateMinimalQR(data) {
-            // Intentar versión progresivamente reducida si la original falla
-            let qrText = '';
-            let qrSize = 250;
-            let attempts = 0;
-            const maxAttempts = 3;
-            
-            // Función para intentar con diferentes niveles de compresión
-            function tryGenerate(dataObj, size) {
-                try {
-                    const qrContainer = document.getElementById('qrCode');
-                    qrContainer.innerHTML = '<div style="font-weight: bold; margin-bottom: 5px;">Código de verificación del documento</div>';
-                    
-                    new QRCode(qrContainer, {
-                        text: JSON.stringify(dataObj),
-                        width: size,
-                        height: size,
-                        correctLevel: QRCode.CorrectLevel.L
-                    });
-                    
-                    return true;
-                } catch (e) {
-                    console.error(`Intento ${attempts+1} fallido:`, e);
-                    return false;
-                }
-            }
-            
-            // Primer intento: datos principales y secundarios
-            const mainData = {
-                t: data.tramite || '',
-                a1: data.primerApellido || '',
-                a2: data.segundoApellido || '',
-                n1: data.primerNombre || '',
-                n2: data.segundoNombre || '',
-                s: data.sexo || '',
-                fn: data.fn || '',
-                fs: data.fs || '',
-                g: new Date().toISOString().split('T')[0]
-            };
-            
-            if (tryGenerate(mainData, 230)) {
-                console.log("QR generado con datos principales");
-                return true;
-            }
-            
-            attempts++;
-            
-            // Segundo intento: solo datos esenciales
-            const essentialData = {
-                a1: data.primerApellido || '',
-                n1: data.primerNombre || '',
-                t: data.tramite || '',
-                s: data.sexo || '',
-                fs: data.fs || ''
-            };
-            
-            if (tryGenerate(essentialData, 200)) {
-                console.log("QR generado con datos esenciales");
-                return true;
-            }
-            
-            attempts++;
-            
-            // Tercer intento: mínimo absoluto
-            const minimalData = {
-                a1: data.primerApellido || '',
-                n1: data.primerNombre || '',
-                g: new Date().toISOString().split('T')[0].replace(/-/g, '')
-            };
-            
-            if (tryGenerate(minimalData, 180)) {
-                console.log("QR generado con datos mínimos");
-                return true;
-            }
-            
-            // Si todos los intentos fallan
-            alert("Error al generar el código QR. El formulario contiene demasiados datos.");
-            return false;
-        }
-
-        // Función principal para generar el PDF
-        function generatePDF() {
-            // 1. Validar formulario antes de proceder
-            if (!validateForm()) {
-                alert("Por favor complete todos los campos requeridos");
-                return;
-            }
-
-            // 2. Mostrar loader mientras se procesa
-            document.getElementById('loader').style.display = 'flex';
-
-            // 3. Recolectar todos los datos del formulario
-            const formData = collectFormData();
-            console.log("Datos del formulario recolectados:", formData);
-
-            // 4. Generar código QR con datos limitados
-            const qrSuccess = generateQRWithLimitedData(formData);
-            if (!qrSuccess) {
-                document.getElementById('loader').style.display = 'none';
-                alert("Error al generar el código QR. Intente con menos datos.");
-                return;
-            }
-            
-            // 5. Opciones básicas para el PDF
-            const element = document.getElementById('form-to-print');
-            
-            // 6. Dar tiempo para que se renderice el QR antes de generar el PDF
-            setTimeout(() => {
-                try {
-                    const opt = {
-                        margin: 10,
-                        filename: `solicitud_pasaporte_${formData.primerApellido || 'cuba'}.pdf`,
-                        image: { type: 'jpeg', quality: 0.95 },
-                        html2canvas: { 
-                            scale: 2,
-                            logging: false,
-                            useCORS: true
-                        },
-                        jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' }
-                    };
-                    
-                    html2pdf().set(opt).from(element).save();
-                    
-                    // Mostrar mensaje de éxito después de un tiempo
-                    setTimeout(() => {
-                        document.getElementById('loader').style.display = 'none';
-                        alert("PDF generado con éxito");
-                    }, 2000);
-                } catch (error) {
-                    console.error("Error al generar PDF:", error);
-                    document.getElementById('loader').style.display = 'none';
-                    alert("Ocurrió un error al generar el PDF. Por favor intente nuevamente.");
-                }
-            }, 800); // Aumentar el tiempo para asegurar que el QR se renderice completamente
-        }
-
-        // Lista de países según ISO en español
-        const paisesISO = [
-            { codigo: "CU", nombre: "Cuba" },
-            { codigo: "US", nombre: "Estados Unidos" },
-            { codigo: "ES", nombre: "España" },
-            // Agregar todos los países según ISO
-        ];
-
-        // Provincias y municipios de Cuba
-        const provinciasCuba = {
-            "Pinar del Río": ["Consolación del Sur", "Guane", "La Palma", "Los Palacios", "Mantua", "Minas de Matahambre", "Pinar del Río", "San Juan y Martínez", "San Luis", "Sandino", "Viñales"],
-            "Artemisa": ["Alquízar", "Artemisa", "Bauta", "Caimito", "Guanajay", "Güira de Melena", "Mariel", "San Antonio de los Baños", "Bahía Honda", "Candelaria", "San Cristóbal"],
-            "La Habana": ["Arroyo Naranjo", "Boyeros", "Centro Habana", "Cerro", "Cotorro", "Diez de Octubre", "Guanabacoa", "Habana del Este", "Habana Vieja", "La Lisa", "Marianao", "Playa", "Plaza de la Revolución", "Regla", "San Miguel del Padrón"],
-            "Mayabeque": ["Batabanó", "Bejucal", "Güines", "Jaruco", "Madruga", "Melena del Sur", "Nueva Paz", "Quivicán", "San José de las Lajas", "Santa Cruz del Norte"],
-            "Matanzas": ["Calimete", "Cárdenas", "Ciénaga de Zapata", "Colón", "Jagüey Grande", "Jovellanos", "Limonar", "Los Arabos", "Martí", "Matanzas", "Pedro Betancourt", "Perico", "Unión de Reyes"],
-            "Cienfuegos": ["Aguada de Pasajeros", "Cienfuegos", "Cruces", "Cumanayagua", "Palmira", "Rodas", "Abreus", "Lajas"],
-            "Villa Clara": ["Caibarién", "Camajuaní", "Cifuentes", "Corralillo", "Encrucijada", "Manicaragua", "Placetas", "Quemado de Güines", "Ranchuelo", "Remedios", "Sagua la Grande", "Santa Clara", "Santo Domingo"],
-            "Sancti Spíritus": ["Cabaiguán", "Fomento", "Jatibonico", "La Sierpe", "Sancti Spíritus", "Taguasco", "Trinidad", "Yaguajay"],
-            "Ciego de Ávila": ["Baraguá", "Bolivia", "Ciego de Ávila", "Chambas", "Ciro Redondo", "Florencia", "Majagua", "Morón", "Primero de Enero", "Venezuela"],
-            "Camagüey": ["Camagüey", "Carlos Manuel de Céspedes", "Esmeralda", "Florida", "Guaimaro", "Jimaguayú", "Minas", "Najasa", "Nuevitas", "Santa Cruz del Sur", "Sibanicú", "Sierra de Cubitas", "Vertientes"],
-            "Las Tunas": ["Amancio", "Colombia", "Jesús Menéndez", "Jobabo", "Majibacoa", "Manatí", "Puerto Padre", "Las Tunas"],
-            "Holguín": ["Antilla", "Báguanos", "Banes", "Cacocum", "Calixto García", "Cueto", "Frank País", "Gibara", "Holguín", "Mayarí", "Moa", "Rafael Freyre", "Sagua de Tánamo", "Urbano Noris"],
-            "Granma": ["Bartolomé Masó", "Bayamo", "Buey Arriba", "Campechuela", "Cauto Cristo", "Guisa", "Jiguaní", "Manzanillo", "Media Luna", "Niquero", "Pilón", "Río Cauto", "Yara"],
-            "Santiago de Cuba": ["Contramaestre", "Guamá", "Mella", "Palma Soriano", "San Luis", "Santiago de Cuba", "Segundo Frente", "Songo-La Maya", "Tercer Frente"],
-            "Guantánamo": ["Baracoa", "Caimanera", "El Salvador", "Guantánamo", "Imías", "Maisí", "Manuel Tames", "Niceto Pérez", "San Antonio del Sur", "Yateras"],
-            "Isla de la Juventud": ["Isla de la Juventud"]
-        };
-
-        function llenarPaises(selectId) {
-    const select = document.getElementById(selectId);
-    paisesISO.forEach(pais => {
-        const option = document.createElement("option");
-        option.value = pais.codigo;
-        option.textContent = pais.nombre;
-        select.appendChild(option);
-    });
-}
-
-// Detectar país por IP y establecer como predeterminado
-async function detectarPaisPorIP(selectId) {
-    try {
-        const response = await fetch("https://ipapi.co/json/");
-        const data = await response.json();
-        const paisUsuario = data.country_code;
-        const select = document.getElementById(selectId);
-        select.value = paisUsuario;
-    } catch (error) {
-        console.error("Error al detectar país por IP:", error);
-    }
-}
-
-        // Manejar cambio en el país de nacimiento
-       // Manejar cambio en el país de nacimiento
-// Manejar cambio en el país de nacimiento
-document.getElementById("paisNacimiento").addEventListener("change", function () {
-    const pais = this.value;
-    const provinciaContainer = document.getElementById("provincia-container");
-    const municipioContainer = document.getElementById("municipio-container");
-
-    // Limpiar contenedores
-    provinciaContainer.innerHTML = '';
-    municipioContainer.innerHTML = '';
-
-    if (pais === "CU") {
-        // Si el país es Cuba, crear selects para provincia y municipio
-        const provinciaSelect = createSelect('provinciaNacimiento', 'Seleccione provincia');
-        const municipioSelect = createSelect('municipioNacimiento', 'Seleccione municipio');
-        municipioSelect.disabled = true;
-
-        // Llenar provincias
-        Object.keys(provinciasCuba).forEach(provincia => {
-            const option = document.createElement("option");
-            option.value = provincia;
-            option.textContent = provincia;
-            provinciaSelect.appendChild(option);
-        });
-
-        // Evento para llenar municipios cuando cambia la provincia
-        provinciaSelect.addEventListener("change", function () {
-            const provinciaSeleccionada = this.value;
-            if (provinciaSeleccionada) {
-                municipioSelect.disabled = false;
-                municipioSelect.innerHTML = '<option value="">Seleccione municipio</option>';
-                provinciasCuba[provinciaSeleccionada].forEach(municipio => {
-                    const option = document.createElement("option");
-                    option.value = municipio;
-                    option.textContent = municipio;
-                    municipioSelect.appendChild(option);
-                });
-            } else {
-                municipioSelect.disabled = true;
-                municipioSelect.innerHTML = '<option value="">Seleccione municipio</option>';
-            }
-        });
-
-        // Agregar al DOM
-        provinciaContainer.appendChild(provinciaSelect);
-        municipioContainer.appendChild(municipioSelect);
-
-    } else {
-        // Si no es Cuba, crear inputs para provincia y municipio
-        const provinciaInput = createInput('provinciaNacimiento', 'Escriba la provincia');
-        const municipioInput = createInput('municipioNacimiento', 'Escriba el municipio');
-
-        // Agregar al DOM
-        provinciaContainer.appendChild(provinciaInput);
-        municipioContainer.appendChild(municipioInput);
-    }
-});
-
-// Función auxiliar para crear select
-function createSelect(id, placeholderText) {
-    const select = document.createElement("select");
-    select.id = id;
-    select.name = id;
-    select.required = true;
-    const placeholder = document.createElement("option");
-    placeholder.value = "";
-    placeholder.textContent = placeholderText;
-    placeholder.disabled = true;
-    placeholder.selected = true;
-    select.appendChild(placeholder);
-    return select;
-}
-
-// Función auxiliar para crear input
-function createInput(id, placeholderText) {
-    const input = document.createElement("input");
-    input.type = "text";
-    input.id = id;
-    input.name = id;
-    input.placeholder = placeholderText;
-    input.required = true;
-    return input;
-}
-
-        // Validar que los nombres solo contengan letras y guiones
-        document.querySelectorAll("#primerNombre, #segundoNombre, #primerApellido, #segundoApellido").forEach(input => {
-            input.addEventListener("input", function () {
-                this.value = this.value.replace(/[^a-zA-ZáéíóúÁÉÍÓÚñÑ\s-]/g, "");
             });
-        });
-
-        // Inicializar países al cargar la página
-        window.addEventListener("DOMContentLoaded", function () {
-            llenarPaises("paisResidencia");
-            llenarPaises("paisNacimiento");
-            detectarPaisPorIP("paisResidencia");
-        });
-
-        // Función para convertir formulario a JSON
-        function formToJSON() {
-            const formData = {};
-            
-            // Capturar todos los campos del formulario
-            document.querySelectorAll('input, select, textarea').forEach(field => {
-                if (field.name) {
-                    if (field.type === 'checkbox') {
-                        formData[field.name] = field.checked;
-                    } else if (field.type === 'radio') {
-                        if (field.checked) {
-                            formData[field.name] = field.value;
-                        }
-                    } else {
-                        formData[field.name] = field.value;
-                    }
-                }
-            });
-
-            // Formatear fechas
-            formData.fechaNacimiento = [
-                document.getElementById('diaNacimiento').value,
-                document.getElementById('mesNacimiento').value,
-                document.getElementById('anoNacimiento').value
-            ].join('/');
-
-            formData.fechaSolicitud = [
-                document.getElementById('diaSolicitud').value,
-                document.getElementById('mesSolicitud').value,
-                document.getElementById('anoSolicitud').value
-            ].join('/');
 
             return formData;
         }
 
-        // Función para generar solo el QR
-        function generateOnlyQR() {
-            if (!validateForm()) {
-                alert("Por favor complete todos los campos requeridos");
-                return;
-            }
-
-            const jsonData = formToJSON();
-            generateQRWithJSON(jsonData);
-        }
-
-        // Función para generar QR con JSON
-        function generateQRWithJSON(data) {
-            const qrContainer = document.getElementById('qrCode');
-            qrContainer.innerHTML = '<div style="font-weight: bold; margin-bottom: 5px;">Código de verificación del documento</div>';
-            
-            try {
-                const jsonStr = JSON.stringify(data);
-                new QRCode(qrContainer, {
-                    text: jsonStr,
-                    width: 250,
-                    height: 250,
-                    correctLevel: QRCode.CorrectLevel.L
-                });
-                return true;
-            } catch (error) {
-                console.error("Error al generar QR:", error);
-                alert("Error al generar el código QR. Intente con menos datos.");
-                return false;
-            }
-        }
-
-        // Modificar la función generatePDF para usar el nuevo sistema JSON
         function generatePDF() {
             if (!validateForm()) {
-                alert("Por favor complete todos los campos requeridos");
+                showNotification("Por favor complete todos los campos requeridos");
                 return;
             }
 
@@ -1275,15 +964,1157 @@ function createInput(id, placeholderText) {
                     
                     setTimeout(() => {
                         document.getElementById('loader').style.display = 'none';
-                        alert("PDF generado con éxito");
+                        showNotification("PDF generado con éxito", "success");
                     }, 2000);
                 } catch (error) {
-                    console.error("Error al generar PDF:", error);
                     document.getElementById('loader').style.display = 'none';
-                    alert("Ocurrió un error al generar el PDF. Por favor intente nuevamente.");
+                    showNotification("Ocurrió un error al generar el PDF. Por favor intente nuevamente.");
                 }
             }, 800);
         }
+
+        // Función para generar solo el QR
+        function generateOnlyQR() {
+            if (!validateForm()) {
+                showNotification("Por favor complete todos los campos requeridos");
+                return;
+            }
+
+            const jsonData = formToJSON();
+            generateQRWithJSON(jsonData);
+        }
+// Función para convertir formulario a JSON
+function formToJSON() {
+    const formData = {};
+
+    // Capturar todos los campos del formulario
+    document.querySelectorAll('input, select, textarea').forEach(field => {
+        if (field.name && field.value.trim()) { // Solo agregar si tiene valor
+            if (field.type === 'checkbox') {
+                if (field.checked) {
+                    formData[field.name] = true;
+                }
+            } else if (field.type === 'radio') {
+                if (field.checked) {
+                    formData[field.name] = field.value;
+                }
+            } else {
+                formData[field.name] = field.value.trim();
+            }
+        }
+    });
+
+    // Formatear fechas si están completas
+    const fechaNacimiento = [
+        document.getElementById('diaNacimiento').value,
+        document.getElementById('mesNacimiento').value,
+        document.getElementById('anoNacimiento').value
+    ];
+    if (fechaNacimiento.every(value => value.trim())) {
+        formData.fechaNacimiento = fechaNacimiento.join('/');
+    }
+
+    const fechaSolicitud = [
+        document.getElementById('diaSolicitud').value,
+        document.getElementById('mesSolicitud').value,
+        document.getElementById('anoSolicitud').value
+    ];
+    if (fechaSolicitud.every(value => value.trim())) {
+        formData.fechaSolicitud = fechaSolicitud.join('/');
+    }
+
+    const fechaSalida = [
+        document.getElementById('diaSalida').value,
+        document.getElementById('mesSalida').value,
+        document.getElementById('anoSalida').value
+    ];
+    if (fechaSalida.every(value => value.trim())) {
+        formData.fechaSalida = fechaSalida.join('/');
+    }
+
+    console.log("Datos del formulario en JSON:", formData); // Para depuración
+    return formData;
+}
+
+        // Función para generar QR con JSON
+        function generateQRWithJSON(data) {
+            const qrContainer = document.getElementById('qrCode');
+            qrContainer.innerHTML = '<div style="font-weight: bold; margin-bottom: 5px;">Código de verificación del documento</div>';
+            
+            try {
+                const jsonStr = JSON.stringify(data);
+                new QRCode(qrContainer, {
+                    text: jsonStr,
+                    width: 500, // Aumentar tamaño del QR
+                    height: 500, // Aumentar tamaño del QR
+                    correctLevel: QRCode.CorrectLevel.L // Reducir nivel de corrección de errores para mayor capacidad
+                });
+                return true;
+            } catch (error) {
+                console.error("Error al generar QR:", error);
+                showNotification("Error al generar el código QR. Intente con menos datos.");                
+                return false;
+            }
+        }
+
+        
+        // Lista completa de países según ISO 3166-1
+        const countries = [
+            {code: 'AF', name: 'Afganistán'},
+            {code: 'AL', name: 'Albania'},
+            {code: 'DE', name: 'Alemania'},
+            {code: 'AD', name: 'Andorra'},
+            {code: 'AO', name: 'Angola'},
+            {code: 'AI', name: 'Anguila'},
+            {code: 'AQ', name: 'Antártida'},
+            {code: 'AG', name: 'Antigua y Barbuda'},
+            {code: 'SA', name: 'Arabia Saudita'},
+            {code: 'DZ', name: 'Argelia'},
+            {code: 'AR', name: 'Argentina'},
+            {code: 'AM', name: 'Armenia'},
+            {code: 'AW', name: 'Aruba'},
+            {code: 'AU', name: 'Australia'},
+            {code: 'AT', name: 'Austria'},
+            {code: 'AZ', name: 'Azerbaiyán'},
+            {code: 'BS', name: 'Bahamas'},
+            {code: 'BD', name: 'Bangladés'},
+            {code: 'BB', name: 'Barbados'},
+            {code: 'BH', name: 'Baréin'},
+            {code: 'BE', name: 'Bélgica'},
+            {code: 'BZ', name: 'Belice'},
+            {code: 'BJ', name: 'Benín'},
+            {code: 'BM', name: 'Bermudas'},
+            {code: 'BY', name: 'Bielorrusia'},
+            {code: 'BO', name: 'Bolivia'},
+            {code: 'BA', name: 'Bosnia y Herzegovina'},
+            {code: 'BW', name: 'Botsuana'},
+            {code: 'BR', name: 'Brasil'},
+            {code: 'BN', name: 'Brunéi'},
+            {code: 'BG', name: 'Bulgaria'},
+            {code: 'BF', name: 'Burkina Faso'},
+            {code: 'BI', name: 'Burundi'},
+            {code: 'BT', name: 'Bután'},
+            {code: 'CV', name: 'Cabo Verde'},
+            {code: 'KH', name: 'Camboya'},
+            {code: 'CM', name: 'Camerún'},
+            {code: 'CA', name: 'Canadá'},
+            {code: 'TD', name: 'Chad'},
+            {code: 'CL', name: 'Chile'},
+            {code: 'CN', name: 'China'},
+            {code: 'CY', name: 'Chipre'},
+            {code: 'CO', name: 'Colombia'},
+            {code: 'KM', name: 'Comoras'},
+            {code: 'CG', name: 'Congo'},
+            {code: 'KP', name: 'Corea del Norte'},
+            {code: 'KR', name: 'Corea del Sur'},
+            {code: 'CI', name: 'Costa de Marfil'},
+            {code: 'CR', name: 'Costa Rica'},
+            {code: 'HR', name: 'Croacia'},
+            {code: 'CU', name: 'Cuba'},
+            {code: 'CW', name: 'Curazao'},
+            {code: 'DK', name: 'Dinamarca'},
+            {code: 'DM', name: 'Dominica'},
+            {code: 'EC', name: 'Ecuador'},
+            {code: 'EG', name: 'Egipto'},
+            {code: 'SV', name: 'El Salvador'},
+            {code: 'AE', name: 'Emiratos Árabes Unidos'},
+            {code: 'ER', name: 'Eritrea'},
+            {code: 'SK', name: 'Eslovaquia'},
+            {code: 'SI', name: 'Eslovenia'},
+            {code: 'ES', name: 'España'},
+            {code: 'US', name: 'Estados Unidos'},
+            {code: 'EE', name: 'Estonia'},
+            {code: 'ET', name: 'Etiopía'},
+            {code: 'PH', name: 'Filipinas'},
+            {code: 'FI', name: 'Finlandia'},
+            {code: 'FJ', name: 'Fiyi'},
+            {code: 'FR', name: 'Francia'},
+            {code: 'GA', name: 'Gabón'},
+            {code: 'GM', name: 'Gambia'},
+            {code: 'GE', name: 'Georgia'},
+            {code: 'GH', name: 'Ghana'},
+            {code: 'GI', name: 'Gibraltar'},
+            {code: 'GD', name: 'Granada'},
+            {code: 'GR', name: 'Grecia'},
+            {code: 'GL', name: 'Groenlandia'},
+            {code: 'GP', name: 'Guadalupe'},
+            {code: 'GU', name: 'Guam'},
+            {code: 'GT', name: 'Guatemala'},
+            {code: 'GF', name: 'Guayana Francesa'},
+            {code: 'GG', name: 'Guernsey'},
+            {code: 'GN', name: 'Guinea'},
+            {code: 'GQ', name: 'Guinea Ecuatorial'},
+            {code: 'GW', name: 'Guinea-Bisáu'},
+            {code: 'GY', name: 'Guyana'},
+            {code: 'HT', name: 'Haití'},
+            {code: 'HN', name: 'Honduras'},
+            {code: 'HK', name: 'Hong Kong'},
+            {code: 'HU', name: 'Hungría'},
+            {code: 'IN', name: 'India'},
+            {code: 'ID', name: 'Indonesia'},
+            {code: 'IR', name: 'Irán'},
+            {code: 'IQ', name: 'Iraq'},
+            {code: 'IE', name: 'Irlanda'},
+            {code: 'BV', name: 'Isla Bouvet'},
+            {code: 'IM', name: 'Isla de Man'},
+            {code: 'IS', name: 'Islandia'},
+            {code: 'KY', name: 'Islas Caimán'},
+            {code: 'CK', name: 'Islas Cook'},
+            {code: 'FO', name: 'Islas Feroe'},
+            {code: 'GS', name: 'Islas Georgias del Sur y Sandwich del Sur'},
+            {code: 'FK', name: 'Islas Malvinas'},
+            {code: 'MP', name: 'Islas Marianas del Norte'},
+            {code: 'MH', name: 'Islas Marshall'},
+            {code: 'PN', name: 'Islas Pitcairn'},
+            {code: 'SB', name: 'Islas Salomón'},
+            {code: 'TC', name: 'Islas Turcas y Caicos'},
+            {code: 'VG', name: 'Islas Vírgenes Británicas'},
+            {code: 'VI', name: 'Islas Vírgenes de los Estados Unidos'},
+            {code: 'IL', name: 'Israel'},
+            {code: 'IT', name: 'Italia'},
+            {code: 'JM', name: 'Jamaica'},
+            {code: 'JP', name: 'Japón'},
+            {code: 'JE', name: 'Jersey'},
+            {code: 'JO', name: 'Jordania'},
+            {code: 'KZ', name: 'Kazajistán'},
+            {code: 'KE', name: 'Kenia'},
+            {code: 'KG', name: 'Kirguistán'},
+            {code: 'KI', name: 'Kiribati'},
+            {code: 'KW', name: 'Kuwait'},
+            {code: 'LA', name: 'Laos'},
+            {code: 'LS', name: 'Lesoto'},
+            {code: 'LV', name: 'Letonia'},
+            {code: 'LB', name: 'Líbano'},
+            {code: 'LR', name: 'Liberia'},
+            {code: 'LY', name: 'Libia'},
+            {code: 'LI', name: 'Liechtenstein'},
+            {code: 'LT', name: 'Lituania'},
+            {code: 'LU', name: 'Luxemburgo'},
+            {code: 'MO', name: 'Macao'},
+            {code: 'MK', name: 'Macedonia del Norte'},
+            {code: 'MG', name: 'Madagascar'},
+            {code: 'MY', name: 'Malasia'},
+            {code: 'MW', name: 'Malaui'},
+            {code: 'MV', name: 'Maldivas'},
+            {code: 'ML', name: 'Malí'},
+            {code: 'MT', name: 'Malta'},
+            {code: 'MA', name: 'Marruecos'},
+            {code: 'MQ', name: 'Martinica'},
+            {code: 'MU', name: 'Mauricio'},
+            {code: 'MR', name: 'Mauritania'},
+            {code: 'YT', name: 'Mayotte'},
+            {code: 'MX', name: 'México'},
+            {code: 'FM', name: 'Micronesia'},
+            {code: 'MD', name: 'Moldavia'},
+            {code: 'MC', name: 'Mónaco'},
+            {code: 'MN', name: 'Mongolia'},
+            {code: 'ME', name: 'Montenegro'},
+            {code: 'MS', name: 'Montserrat'},
+            {code: 'MZ', name: 'Mozambique'},
+            {code: 'MM', name: 'Myanmar'},
+            {code: 'NA', name: 'Namibia'},
+            {code: 'NR', name: 'Nauru'},
+            {code: 'NP', name: 'Nepal'},
+            {code: 'NI', name: 'Nicaragua'},
+            {code: 'NE', name: 'Níger'},
+            {code: 'NG', name: 'Nigeria'},
+            {code: 'NU', name: 'Niue'},
+            {code: 'NF', name: 'Norfolk'},
+            {code: 'NO', name: 'Noruega'},
+            {code: 'NC', name: 'Nueva Caledonia'},
+            {code: 'NZ', name: 'Nueva Zelanda'},
+            {code: 'OM', name: 'Omán'},
+            {code: 'NL', name: 'Países Bajos'},
+            {code: 'PK', name: 'Pakistán'},
+            {code: 'PW', name: 'Palaos'},
+            {code: 'PS', name: 'Palestina'},
+            {code: 'PA', name: 'Panamá'},
+            {code: 'PG', name: 'Papúa Nueva Guinea'},
+            {code: 'PY', name: 'Paraguay'},
+            {code: 'PE', name: 'Perú'},
+            {code: 'PF', name: 'Polinesia Francesa'},
+            {code: 'PL', name: 'Polonia'},
+            {code: 'PT', name: 'Portugal'},
+            {code: 'PR', name: 'Puerto Rico'},
+            {code: 'QA', name: 'Qatar'},
+            {code: 'GB', name: 'Reino Unido'},
+            {code: 'CF', name: 'República Centroafricana'},
+            {code: 'CZ', name: 'República Checa'},
+            {code: 'CD', name: 'República Democrática del Congo'},
+            {code: 'DO', name: 'República Dominicana'},
+            {code: 'RE', name: 'Reunión'},
+            {code: 'RW', name: 'Ruanda'},
+            {code: 'RO', name: 'Rumania'},
+            {code: 'RU', name: 'Rusia'},
+            {code: 'EH', name: 'Sahara Occidental'},
+            {code: 'WS', name: 'Samoa'},
+            {code: 'AS', name: 'Samoa Americana'},
+            {code: 'BL', name: 'San Bartolomé'},
+            {code: 'KN', name: 'San Cristóbal y Nieves'},
+            {code: 'SM', name: 'San Marino'},
+            {code: 'MF', name: 'San Martín'},
+            {code: 'PM', name: 'San Pedro y Miquelón'},
+            {code: 'VC', name: 'San Vicente y las Granadinas'},
+            {code: 'SH', name: 'Santa Elena'},
+            {code: 'LC', name: 'Santa Lucía'},
+            {code: 'ST', name: 'Santo Tomé y Príncipe'},
+            {code: 'SN', name: 'Senegal'},
+            {code: 'RS', name: 'Serbia'},
+            {code: 'SC', name: 'Seychelles'},
+            {code: 'SL', name: 'Sierra Leona'},
+            {code: 'SG', name: 'Singapur'},
+            {code: 'SX', name: 'Sint Maarten'},
+            {code: 'SY', name: 'Siria'},
+            {code: 'SO', name: 'Somalia'},
+            {code: 'LK', name: 'Sri Lanka'},
+            {code: 'SZ', name: 'Suazilandia'},
+            {code: 'ZA', name: 'Sudáfrica'},
+            {code: 'SD', name: 'Sudán'},
+            {code: 'SS', name: 'Sudán del Sur'},
+            {code: 'SE', name: 'Suecia'},
+            {code: 'CH', name: 'Suiza'},
+            {code: 'SR', name: 'Surinam'},
+            {code: 'SJ', name: 'Svalbard y Jan Mayen'},
+            {code: 'TH', name: 'Tailandia'},
+            {code: 'TW', name: 'Taiwán'},
+            {code: 'TZ', name: 'Tanzania'},
+            {code: 'TJ', name: 'Tayikistán'},
+            {code: 'IO', name: 'Territorio Británico del Océano Índico'},
+            {code: 'TF', name: 'Territorios Australes Franceses'},
+            {code: 'TL', name: 'Timor Oriental'},
+            {code: 'TG', name: 'Togo'},
+            {code: 'TK', name: 'Tokelau'},
+            {code: 'TO', name: 'Tonga'},
+            {code: 'TT', name: 'Trinidad y Tobago'},
+            {code: 'TN', name: 'Túnez'},
+            {code: 'TM', name: 'Turkmenistán'},
+            {code: 'TR', name: 'Turquía'},
+            {code: 'TV', name: 'Tuvalu'},
+            {code: 'UA', name: 'Ucrania'},
+            {code: 'UG', name: 'Uganda'},
+            {code: 'UY', name: 'Uruguay'},
+            {code: 'UZ', name: 'Uzbekistán'},
+            {code: 'VU', name: 'Vanuatu'},
+            {code: 'VA', name: 'Vaticano'},
+            {code: 'VE', name: 'Venezuela'},
+            {code: 'VN', name: 'Vietnam'},
+            {code: 'WF', name: 'Wallis y Futuna'},
+            {code: 'YE', name: 'Yemen'},
+            {code: 'DJ', name: 'Yibuti'},
+            {code: 'ZM', name: 'Zambia'},
+            {code: 'ZW', name: 'Zimbabue'}
+        ];
+
+        // Provincias de Cuba según períodos históricos
+        const provinciasHistoricas = {
+            before1976: [
+                {
+                    name: 'Pinar del Río',
+                    municipios: ['Pinar del Río', 'San Juan y Martínez', 'San Luis', 'Consolación del Sur', 'Los Palacios', 'Viñales']
+                },
+                {
+                    name: 'La Habana',
+                    municipios: ['La Habana', 'Marianao', 'Regla', 'Guanabacoa', 'Santiago de las Vegas', 'Bauta', 'San Antonio de los Baños']
+                },
+                {
+                    name: 'Matanzas',
+                    municipios: ['Matanzas', 'Cárdenas', 'Colón', 'Jagüey Grande', 'Jovellanos', 'Unión de Reyes']
+                },
+                {
+                    name: 'Las Villas',
+                    municipios: ['Santa Clara', 'Cienfuegos', 'Sancti Spíritus', 'Trinidad', 'Sagua la Grande', 'Remedios']
+                },
+                {
+                    name: 'Camagüey',
+                    municipios: ['Camagüey', 'Nuevitas', 'Florida', 'Morón', 'Ciego de Ávila']
+                },
+                {
+                    name: 'Oriente',
+                    municipios: ['Santiago de Cuba', 'Guantánamo', 'Bayamo', 'Holguín', 'Manzanillo', 'Las Tunas']
+                }
+            ],
+            after1976: [
+                {
+                    name: 'Pinar del Río',
+                    municipios: ['Sandino', 'Mantua', 'Minas de Matahambre', 'Viñales', 'La Palma', 'Los Palacios', 'Consolación del Sur', 'Pinar del Río', 'San Luis', 'San Juan y Martínez', 'Guane']
+                },
+                {
+                    name: 'La Habana',
+                    municipios: ['Playa', 'Plaza de la Revolución', 'Centro Habana', 'La Habana Vieja', 'Regla', 'La Habana del Este', 'Guanabacoa', 'San Miguel del Padrón', 'Diez de Octubre', 'Cerro', 'Marianao', 'La Lisa', 'Boyeros', 'Arroyo Naranjo', 'Cotorro']
+                },
+                {
+                    name: 'Matanzas',
+                    municipios: ['Matanzas', 'Cárdenas', 'Varadero', 'Jovellanos', 'Pedro Betancourt', 'Colón', 'Perico', 'Los Arabos', 'Calimete', 'Jagüey Grande', 'Limonar', 'Unión de Reyes', 'Ciénaga de Zapata']
+                },
+                {
+                    name: 'Villa Clara',
+                    municipios: ['Santa Clara', 'Remedios', 'Sagua la Grande', 'Placetas', 'Camajuaní', 'Caibarién', 'Cifuentes', 'Santo Domingo', 'Ranchuelo', 'Manicaragua', 'Quemado de Güines', 'Encrucijada', 'Corralillo']
+                },
+                {
+                    name: 'Cienfuegos',
+                    municipios: ['Cienfuegos', 'Aguada de Pasajeros', 'Rodas', 'Palmira', 'Lajas', 'Cruces', 'Cumanayagua', 'Abreus']
+                },
+                {
+                    name: 'Sancti Spíritus',
+                    municipios: ['Sancti Spíritus', 'Trinidad', 'Cabaiguán', 'Yaguajay', 'Jatibonico', 'Fomento', 'La Sierpe', 'Taguasco']
+                },
+                {
+                    name: 'Ciego de Ávila',
+                    municipios: ['Ciego de Ávila', 'Morón', 'Chambas', 'Venezuela', 'Baraguá', 'Bolivia', 'Primero de Enero', 'Florencia', 'Majagua', 'Ciro Redondo']
+                },
+                {
+                    name: 'Camagüey',
+                    municipios: ['Camagüey', 'Nuevitas', 'Florida', 'Esmeralda', 'Vertientes', 'Santa Cruz del Sur', 'Guáimaro', 'Sibanicú', 'Minas', 'Sierra de Cubitas', 'Najasa', 'Jimaguayú', 'Carlos Manuel de Céspedes']
+                },
+                {
+                    name: 'Las Tunas',
+                    municipios: ['Las Tunas', 'Puerto Padre', 'Jobabo', 'Colombia', 'Manatí', 'Majibacoa', 'Amancio', 'Jesús Menéndez']
+                },
+                {
+                    name: 'Holguín',
+                    municipios: ['Holguín', 'Gibara', 'Rafael Freyre', 'Banes', 'Antilla', 'Báguanos', 'Mayarí', 'Frank País', 'Sagua de Tánamo', 'Moa', 'Calixto García', 'Urbano Noris', 'Cueto', 'Cacocum']
+                },
+                {
+                    name: 'Granma',
+                    municipios: ['Bayamo', 'Manzanillo', 'Yara', 'Campechuela', 'Media Luna', 'Niquero', 'Pilón', 'Bartolomé Masó', 'Jiguaní', 'Buey Arriba', 'Guisa', 'Cauto Cristo', 'Río Cauto']
+                },
+                {
+                    name: 'Santiago de Cuba',
+                    municipios: ['Santiago de Cuba', 'Palma Soriano', 'Contramaestre', 'San Luis', 'Segundo Frente', 'Songo-La Maya', 'Mella', 'Tercer Frente', 'Guamá']
+                },
+                {
+                    name: 'Guantánamo',
+                    municipios: ['Guantánamo', 'Baracoa', 'Maisí', 'San Antonio del Sur', 'Yateras', 'El Salvador', 'Manuel Tames', 'Imías', 'Niceto Pérez', 'Caimanera']
+                },
+                {
+                    name: 'Isla de la Juventud',
+                    municipios: ['Nueva Gerona']
+                }
+            ],
+            after2011: [
+                {
+                    name: 'Pinar del Río',
+                    municipios: ['Sandino', 'Mantua', 'Minas de Matahambre', 'Viñales', 'La Palma', 'Los Palacios', 'Consolación del Sur', 'Pinar del Río', 'San Luis', 'San Juan y Martínez', 'Guane']
+                },
+                {
+                    name: 'Artemisa',
+                    municipios: ['Alquízar', 'Artemisa', 'Bauta', 'Caimito', 'Guanajay', 'Güira de Melena', 'Mariel', 'San Antonio de los Baños', 'Bahía Honda', 'San Cristóbal', 'Candelaria']
+                },
+                {
+                    name: 'La Habana',
+                    municipios: ['Playa', 'Plaza de la Revolución', 'Centro Habana', 'La Habana Vieja', 'Regla', 'Habana del Este', 'Guanabacoa', 'San Miguel del Padrón', 'Diez de Octubre', 'Cerro', 'Marianao', 'La Lisa', 'Boyeros', 'Arroyo Naranjo', 'Cotorro']
+                },
+                {
+                    name: 'Mayabeque',
+                    municipios: ['Bejucal', 'San José de las Lajas', 'Jaruco', 'Santa Cruz del Norte', 'Madruga', 'Nueva Paz', 'San Nicolás', 'Güines', 'Melena del Sur', 'Batabanó', 'Quivicán']
+                },
+                {
+                    name: 'Matanzas',
+                    municipios: ['Matanzas', 'Cárdenas', 'Varadero', 'Jovellanos', 'Pedro Betancourt', 'Colón', 'Perico', 'Los Arabos', 'Calimete', 'Jagüey Grande', 'Limonar', 'Unión de Reyes', 'Ciénaga de Zapata']
+                },
+                {
+                    name: 'Villa Clara',
+                    municipios: ['Santa Clara', 'Remedios', 'Sagua la Grande', 'Placetas', 'Camajuaní', 'Caibarién', 'Cifuentes', 'Santo Domingo', 'Ranchuelo', 'Manicaragua', 'Quemado de Güines', 'Encrucijada', 'Corralillo']
+                },
+                {
+                    name: 'Cienfuegos',
+                    municipios: ['Cienfuegos', 'Aguada de Pasajeros', 'Rodas', 'Palmira', 'Lajas', 'Cruces', 'Cumanayagua', 'Abreus']
+                },
+                {
+                    name: 'Sancti Spíritus',
+                    municipios: ['Sancti Spíritus', 'Trinidad', 'Cabaiguán', 'Yaguajay', 'Jatibonico', 'Fomento', 'La Sierpe', 'Taguasco']
+                },
+                {
+                    name: 'Ciego de Ávila',
+                    municipios: ['Ciego de Ávila', 'Morón', 'Chambas', 'Venezuela', 'Baraguá', 'Bolivia', 'Primero de Enero', 'Florencia', 'Majagua', 'Ciro Redondo']
+                },
+                {
+                    name: 'Camagüey',
+                    municipios: ['Camagüey', 'Nuevitas', 'Florida', 'Esmeralda', 'Vertientes', 'Santa Cruz del Sur', 'Guáimaro', 'Sibanicú', 'Minas', 'Sierra de Cubitas', 'Najasa', 'Jimaguayú', 'Carlos Manuel de Céspedes']
+                },
+                {
+                    name: 'Las Tunas',
+                    municipios: ['Las Tunas', 'Puerto Padre', 'Jobabo', 'Colombia', 'Manatí', 'Majibacoa', 'Amancio', 'Jesús Menéndez']
+                },
+                {
+                    name: 'Holguín',
+                    municipios: ['Holguín', 'Gibara', 'Rafael Freyre', 'Banes', 'Antilla', 'Báguanos', 'Mayarí', 'Frank País', 'Sagua de Tánamo', 'Moa', 'Calixto García', 'Urbano Noris', 'Cueto', 'Cacocum']
+                },
+                {
+                    name: 'Granma',
+                    municipios: ['Bayamo', 'Manzanillo', 'Yara', 'Campechuela', 'Media Luna', 'Niquero', 'Pilón', 'Bartolomé Masó', 'Jiguaní', 'Buey Arriba', 'Guisa', 'Cauto Cristo', 'Río Cauto']
+                },
+                {
+                    name: 'Santiago de Cuba',
+                    municipios: ['Santiago de Cuba', 'Palma Soriano', 'Contramaestre', 'San Luis', 'Segundo Frente', 'Songo-La Maya', 'Mella', 'Tercer Frente', 'Guamá']
+                },
+                {
+                    name: 'Guantánamo',
+                    municipios: ['Guantánamo', 'Baracoa', 'Maisí', 'San Antonio del Sur', 'Yateras', 'El Salvador', 'Manuel Tames', 'Imías', 'Niceto Pérez', 'Caimanera']
+                },
+                {
+                    name: 'Isla de la Juventud',
+                    municipios: ['Nueva Gerona']
+                }
+            ]
+        };
+
+        // Función para actualizar las provincias y municipios
+        function actualizarProvinciasYMunicipios(provincias) {
+            const provinciaSelect = document.getElementById('provinciaNacimiento');
+            const municipioSelect = document.getElementById('municipioNacimiento');
+            
+            // Limpiar selects actuales
+            provinciaSelect.innerHTML = '<option value="">Seleccione una provincia</option>';
+            municipioSelect.innerHTML = '<option value="">Seleccione un municipio</option>';
+            
+            // Habilitar selector de provincia
+            provinciaSelect.disabled = false;
+            // El municipio se mantiene deshabilitado hasta que se seleccione una provincia
+            municipioSelect.disabled = true;
+            
+            // Poblar provincias
+            provincias.forEach(provincia => {
+                const option = document.createElement('option');
+                option.value = provincia.name;
+                option.textContent = provincia.name;
+                provinciaSelect.appendChild(option);
+            });
+        }
+
+        // Función para actualizar municipios según la provincia seleccionada
+        function actualizarMunicipios(provincias, provinciaSeleccionada) {
+            const municipioSelect = document.getElementById('municipioNacimiento');
+            municipioSelect.innerHTML = '<option value="">Seleccione un municipio</option>';
+            
+            const provincia = provincias.find(p => p.name === provinciaSeleccionada);
+            if (provincia) {
+                municipioSelect.disabled = false;
+                provincia.municipios.forEach(municipio => {
+                    const option = document.createElement('option');
+                    option.value = municipio;
+                    option.textContent = municipio;
+                    municipioSelect.appendChild(option);
+                });
+            } else {
+                municipioSelect.disabled = true;
+            }
+        }
+
+        // Evento para el cambio de país de nacimiento
+        document.getElementById('paisNacimiento').addEventListener('change', function() {
+            const provinciaContainer = document.getElementById('provinciaNacimiento').parentNode;
+            const municipioContainer = document.getElementById('municipioNacimiento').parentNode;
+            const year = parseInt(document.getElementById('anoNacimiento').value);
+
+            if (this.value === 'Cuba') {
+                // Crear y agregar selectores para Cuba
+                const provinciaSelect = document.createElement('select');
+                provinciaSelect.id = 'provinciaNacimiento';
+                provinciaSelect.name = 'provinciaNacimiento';
+                provinciaSelect.innerHTML = '<option value="">Seleccione una provincia</option>';
+                
+                const municipioSelect = document.createElement('select');
+                municipioSelect.id = 'municipioNacimiento';
+                municipioSelect.name = 'municipioNacimiento';
+                municipioSelect.disabled = true;
+                municipioSelect.innerHTML = '<option value="">Seleccione un municipio</option>';
+
+                // Reemplazar los campos existentes
+                provinciaContainer.querySelector('select, input').replaceWith(provinciaSelect);
+                municipioContainer.querySelector('select, input').replaceWith(municipioSelect);
+
+                // Determinar qué provincias mostrar según el año
+                if (year) {
+                    let provincias;
+                    if (year < 1976) {
+                        provincias = provinciasHistoricas.before1976;
+                    } else if (year < 2011) {
+                        provincias = provinciasHistoricas.after1976;
+                    } else {
+                        provincias = provinciasHistoricas.after2011;
+                    }
+                    actualizarProvinciasYMunicipios(provincias);
+                    
+                    // Agregar evento para cambio de provincia
+                    provinciaSelect.addEventListener('change', function() {
+                        actualizarMunicipios(provincias, this.value);
+                    });
+                }
+            } else {
+                // Crear y agregar campos de texto para otros países
+                const provinciaInput = document.createElement('input');
+                provinciaInput.type = 'text';
+                provinciaInput.id = 'provinciaNacimiento';
+                provinciaInput.name = 'provinciaNacimiento';
+                
+                const municipioInput = document.createElement('input');
+                municipioInput.type = 'text';
+                municipioInput.id = 'municipioNacimiento';
+                municipioInput.name = 'municipioNacimiento';
+
+                // Reemplazar los campos existentes
+                provinciaContainer.querySelector('select, input').replaceWith(provinciaInput);
+                municipioContainer.querySelector('select, input').replaceWith(municipioInput);
+            }
+        });
+
+        // Evento para actualizar las provincias cuando cambia el año de nacimiento
+        document.getElementById('anoNacimiento').addEventListener('change', function() {
+            const paisNacimiento = document.getElementById('paisNacimiento').value;
+            if (paisNacimiento === 'Cuba') {
+                const year = parseInt(this.value);
+                if (year) {
+                    let provincias;
+                    if (year < 1976) {
+                        provincias = provinciasHistoricas.before1976;
+                    } else if (year <= 2011) {
+                        provincias = provinciasHistoricas.after1976;
+                    } else {
+                        provincias = provinciasHistoricas.after2011;
+                    }
+                    actualizarProvinciasYMunicipios(provincias);
+                    
+                    // Agregar evento para cambio de provincia
+                    const provinciaSelect = document.getElementById('provinciaNacimiento');
+                    provinciaSelect.addEventListener('change', function() {
+                        actualizarMunicipios(provincias, this.value);
+                    });
+                }
+            }
+        });
+
+        // Poblar select de países al cargar la página
+        window.addEventListener('DOMContentLoaded', function() {
+            const paisSelect = document.getElementById('paisResidencia');
+            countries.sort((a, b) => a.name.localeCompare(b.name)).forEach(country => {
+                const option = document.createElement('option');
+                option.value = country.code;
+                option.textContent = country.name;
+                paisSelect.appendChild(option);
+            });
+        });
+
+        // Función para validar campos
+        function validarCampo(input, regex, mensaje) {
+            if (!regex.test(input.value)) {
+                input.classList.add('error-field');
+                showNotification(mensaje);
+                return false;
+            }
+            input.classList.remove('error-field');
+            return true;
+        }
+
+        // Función para validar el carné de identidad cubano
+        function validarCI(ci) {
+            if (ci.length !== 11) return false;
+            
+            // Validar que todos sean números
+            if (!/^\d+$/.test(ci)) return false;
+            
+            // Extraer año, mes y día
+            const year = parseInt(ci.substring(0, 2));
+            const month = parseInt(ci.substring(2, 4));
+            const day = parseInt(ci.substring(4, 6));
+            
+            // Validar mes
+            if (month < 1 || month > 12) return false;
+            
+            // Validar día
+            if (day < 1 || day > 31) return false;
+            
+            // Validación específica de días según el mes
+            const diasPorMes = [31, 29, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31];
+            if (day > diasPorMes[month - 1]) return false;
+            
+            return true;
+        }
+
+        // Validación del Carné de Identidad
+        document.getElementById('carneIdentidad').addEventListener('blur', function() {
+            const mensaje = "El carné de identidad debe tener 11 dígitos y ser una fecha válida";
+            if (!validarCI(this.value)) {
+                this.classList.add('error-field');
+                showNotification(mensaje);
+            } else {
+                this.classList.remove('error-field');
+            }
+        });
+
+        // Validación de estatura
+        document.getElementById('estatura').addEventListener('blur', function() {
+            const altura = parseInt(this.value);
+            if (altura < 100 || altura > 250) {
+                this.classList.add('error-field');
+                showNotification("La estatura debe estar entre 100 y 250 cm");
+            } else {
+                this.classList.remove('error-field');
+            }
+        });
+
+        // Validación de nombres y apellidos (solo letras y espacios)
+        const nombresApellidos = ['primerNombre', 'segundoNombre', 'primerApellido', 'segundoApellido'];
+        nombresApellidos.forEach(id => {
+            document.getElementById(id).addEventListener('blur', function() {
+                const regex = /^[A-ZÁÉÍÓÚÑ][a-záéíóúñ]+(\s+[A-ZÁÉÍÓÚÑ][a-záéíóúñ]+)*$/;
+                validarCampo(this, regex, "El campo debe comenzar con mayúscula y contener solo letras");
+            });
+        });
+
+        // Validación de fechas
+        function validarFecha(dia, mes, ano) {
+            // Convertir a números
+            dia = parseInt(dia);
+            mes = parseInt(mes);
+            ano = parseInt(ano);
+            
+            // Validar rangos básicos
+            if (mes < 1 || mes > 12) return false;
+            if (dia < 1 || dia > 31) return false;
+            
+            // Validar días según el mes
+            const diasPorMes = [31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31];
+            
+            // Ajustar febrero en año bisiesto
+            if (mes === 2 && ((ano % 4 === 0 && ano % 100 !== 0) || ano % 400 === 0)) {
+                diasPorMes[1] = 29;
+            }
+            
+            return dia <= diasPorMes[mes - 1];
+        }
+
+        // Validación de la fecha de nacimiento
+        ['diaNacimiento', 'mesNacimiento', 'anoNacimiento'].forEach(id => {
+            document.getElementById(id).addEventListener('blur', function() {
+                const dia = document.getElementById('diaNacimiento').value;
+                const mes = document.getElementById('mesNacimiento').value;
+                const ano = document.getElementById('anoNacimiento').value;
+                
+                if (dia && mes && ano) {
+                    if (!validarFecha(dia, mes, ano)) {
+                        this.classList.add('error-field');
+                        showNotification("Fecha de nacimiento inválida");
+                    } else {
+                        this.classList.remove('error-field');
+                        // Validar que la fecha no sea futura
+                        const fechaNacimiento = new Date(ano, mes - 1, dia);
+                        const hoy = new Date();
+                        if (fechaNacimiento > hoy) {
+                            this.classList.add('error-field');
+                            showNotification("La fecha de nacimiento no puede ser futura");
+                        }
+                    }
+                }
+            });
+        });
+
+        // Validación de email
+        document.getElementById('emailResidencia').addEventListener('blur', function() {
+            const regex = /^[a-zA-Z0-9._-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,6}$/;
+            validarCampo(this, regex, "Email inválido");
+        });
+
+        document.getElementById('emailTrabajo').addEventListener('blur', function() {
+            const regex = /^[a-zA-Z0-9._-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,6}$/;
+            validarCampo(this, regex, "Email inválido");
+        });
+
+        // Validación de teléfonos
+        ['telefonoResidencia', 'telefonoTrabajo', 'faxResidencia', 'faxTrabajo'].forEach(id => {
+            document.getElementById(id).addEventListener('blur', function() {
+                const regex = /^[\d\s\-\+\(\)]{7,20}$/;
+                validarCampo(this, regex, "Número de teléfono inválido. Debe contener entre 7 y 20 caracteres numéricos");
+            });
+        });
+
+        // Validación del código postal
+        ['codigoPostalResidencia', 'codigoPostalTrabajo'].forEach(id => {
+            document.getElementById(id).addEventListener('blur', function() {
+                const regex = /^[\d\-]{4,10}$/;
+                validarCampo(this, regex, "Código postal inválido");
+            });
+        });
+
+        // Validación de la fecha de salida de Cuba
+        ['diaSalida', 'mesSalida', 'anoSalida'].forEach(id => {
+            document.getElementById(id).addEventListener('blur', function() {
+                const dia = document.getElementById('diaSalida').value;
+                const mes = document.getElementById('mesSalida').value;
+                const ano = document.getElementById('anoSalida').value;
+                
+                if (dia && mes && ano) {
+                    if (!validarFecha(dia, mes, ano)) {
+                        this.classList.add('error-field');
+                        showNotification("Fecha de salida inválida");
+                    } else {
+                        this.classList.remove('error-field');
+                        // Validar que la fecha no sea futura
+                        const fechaSalida = new Date(ano, mes - 1, dia);
+                        const hoy = new Date();
+                        if (fechaSalida > hoy) {
+                            this.classList.add('error-field');
+                            showNotification("La fecha de salida no puede ser futura");
+                        }
+                        
+                        // Validar que la fecha de salida sea posterior a la fecha de nacimiento
+                        const diaNac = document.getElementById('diaNacimiento').value;
+                        const mesNac = document.getElementById('mesNacimiento').value;
+                        const anoNac = document.getElementById('anoNacimiento').value;
+                        
+                        if (diaNac && mesNac && anoNac) {
+                            const fechaNacimiento = new Date(anoNac, mesNac - 1, diaNac);
+                            if (fechaSalida < fechaNacimiento) {
+                                this.classList.add('error-field');
+                                showNotification("La fecha de salida debe ser posterior a la fecha de nacimiento");
+                            }
+                        }
+                    }
+                }
+            });
+        });
+
+        // Validación del número de pasaporte
+        document.getElementById('numeroPasaporte').addEventListener('blur', function() {
+            const regex = /^[A-Z0-9]{6,12}$/;
+            validarCampo(this, regex, "El número de pasaporte debe contener entre 6 y 12 caracteres alfanuméricos");
+        });
+
+        // Actualizar la función validateForm para incluir todas las validaciones
+        function validateForm() {
+            let isValid = true;
+            const requiredFields = document.querySelectorAll('[required]');
+            const errorFields = [];
+
+            // Limpiar errores previos
+            document.querySelectorAll('.error-field').forEach(field => {
+                field.classList.remove('error-field');
+            });
+
+            // Validar campos requeridos
+            requiredFields.forEach(field => {
+                if ((field.tagName === 'SELECT' && field.value === '') ||
+                    (field.tagName === 'INPUT' && !field.value.trim())) {
+                    field.classList.add('error-field');
+                    // Safely get field label text
+                    const fieldLabel = field.previousElementSibling ? 
+                                     field.previousElementSibling.textContent : 
+                                     field.name || field.id || 'Campo requerido';
+                    errorFields.push(fieldLabel);
+                    isValid = false;
+                }
+            });
+
+            if (errorFields.length > 0) {
+                showNotification("Por favor complete los siguientes campos obligatorios:\n" + errorFields.join(", "));
+                scrollToFirstError();
+                return false;
+            }
+
+            // Validar Carné de Identidad
+            const ci = document.getElementById('carneIdentidad').value;
+            if (!validarCI(ci)) {
+                document.getElementById('carneIdentidad').classList.add('error-field');
+                showNotification("El carné de identidad es inválido");
+                scrollToFirstError();
+                return false;
+            }
+
+            // Validar fecha de nacimiento
+            const diaNac = document.getElementById('diaNacimiento').value;
+            const mesNac = document.getElementById('mesNacimiento').value;
+            const anoNac = document.getElementById('anoNacimiento').value;
+            if (diaNac && mesNac && anoNac) {
+                if (!validarFecha(diaNac, mesNac, anoNac)) {
+                    document.getElementById('diaNacimiento').classList.add('error-field');
+                    showNotification("La fecha de nacimiento es inválida");
+                    scrollToFirstError();
+                    return false;
+                }
+            }
+
+            // Validar fecha de salida si está presente
+            const diaSal = document.getElementById('diaSalida').value;
+            const mesSal = document.getElementById('mesSalida').value;
+            const anoSal = document.getElementById('anoSalida').value;
+            if (diaSal && mesSal && anoSal) {
+                if (!validarFecha(diaSal, mesSal, anoSal)) {
+                    document.getElementById('diaSalida').classList.add('error-field');
+                    showNotification("La fecha de salida es inválida");
+                    scrollToFirstError();
+                    return false;
+                }
+            }
+
+            // Validar que los emails sean válidos si están presentes
+            const emailResidencia = document.getElementById('emailResidencia').value;
+            const emailTrabajo = document.getElementById('emailTrabajo').value;
+            const emailRegex = /^[a-zA-Z0-9._-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,6}$/;
+            
+            if (emailResidencia && !emailRegex.test(emailResidencia)) {
+                document.getElementById('emailResidencia').classList.add('error-field');
+                showNotification("El email de residencia es inválido");
+                scrollToFirstError();
+                return false;
+            }
+            
+            if (emailTrabajo && !emailRegex.test(emailTrabajo)) {
+                document.getElementById('emailTrabajo').classList.add('error-field');
+                showNotification("El email de trabajo es inválido");
+                scrollToFirstError();
+                return false;
+            }
+
+            return isValid;
+        }
+
+        // Estilo para campos inválidos
+        const style = document.createElement('style');
+        style.textContent = `
+            .error-field {
+                border: 2px solid red !important;
+                background-color: #fff3f3 !important;
+            }
+        `;
+        document.head.appendChild(style);
+
+        // Función para mostrar notificaciones
+        function showNotification(message, type = 'error') {
+            Toastify({
+                text: message,
+                duration: 3000,
+                gravity: "top",
+                position: "center",
+                className: type,
+                stopOnFocus: true
+            }).showToast();
+        }
+
+        // Función para desplazarse al primer campo con error
+        function scrollToFirstError() {
+            const firstError = document.querySelector('.error-field');
+            if (firstError) {
+                firstError.focus();
+                firstError.scrollIntoView({ behavior: 'smooth', block: 'center' });
+            }
+        }
+
+        // Actualizar la función validarCampo
+        function validarCampo(input, regex, mensaje) {
+            if (!regex.test(input.value)) {
+                input.classList.add('error-field');
+                showNotification(mensaje);
+                return false;
+            }
+            input.classList.remove('error-field');
+            return true;
+        }
+
+        // Actualizar la validación del Carné de Identidad
+        document.getElementById('carneIdentidad').addEventListener('blur', function() {
+            const mensaje = "El carné de identidad debe tener 11 dígitos y ser una fecha válida";
+            if (!validarCI(this.value)) {
+                this.classList.add('error-field');
+                showNotification(mensaje);
+            } else {
+                this.classList.remove('error-field');
+            }
+        });
+
+        // Actualizar la validación de estatura
+        document.getElementById('estatura').addEventListener('blur', function() {
+            const altura = parseInt(this.value);
+            if (altura < 100 || altura > 250) {
+                this.classList.add('error-field');
+                showNotification("La estatura debe estar entre 100 y 250 cm");
+            } else {
+                this.classList.remove('error-field');
+            }
+        });
+
+        // Actualizar validación de fecha de nacimiento
+        ['diaNacimiento', 'mesNacimiento', 'anoNacimiento'].forEach(id => {
+            document.getElementById(id).addEventListener('blur', function() {
+                const dia = document.getElementById('diaNacimiento').value;
+                const mes = document.getElementById('mesNacimiento').value;
+                const ano = document.getElementById('anoNacimiento').value;
+                
+                if (dia && mes && ano) {
+                    if (!validarFecha(dia, mes, ano)) {
+                        this.classList.add('error-field');
+                        showNotification("Fecha de nacimiento inválida");
+                    } else {
+                        this.classList.remove('error-field');
+                        const fechaNacimiento = new Date(ano, mes - 1, dia);
+                        const hoy = new Date();
+                        if (fechaNacimiento > hoy) {
+                            this.classList.add('error-field');
+                            showNotification("La fecha de nacimiento no puede ser futura");
+                        }
+                    }
+                }
+            });
+        });
+
+        // Actualizar validación de fecha de salida
+        ['diaSalida', 'mesSalida', 'anoSalida'].forEach(id => {
+            document.getElementById(id).addEventListener('blur', function() {
+                const dia = document.getElementById('diaSalida').value;
+                const mes = document.getElementById('mesSalida').value;
+                const ano = document.getElementById('anoSalida').value;
+                
+                if (dia && mes && ano) {
+                    if (!validarFecha(dia, mes, ano)) {
+                        this.classList.add('error-field');
+                        showNotification("Fecha de salida inválida");
+                    } else {
+                        this.classList.remove('error-field');
+                        const fechaSalida = new Date(ano, mes - 1, dia);
+                        const hoy = new Date();
+                        if (fechaSalida > hoy) {
+                            this.classList.add('error-field');
+                            showNotification("La fecha de salida no puede ser futura");
+                        }
+                        
+                        const diaNac = document.getElementById('diaNacimiento').value;
+                        const mesNac = document.getElementById('mesNacimiento').value;
+                        const anoNac = document.getElementById('anoNacimiento').value;
+                        
+                        if (diaNac && mesNac && anoNac) {
+                            const fechaNacimiento = new Date(anoNac, mesNac - 1, diaNac);
+                            if (fechaSalida < fechaNacimiento) {
+                                this.classList.add('error-field');
+                                showNotification("La fecha de salida debe ser posterior a la fecha de nacimiento");
+                            }
+                        }
+                    }
+                }
+            });
+        });
+
+        // Actualizar la función validateForm
+        function validateForm() {
+            let isValid = true;
+            const requiredFields = document.querySelectorAll('[required]');
+            const errorFields = [];
+
+            // Limpiar errores previos
+            document.querySelectorAll('.error-field').forEach(field => {
+                field.classList.remove('error-field');
+            });
+
+            // Validar campos requeridos
+            requiredFields.forEach(field => {
+                if ((field.tagName === 'SELECT' && field.value === '') ||
+                    (field.tagName === 'INPUT' && !field.value.trim())) {
+                    field.classList.add('error-field');
+                    // Safely get field label text
+                    const fieldLabel = field.previousElementSibling ? 
+                                     field.previousElementSibling.textContent : 
+                                     field.name || field.id || 'Campo requerido';
+                    errorFields.push(fieldLabel);
+                    isValid = false;
+                }
+            });
+
+            // Obtener valores de fecha de nacimiento una sola vez
+            const diaNac = document.getElementById('diaNacimiento').value;
+            const mesNac = document.getElementById('mesNacimiento').value;
+            const anoNac = document.getElementById('anoNacimiento').value;
+
+            // Validar fecha de nacimiento
+            if (!diaNac || !mesNac || !anoNac || !validarFecha(diaNac, mesNac, anoNac)) {
+                document.getElementById('diaNacimiento').classList.add('error-field');
+                document.getElementById('mesNacimiento').classList.add('error-field');
+                document.getElementById('anoNacimiento').classList.add('error-field');
+                errorFields.push("Fecha de Nacimiento");
+                isValid = false;
+            }
+
+            // Validar provincia y municipio
+            const provincia = document.getElementById('provinciaNacimiento');
+            const municipio = document.getElementById('municipioNacimiento');
+            if (provincia && provincia.value === '') {
+                provincia.classList.add('error-field');
+                errorFields.push("Provincia de Nacimiento");
+                isValid = false;
+            }
+            if (municipio && municipio.value === '') {
+                municipio.classList.add('error-field');
+                errorFields.push("Municipio de Nacimiento");
+                isValid = false;
+            }
+
+            if (errorFields.length > 0) {
+                showNotification("Por favor complete los siguientes campos obligatorios:\n" + errorFields.join(", "));
+                scrollToFirstError();
+                return false;
+            }
+
+            // Validar Carné de Identidad
+            const ci = document.getElementById('carneIdentidad').value;
+            if (!validarCI(ci)) {
+                document.getElementById('carneIdentidad').classList.add('error-field');
+                showNotification("El carné de identidad es inválido");
+                scrollToFirstError();
+                return false;
+            }
+
+            // Validar fecha de nacimiento
+            if (!validarFecha(diaNac, mesNac, anoNac)) {
+                document.getElementById('diaNacimiento').classList.add('error-field');
+                showNotification("La fecha de nacimiento es inválida");
+                scrollToFirstError();
+                return false;
+            }
+
+            // Validar fecha de salida si está presente
+            const diaSal = document.getElementById('diaSalida').value;
+            const mesSal = document.getElementById('mesSalida').value;
+            const anoSal = document.getElementById('anoSalida').value;
+            if (diaSal && mesSal && anoSal) {
+                if (!validarFecha(diaSal, mesSal, anoSal)) {
+                    document.getElementById('diaSalida').classList.add('error-field');
+                    showNotification("La fecha de salida es inválida");
+                    scrollToFirstError();
+                    return false;
+                }
+
+                // Usar las variables ya declaradas de fecha de nacimiento
+                if (diaNac && mesNac && anoNac) {
+                    const fechaNacimiento = new Date(anoNac, mesNac - 1, diaNac);
+                    const fechaSalida = new Date(anoSal, mesSal - 1, diaSal);
+                    if (fechaSalida < fechaNacimiento) {
+                        document.getElementById('diaSalida').classList.add('error-field');
+                        showNotification("La fecha de salida debe ser posterior a la fecha de nacimiento");
+                        return false;
+                    }
+                }
+            }
+
+            // Validar emails
+            const emailResidencia = document.getElementById('emailResidencia').value;
+            const emailTrabajo = document.getElementById('emailTrabajo').value;
+            const emailRegex = /^[a-zA-Z0-9._-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,6}$/;
+            
+            if (emailResidencia && !emailRegex.test(emailResidencia)) {
+                document.getElementById('emailResidencia').classList.add('error-field');
+                showNotification("El email de residencia es inválido");
+                scrollToFirstError();
+                return false;
+            }
+            
+            if (emailTrabajo && !emailRegex.test(emailTrabajo)) {
+                document.getElementById('emailTrabajo').classList.add('error-field');
+                showNotification("El email de trabajo es inválido");
+                scrollToFirstError();
+                return false;
+            }
+
+            return isValid;
+        }
+
+       
     </script>
 </body>
 </html>
