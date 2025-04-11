@@ -10,6 +10,8 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.9.3/html2pdf.bundle.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/lz-string/1.4.4/lz-string.min.js"></script>
+
     <style>
         body {
             font-family: Arial, sans-serif;
@@ -336,7 +338,7 @@
                 </div>
                 <div class="form-group">
                     <label>Número de Pasaporte</label>
-                    <input type="text" id="numeroPasaporte" name="numeroPasaporte">
+                    <input type="text" id="numeroPasaporte" name="numeroPasaporte" required>
                 </div>
                 <div class="form-group">
                     <label>Consulado</label>
@@ -1042,12 +1044,18 @@ function formToJSON() {
             qrContainer.innerHTML = '<div style="font-weight: bold; margin-bottom: 5px;">Código de verificación del documento</div>';
             
             try {
+                // Convertir a JSON y eliminar espacios innecesarios
                 const jsonStr = JSON.stringify(data);
+                // Comprimir y codificar la cadena
+                const compressed = LZString.compressToBase64(jsonStr);
+                console.log("Cadena comprimida:", compressed); // Para depuración
+                // Generar el QR usando la versión 40 para máxima capacidad y nivel bajo de corrección de errores
                 new QRCode(qrContainer, {
-                    text: jsonStr,
-                    width: 500, // Aumentar tamaño del QR
-                    height: 500, // Aumentar tamaño del QR
-                    correctLevel: QRCode.CorrectLevel.L // Reducir nivel de corrección de errores para mayor capacidad
+                    text: compressed,
+                    version: 40,
+                    width: 250,
+                    height: 250,
+                    correctLevel: QRCode.CorrectLevel.M
                 });
                 return true;
             } catch (error) {
@@ -1056,6 +1064,7 @@ function formToJSON() {
                 return false;
             }
         }
+
 
         
         // Lista completa de países según ISO 3166-1
@@ -1777,6 +1786,22 @@ function formToJSON() {
         // Validación del número de pasaporte
         document.getElementById('numeroPasaporte').addEventListener('blur', function() {
             const regex = /^[A-Z0-9]{6,12}$/;
+            if (!this.value.trim()) {
+                this.classList.add('error-field');
+                showNotification("El número de pasaporte es obligatorio");
+                return false;
+            }
+            validarCampo(this, regex, "El número de pasaporte debe contener entre 6 y 12 caracteres alfanuméricos");
+        });
+
+        // Validación del número de pasaporte
+        document.getElementById('numeroPasaporte').addEventListener('blur', function() {
+            const regex = /^[A-Z0-9]{6,12}$/;
+            if (!this.value.trim()) {
+                this.classList.add('error-field');
+                showNotification("El número de pasaporte es obligatorio");
+                return false;
+            }
             validarCampo(this, regex, "El número de pasaporte debe contener entre 6 y 12 caracteres alfanuméricos");
         });
 
