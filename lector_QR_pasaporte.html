@@ -1,0 +1,478 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Escanear QR y Convertir a JSON</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://unpkg.com/html5-qrcode" type="text/javascript"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Poppins', sans-serif;
+            background-color: #f8fafc;
+        }
+        .banner {
+            width: 100%;
+            height: 200px;
+            object-fit: cover;
+            margin-bottom: 2rem;
+        }
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 1rem;
+        }
+        .card {
+            background: white;
+            border-radius: 1rem;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+            transition: transform 0.2s ease-in-out;
+        }
+        .card:hover {
+            transform: translateY(-2px);
+        }
+        #qr-reader {
+            width: 100%;
+            max-width: 400px;
+            border: 2px solid #e2e8f0;
+            border-radius: 1rem;
+            overflow: hidden;
+            margin: 0 auto;
+        }
+        #qr-reader__dashboard_section_csr button {
+            background-color: #4f46e5;
+            color: white;
+            padding: 0.75rem 1.5rem;
+            border-radius: 0.5rem;
+            font-weight: 500;
+            transition: all 0.3s ease;
+        }
+        #qr-reader__dashboard_section_csr button:hover {
+            background-color: #4338ca;
+            transform: translateY(-1px);
+        }
+        .btn {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            padding: 0.75rem 1.5rem;
+            border-radius: 0.5rem;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            gap: 0.5rem;
+        }
+        .btn-primary {
+            background-color: #4f46e5;
+            color: white;
+        }
+        .btn-primary:hover {
+            background-color: #4338ca;
+            transform: translateY(-1px);
+        }
+        .btn-secondary {
+            background-color: #64748b;
+            color: white;
+        }
+        .btn-secondary:hover {
+            background-color: #475569;
+        }
+        .btn-disabled {
+            background-color: #e2e8f0;
+            color: #94a3b8;
+            cursor: not-allowed;
+        }
+        .message-box {
+            margin-top: 1rem;
+            padding: 1rem;
+            border-radius: 0.75rem;
+            animation: slideIn 0.3s ease-out;
+        }
+        .message-success {
+            background-color: #dcfce7;
+            color: #166534;
+            border: 1px solid #86efac;
+        }
+        .message-error {
+            background-color: #fee2e2;
+            color: #991b1b;
+            border: 1px solid #fca5a5;
+        }
+        @keyframes slideIn {
+            from {
+                transform: translateY(-10px);
+                opacity: 0;
+            }
+            to {
+                transform: translateY(0);
+                opacity: 1;
+            }
+        }
+        #result-container {
+            transition: all 0.3s ease;
+        }
+        #scanned-data {
+            background: #f8fafc;
+            padding: 1rem;
+            border-radius: 0.5rem;
+            font-family: 'Monaco', 'Consolas', monospace;
+            font-size: 0.875rem;
+            line-height: 1.5;
+        }
+    </style>
+</head>
+<body class="min-h-screen">
+    <img src="https://cubaminrex.cu/sites/default/files/inline-images/banner_1.jpg" alt="Banner" class="banner shadow-lg object-left object-cover">
+    
+    <div class="container mx-auto px-4 py-8">
+        <div class="card p-8 max-w-2xl mx-auto">
+            <h1 class="text-3xl font-bold text-gray-800 text-center mb-8">Escáner QR</h1>
+            
+            <div id="qr-reader" class="mb-8 mx-auto"></div>
+            <div id="qr-reader-results" class="text-sm text-gray-600 text-center mb-4"></div>
+
+            <div class="flex justify-center">
+                <button id="start-scan-btn" class="btn btn-primary">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
+                        <path fill-rule="evenodd" d="M4 5a2 2 0 012-2h8a2 2 0 012 2v10a2 2 0 01-2 2H6a2 2 0 01-2-2V5zm2-2h8a2 2 0 012 2v10a2 2 0 01-2 2H6a2 2 0 01-2-2V5a2 2 0 012-2z" clip-rule="evenodd"/>
+                    </svg>
+                    Iniciar Escaneo
+                </button>
+            </div>
+
+            <div id="result-container" class="mt-8 hidden">
+                <h2 class="text-xl font-semibold mb-4 text-gray-700">Datos Escaneados:</h2>
+                <pre id="scanned-data" class="overflow-x-auto"></pre>
+                <button id="download-json-btn" class="btn btn-secondary w-full mt-4" disabled>
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
+                        <path fill-rule="evenodd" d="M3 17a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zm3.293-7.707a1 1 0 011.414 0L9 10.586V3a1 1 0 112 0v7.586l1.293-1.293a1 1 0 111.414 1.414l-3 3a1 1 0 01-1.414 0l-3-3a1 1 0 010-1.414z" clip-rule="evenodd"/>
+                    </svg>
+                    Descargar JSON
+                </button>
+            </div>
+
+            <div id="message-box" class="message-box">
+                <p id="message-text" class="text-center"></p>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // --- Variables Globales ---
+        let html5QrCode = null; // Instancia del lector QR
+        let jsonData = null; // Datos JSON generados
+        let isScanning = false; // Estado del escaneo
+        let chunkedData = new Map(); // Para manejar datos en chunks
+        let totalChunks = 0; // Número total de chunks esperados
+
+        // --- Elementos del DOM ---
+        const qrReaderElement = document.getElementById('qr-reader');
+        const resultContainer = document.getElementById('result-container');
+        const scannedDataElement = document.getElementById('scanned-data');
+        const startScanBtn = document.getElementById('start-scan-btn');
+        const downloadJsonBtn = document.getElementById('download-json-btn');
+        const messageBox = document.getElementById('message-box');
+        const messageText = document.getElementById('message-text');
+
+        // --- Funciones ---
+
+        // Muestra mensajes al usuario (éxito o error)
+        function showMessage(message, type = 'success') {
+            messageText.textContent = message;
+            messageBox.className = `message-box message-${type}`; // Reinicia clases y aplica la nueva
+            messageBox.style.display = 'block';
+            // Ocultar mensaje después de 5 segundos
+            setTimeout(() => {
+                 messageBox.style.display = 'none';
+            }, 5000);
+        }
+
+        // Intenta parsear los datos del QR a un objeto JSON
+        function parseQrData(data) {
+            try {
+                // Primero verifica si es un chunk de datos
+                if (data.startsWith('CHUNK:')) {
+                    return handleChunkedData(data);
+                }
+
+                // Intenta descomprimir si los datos están comprimidos
+                if (data.startsWith('COMPRESSED:')) {
+                    data = decompressData(data.substring(11));
+                }
+
+                // Intenta parsear directamente como JSON
+                try {
+                    return JSON.parse(data);
+                } catch (e) {
+                    // Intenta parsear como Base64
+                    try {
+                        const decodedData = atob(data);
+                        return JSON.parse(decodedData);
+                    } catch (e2) {
+                        // Intenta interpretar como parámetros URL
+                        try {
+                            const params = new URLSearchParams(data);
+                            const obj = {};
+                            for (const [key, value] of params.entries()) {
+                                // Manejo de arrays y objetos anidados
+                                if (value.startsWith('[') || value.startsWith('{')) {
+                                    try {
+                                        obj[key] = JSON.parse(value);
+                                    } catch {
+                                        obj[key] = value;
+                                    }
+                                } else {
+                                    obj[key] = value;
+                                }
+                            }
+                            if (Object.keys(obj).length > 0) {
+                                return obj;
+                            }
+                        } catch (e3) {
+                            // Intenta separar por delimitadores comunes
+                            if (data.includes('|') || data.includes(';')) {
+                                const pairs = data.split(/[|;]/);
+                                const obj = {};
+                                pairs.forEach(pair => {
+                                    const [key, value] = pair.split('=').map(s => s.trim());
+                                    if (key && value) {
+                                        try {
+                                            obj[key] = JSON.parse(value);
+                                        } catch {
+                                            obj[key] = value;
+                                        }
+                                    }
+                                });
+                                if (Object.keys(obj).length > 0) {
+                                    return obj;
+                                }
+                            }
+                        }
+                    }
+                }
+                
+                // Si todo falla, devuelve un objeto con la data como string
+                return { rawData: data };
+            } catch (error) {
+                console.error('Error parsing QR data:', error);
+                return { error: 'Error parsing data', rawData: data };
+            }
+        }
+
+        // Maneja datos que vienen en chunks
+        function handleChunkedData(data) {
+            try {
+                // Formato esperado: CHUNK:index:total:data
+                const [, index, total, chunkData] = data.split(':');
+                const chunkIndex = parseInt(index);
+                const totalExpected = parseInt(total);
+
+                if (totalChunks === 0) {
+                    totalChunks = totalExpected;
+                    chunkedData.clear();
+                }
+
+                chunkedData.set(chunkIndex, chunkData);
+
+                // Verifica si tenemos todos los chunks
+                if (chunkedData.size === totalChunks) {
+                    // Reconstruye los datos originales
+                    const completeData = Array.from({ length: totalChunks }, (_, i) => 
+                        chunkedData.get(i)
+                    ).join('');
+
+                    // Limpia el buffer de chunks
+                    chunkedData.clear();
+                    totalChunks = 0;
+
+                    // Intenta parsear los datos completos
+                    return parseQrData(completeData);
+                }
+
+                // Si aún faltan chunks, devuelve un estado parcial
+                return {
+                    partial: true,
+                    progress: `${chunkedData.size}/${totalChunks}`,
+                    message: `Escaneando parte ${chunkedData.size} de ${totalChunks}...`
+                };
+            } catch (error) {
+                console.error('Error handling chunked data:', error);
+                return { error: 'Error processing chunked data', rawData: data };
+            }
+        }
+
+        // Función auxiliar para descomprimir datos (si están comprimidos)
+        function decompressData(compressedData) {
+            try {
+                // Decodifica Base64 si es necesario
+                const raw = atob(compressedData);
+                // Aquí podrías implementar más métodos de descompresión si es necesario
+                return raw;
+            } catch (error) {
+                console.error('Error decompressing data:', error);
+                return compressedData;
+            }
+        }
+
+        // Callback cuando se escanea un QR exitosamente
+        function onScanSuccess(decodedText, decodedResult) {
+            console.log(`Código QR detectado: ${decodedText.substring(0, 100)}...`);
+            
+            // Procesa los datos
+            const result = parseQrData(decodedText);
+
+            // Si es un chunk parcial, muestra el progreso y continúa escaneando
+            if (result.partial) {
+                showMessage(result.message, 'success');
+                return; // No detiene el escaneo para chunks parciales
+            }
+
+            // Si no es un chunk, procede normalmente
+            isScanning = false;
+
+            // Intenta detener el lector de QR
+            if (html5QrCode && html5QrCode.isScanning) {
+                html5QrCode.stop().then(() => {
+                    console.log("Lector QR detenido.");
+                    qrReaderElement.style.display = 'none';
+                    startScanBtn.textContent = 'Volver a Escanear';
+                    startScanBtn.disabled = false;
+                }).catch(err => {
+                    console.error("Error al detener el lector QR:", err);
+                });
+            }
+
+            // Guarda y muestra los datos procesados
+            jsonData = result;
+            scannedDataElement.textContent = JSON.stringify(result, null, 2);
+            resultContainer.classList.remove('hidden');
+
+            // Habilita el botón de descarga
+            downloadJsonBtn.disabled = false;
+            downloadJsonBtn.classList.remove('btn-disabled');
+            downloadJsonBtn.classList.add('btn-primary');
+
+            showMessage('¡Código QR escaneado con éxito!', 'success');
+        }
+
+        // Callback para errores durante el escaneo (no necesariamente un error fatal)
+        function onScanFailure(error) {
+            // A menudo se llama aunque no haya QR, no es necesariamente un 'error'
+            // console.warn(`Error de escaneo: ${error}`);
+        }
+
+        // Inicia el proceso de escaneo
+        function startScanning() {
+            if (isScanning) return; // Evita iniciar múltiples veces
+
+            // Oculta resultados anteriores y mensajes
+            resultContainer.classList.add('hidden');
+            messageBox.style.display = 'none';
+            downloadJsonBtn.disabled = true; // Deshabilita descarga
+            downloadJsonBtn.classList.add('btn-disabled');
+            downloadJsonBtn.classList.remove('btn-primary');
+            downloadJsonBtn.classList.add('btn-secondary'); // Estilo secundario mientras está deshabilitado
+
+
+            // Muestra el visor de la cámara
+            qrReaderElement.style.display = 'block';
+
+            // Crea una nueva instancia del lector si no existe
+             if (!html5QrCode) {
+                html5QrCode = new Html5Qrcode("qr-reader");
+             }
+
+
+            const config = { fps: 10, qrbox: { width: 250, height: 250 } };
+
+            // Intenta obtener la cámara trasera preferentemente
+            Html5Qrcode.getCameras().then(devices => {
+                if (devices && devices.length) {
+                    // Busca la cámara trasera (suele tener 'back' o 'environment' en la etiqueta)
+                    let cameraId = devices.length > 1
+                        ? devices.find(d => d.label.toLowerCase().includes('back') || d.label.toLowerCase().includes('environment'))?.id
+                        : devices[0].id; // Usa la primera si no hay trasera o solo hay una
+
+                    if (!cameraId && devices.length > 0) {
+                        cameraId = devices[0].id; // Fallback a la primera cámara si no se encontró trasera
+                    }
+
+                    console.log("Usando cámara ID:", cameraId);
+
+                    isScanning = true;
+                    startScanBtn.textContent = 'Escaneando...';
+                    startScanBtn.disabled = true; // Deshabilita mientras escanea
+
+                    html5QrCode.start(
+                        cameraId,     // Usa la cámara seleccionada
+                        config,       // Configuración del lector
+                        onScanSuccess,// Callback de éxito
+                        onScanFailure // Callback de fallo/no detectado
+                    ).catch(err => {
+                        console.error("Error al iniciar el lector QR:", err);
+                        showMessage(`Error al iniciar la cámara: ${err.message}`, 'error');
+                        qrReaderElement.style.display = 'none'; // Oculta si falla
+                        isScanning = false;
+                        startScanBtn.textContent = 'Iniciar Escaneo';
+                        startScanBtn.disabled = false;
+                    });
+                } else {
+                     console.error("No se encontraron cámaras.");
+                     showMessage("No se encontraron cámaras en este dispositivo.", 'error');
+                }
+            }).catch(err => {
+                console.error("Error al obtener cámaras:", err);
+                 showMessage(`Error al acceder a las cámaras: ${err.message}. Asegúrate de dar permiso.`, 'error');
+            });
+        }
+
+        // Descarga los datos JSON como un archivo
+        function downloadJsonFile() {
+            if (!jsonData) {
+                showMessage("No hay datos JSON para descargar.", 'error');
+                return;
+            }
+
+            const dataStr = JSON.stringify(jsonData, null, 2); // Formato legible
+            const dataBlob = new Blob([dataStr], { type: 'application/json' });
+            const url = URL.createObjectURL(dataBlob);
+
+            const link = document.createElement('a');
+            link.href = url;
+            // Nombre de archivo sugerido (puedes personalizarlo)
+            const timestamp = new Date().toISOString().replace(/[:.-]/g, '');
+            link.download = `datos_qr_${timestamp}.json`;
+
+            // Simula un clic para iniciar la descarga
+            document.body.appendChild(link);
+            link.click();
+
+            // Limpia
+            document.body.removeChild(link);
+            URL.revokeObjectURL(url);
+
+            showMessage('Archivo JSON generado para descarga.', 'success');
+        }
+
+        // --- Event Listeners ---
+        startScanBtn.addEventListener('click', startScanning);
+        downloadJsonBtn.addEventListener('click', downloadJsonFile);
+
+        // --- Inicialización ---
+        // Opcional: Verificar si la API es compatible al cargar
+        if (typeof navigator.mediaDevices === 'undefined' || typeof navigator.mediaDevices.getUserMedia === 'undefined') {
+             showMessage("La API de cámara no es compatible con tu navegador.", 'error');
+             startScanBtn.disabled = true;
+             startScanBtn.classList.add('btn-disabled');
+        }
+         // Asegurar que el lector se detenga si el usuario navega fuera de la página
+        window.addEventListener('beforeunload', () => {
+            if (html5QrCode && html5QrCode.isScanning) {
+                html5QrCode.stop().catch(err => console.error("Error al detener QR al salir:", err));
+            }
+        });
+
+    </script>
+
+</body>
+</html>
