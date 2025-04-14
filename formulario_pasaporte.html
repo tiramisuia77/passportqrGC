@@ -3,22 +3,18 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Solicitud de Pasaporte Cubano</title>
+    <title>Solicitud de Tramites Consulares</title>
     <link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/npm/toastify-js/src/toastify.min.css">
-    <script src="https://cdn.jsdelivr.net/npm/toastify-js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.9.3/html2pdf.bundle.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/lz-string/1.4.4/lz-string.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/qrious/4.0.2/qrious.min.js"></script>
 
     <style>
-        /* General body styling */
+        /* Estilos generales (sin cambios significativos respecto a la versión anterior) */
         body {
             font-family: Arial, sans-serif;
-            line-height: 1.6;
+            line-height: 1.4;
             margin: 0;
-            padding: 20px;
+            padding: 15px;
             color: #333;
             background-color: #f4f4f4;
             position: relative;
@@ -28,7 +24,6 @@
             align-items: center;
         }
 
-        /* Background watermark */
         body::before {
             content: '';
             position: fixed;
@@ -37,375 +32,253 @@
             right: 0;
             width: 100%;
             height: 100%;
-            background-image: url('img/escudo_cuba_lineas_azul.png'); /* Placeholder - ensure image exists */
-            background-position: center 20px;
-            background-size: 200px; /* Adjusted size for visibility */
+            background-image: url('img/escudo_cuba_lineas_azul.png'); /* Placeholder */
+            background-position: center 15px;
+            background-size: 180px;
             background-repeat: no-repeat;
             opacity: 0.1;
             z-index: -1;
             pointer-events: none;
         }
 
-        /* Header styling */
-        .header {
-            text-align: center;
-            margin-bottom: 30px;
-        }
-        .header h1 {
-            margin: 5px 0;
-            font-size: 24px;
-        }
-        .header h2 {
-            margin: 5px 0;
-            font-size: 18px;
-            font-weight: normal;
-            color: #777;
-        }
+        .header { text-align: center; margin-bottom: 20px; }
+        .header h1 { margin: 3px 0; font-size: 22px; }
+        .header h2 { margin: 3px 0; font-size: 16px; font-weight: normal; color: #777; }
 
-        /* Form section styling */
         .form-section {
-            margin-bottom: 30px;
+            margin-bottom: 15px;
             border: 1px solid rgba(221, 221, 221, 0.6);
-            padding: 20px;
-            border-radius: 8px;
-            background-color: rgba(255, 255, 255, 0.85); /* Slightly more opaque background */
+            padding: 15px;
+            border-radius: 6px;
+            background-color: rgba(255, 255, 255, 0.85);
             backdrop-filter: blur(5px);
-            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
         }
 
-        /* Form section title styling */
         .form-title {
             background-color: rgba(224, 224, 224, 0.9);
             color: #333;
-            padding: 10px 15px;
-            margin: -20px -20px 20px -20px;
+            padding: 8px 12px;
+            margin: -15px -15px 15px -15px;
             border-bottom: 1px solid rgba(204, 204, 204, 0.6);
             font-weight: bold;
-            font-size: 18px;
-            border-radius: 8px 8px 0 0;
-        }
-
-        /* Form row layout */
-        .form-row {
-            display: flex;
-            flex-wrap: wrap; /* Allow wrapping on smaller screens */
-            gap: 15px;
-            margin-bottom: 15px;
-            align-items: flex-start; /* Align items to the top */
-        }
-
-        /* Form group layout (individual field container) */
-        .form-group {
-            flex: 1; /* Default: grow and shrink equally */
-            min-width: 150px; /* Minimum width before wrapping */
-        }
-
-        /* Specific width adjustments for certain fields */
-        .form-group.width-auto {
-            flex: 0 1 auto; /* Don't grow, shrink if needed, base size on content */
-            min-width: auto;
-        }
-        .form-group.width-small {
-            flex: 0 1 100px; /* Don't grow, shrink, base width 100px */
-            min-width: 80px;
-        }
-        .form-group.width-medium {
-            flex: 0 1 180px; /* Don't grow, shrink, base width 180px */
-            min-width: 150px;
-        }
-        .form-group.width-large {
-             flex: 1 1 250px; /* Grow and shrink, base width 250px */
-             min-width: 200px;
-        }
-        .form-group.full-width {
-            flex: 1 1 100%; /* Take full width */
-            min-width: 100%;
-        }
-
-        /* Label styling */
-        label {
-            display: block;
-            margin-bottom: 5px; /* Increased space below label */
-            font-weight: bold;
-            font-size: 14px; /* Slightly smaller label */
-            color: #555;
-        }
-
-        /* Input, select, textarea styling */
-        input, select, textarea {
-            width: 100%;
-            padding: 10px;
-            border: 1px solid #ccc;
-            border-radius: 6px;
-            box-sizing: border-box;
             font-size: 16px;
-        }
-        input[type="text"], input[type="email"], input[type="tel"], textarea {
-            text-transform: uppercase; /* Ensure text is uppercase */
-        }
-        input[type="number"]::-webkit-inner-spin-button,
-        input[type="number"]::-webkit-outer-spin-button {
-            -webkit-appearance: none; /* Hide number spinners */
-            margin: 0;
-        }
-        input[type="number"] {
-            -moz-appearance: textfield; /* Firefox hide number spinners */
-        }
-        select:disabled, input:disabled { /* Style disabled selects and inputs */
-            background-color: #e9ecef;
-            cursor: not-allowed;
-            opacity: 0.7;
+            border-radius: 6px 6px 0 0;
         }
 
-        /* Photo placeholder box */
+        .form-row { display: flex; flex-wrap: wrap; gap: 10px; margin-bottom: 10px; align-items: flex-start; }
+        .form-group { flex: 1; min-width: 140px; }
+        .form-group.width-auto { flex: 0 1 auto; min-width: auto; }
+        .form-group.width-small { flex: 0 1 90px; min-width: 70px; }
+        .form-group.width-medium { flex: 0 1 160px; min-width: 140px; }
+        .form-group.width-large { flex: 1 1 230px; min-width: 180px; }
+        .form-group.full-width { flex: 1 1 100%; min-width: 100%; }
+
+        label { display: block; margin-bottom: 3px; font-weight: bold; font-size: 13px; color: #555; }
+
+        input, select, textarea {
+            width: 100%; padding: 8px; border: 1px solid #ccc; border-radius: 5px;
+            box-sizing: border-box; font-size: 14px;
+        }
+        input[type="text"], input[type="email"], input[type="tel"], textarea { text-transform: uppercase; }
+        input[type="number"] { -webkit-appearance: none; -moz-appearance: textfield; appearance: textfield; margin: 0; }
+        input[type="number"]::-webkit-inner-spin-button, input[type="number"]::-webkit-outer-spin-button { -webkit-appearance: none; margin: 0; }
+        select:disabled, input:disabled { background-color: #e9ecef; cursor: not-allowed; opacity: 0.7; }
+        input[type="date"] { padding: 7px; font-size: 14px; }
+
         .photo-box {
-            border: 2px dashed #bbb;
-            width: 180px;
-            height: 220px;
-            margin: 0 auto 15px auto; /* Center horizontally, add bottom margin */
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            text-align: center;
-            padding: 15px;
-            background-color: #f9f9f9;
-            border-radius: 6px;
-            color: #777;
-            font-size: 14px;
-            box-sizing: border-box;
+            border: 2px dashed #bbb; width: 160px; height: 200px; display: flex; align-items: center;
+            justify-content: center; text-align: center; padding: 10px; background-color: #f9f9f9;
+            border-radius: 5px; color: #777; font-size: 13px; box-sizing: border-box;
         }
-
-        /* Signature box */
         .signature-box {
-            border: 1px solid #999;
-            width: 100%;
-            height: 120px; /* Reduced height */
-            margin-top: 5px;
-            background-color: #fff;
-            border-radius: 6px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            color: #999;
-            font-style: italic;
-            box-sizing: border-box;
+            border: 1px solid #999; width: 100%; height: 200px; margin-top: 3px; background-color: #fff;
+            border-radius: 5px; display: flex; align-items: center; justify-content: center;
+            color: #999; font-style: italic; box-sizing: border-box;
         }
-
-        /* QR code container */
         .qr-container {
-            margin: 30px auto;
-            text-align: center;
-            padding: 15px; /* Adjusted padding */
-            border: 1px solid #ddd;
-            background-color: #f9f9f9;
-            display: block; /* Make it visible by default, hide for print later if needed */
-            width: fit-content;
-            border-radius: 6px;
+            margin: 20px auto; text-align: center; padding: 10px; border: 1px solid #ddd;
+            background-color: #f9f9f9; display: block; width: fit-content; border-radius: 5px;
         }
-        #qrCode > div { /* Style the text inside QR container */
-             font-weight: bold;
-             margin-bottom: 8px;
-             font-size: 14px;
-        }
-        #qrCode canvas, #qrCode img { /* Ensure QR code image scales */
-            max-width: 100%;
-            height: auto;
-        }
+        #qrCode > div { font-weight: bold; margin-bottom: 5px; font-size: 13px; }
+        #qrCode canvas, #qrCode img { max-width: 100%; height: auto; }
 
-
-        /* Button container */
-        .btn-container {
-            text-align: center;
-            margin: 20px 0; /* Increased margin */
-        }
-        /* Button styling */
+        .btn-container { text-align: center; margin: 15px 0; }
         button {
-            padding: 12px 25px;
-            background-color: #007bff;
-            color: white;
-            border: none;
-            border-radius: 6px;
-            cursor: pointer;
-            font-size: 18px;
-            transition: background-color 0.3s ease;
-            margin: 5px; /* Add space between buttons */
+            padding: 10px 20px; background-color: #007bff; color: white; border: none;
+            border-radius: 5px; cursor: pointer; font-size: 16px; transition: background-color 0.3s ease; margin: 5px;
         }
-        button:hover {
-            background-color: #0056b3;
-        }
+        button:hover { background-color: #0056b3; }
 
-        /* Residence table styling */
-        .residence-table {
-            width: 100%;
-            border-collapse: collapse;
-            margin: 15px 0;
-            font-size: 14px; /* Smaller font for table */
-        }
-        .residence-table th, .residence-table td {
-            border: 1px solid #ddd;
-            padding: 8px; /* Adjusted padding */
-            text-align: left;
-        }
-        .residence-table th {
-            background-color: #f2f2f2;
-            font-weight: bold;
-        }
-        .residence-table input[type="text"] {
-             border: none; /* Remove border for inputs inside table */
-             padding: 4px;
-             font-size: 14px;
-        }
+        .residence-table { width: 100%; border-collapse: collapse; margin: 10px 0; font-size: 13px; }
+        .residence-table th, .residence-table td { border: 1px solid #ddd; padding: 5px; text-align: left; }
+        .residence-table th { background-color: #f2f2f2; font-weight: bold; }
+        .residence-table td:first-child { width: 60%; }
+        .residence-table td:nth-child(2), .residence-table td:nth-child(3) { width: 20%; }
+        .residence-table input[type="text"] { border: none; padding: 3px; font-size: 13px; }
+        .residence-table input[type="number"] { border: none; padding: 3px; font-size: 13px; width: 100%; -moz-appearance: textfield; appearance: textfield; }
 
-        /* Declaration text styling */
         .declaration {
-            font-style: italic;
-            margin: 20px 0;
-            padding: 15px;
-            background-color: #f9f9f9;
-            border-left: 5px solid #ccc;
-            border-radius: 4px;
-            color: #555;
-            font-size: 14px; /* Smaller font size */
+            font-style: italic; margin: 15px 0; padding: 10px; background-color: #f9f9f9;
+            border-left: 4px solid #ccc; border-radius: 4px; color: #555; font-size: 13px;
         }
 
-        /* Loader overlay */
         #loader {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: rgba(0,0,0,0.5);
-            display: none; /* Hidden by default */
-            justify-content: center;
-            align-items: center;
-            z-index: 1000;
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5);
+            display: none; justify-content: center; align-items: center; z-index: 1000;
         }
-        /* Spinner animation */
         .spinner {
-            border: 5px solid #f3f3f3;
-            border-top: 5px solid #3498db;
-            border-radius: 50%;
-            width: 60px;
-            height: 60px;
-            animation: spin 1s linear infinite;
-            margin: 20px auto;
+            border: 4px solid #f3f3f3; border-top: 4px solid #3498db; border-radius: 50%;
+            width: 50px; height: 50px; animation: spin 1s linear infinite; margin: 15px auto;
         }
-        @keyframes spin {
-            0% { transform: rotate(0deg); }
-            100% { transform: rotate(360deg); }
-        }
+        @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
 
-        /* Error field highlight */
-        .error-field {
-            border: 2px solid #ff4444 !important; /* Use !important carefully */
-            background-color: #fff3f3 !important;
-        }
+        .error-field { border: 2px solid #ff4444 !important; background-color: #fff3f3 !important; }
 
-        /* Print-specific styles */
+        /* --- Print-specific styles --- */
         @media print {
             body {
                 background-color: #fff;
-                padding: 0; /* Remove padding for print */
-                font-size: 10pt; /* Adjust base font size for print */
+                padding: 0;
+                font-size: 8.5pt; /* Further reduced base font size */
+                line-height: 1.25; /* Further reduced line-height */
+            }
+            #form-to-print {
+                 max-width: 100%;
+                 padding: 5mm;
+                 box-shadow: none;
+                 border-radius: 0;
+                 border: none; /* Remove border for print */
             }
             .form-section {
                 border: 1px solid #ccc;
                 box-shadow: none;
-                margin-bottom: 15px; /* Reduce margin for print */
-                padding: 15px;
+                margin-bottom: 6px; /* Further reduced margin */
+                padding: 6px; /* Further reduced padding */
+                page-break-inside: avoid; /* Keep avoid on sections */
             }
              .form-title {
-                 margin: -15px -15px 15px -15px; /* Adjust title margin */
-                 font-size: 14pt;
+                 margin: -6px -6px 6px -6px; /* Adjust title margin */
+                 padding: 4px 6px; /* Reduced padding */
+                 font-size: 10pt; /* Further reduced font size */
              }
-            button, .no-print {
-                display: none; /* Hide buttons and elements marked no-print */
+            .form-row {
+                margin-bottom: 5px; /* Further reduced margin */
+                gap: 5px; /* Further reduced gap */
+            }
+            label {
+                font-size: 8.5pt; /* Match body font size */
+                margin-bottom: 1px; /* Further reduced margin */
+            }
+            input, select, textarea {
+                font-size: 8.5pt; /* Match body font size */
+                padding: 3px; /* Further reduced padding */
+                border-radius: 2px; /* Smaller radius */
+                border: 1px solid #bbb; /* Lighter border */
+            }
+            input[type="date"] { padding: 2px; }
+            .photo-box {
+                width: 35mm; height: 45mm; font-size: 7pt; padding: 4px; margin-bottom: 4px;
+                border-style: solid; border-width: 1px; border-color: #ccc; /* Solid border for print */
+            }
+            .signature-box {
+                height: 18mm; /* Slightly reduced */
+                margin-top: 1px;
+                border: 1px solid #aaa;
+            }
+            .residence-table {
+                font-size: 7.5pt; /* Further reduced */
+                margin: 4px 0;
+            }
+            .residence-table th, .residence-table td {
+                padding: 2px; /* Further reduced padding */
+            }
+             .residence-table input {
+                 padding: 1px;
+                 font-size: 7.5pt;
+             }
+            .declaration {
+                font-size: 7.5pt; padding: 4px; margin: 6px 0; border-left-width: 3px;
             }
             .qr-container {
-                display: block !important; /* Ensure QR is visible */
-                page-break-inside: avoid; /* Prevent QR from splitting across pages */
-                margin: 15px auto;
-                padding: 10px;
+                page-break-inside: avoid;
+                margin: 8px auto; padding: 4px; border: 1px solid #aaa;
             }
-            #form-to-print {
-                 max-width: 100%; /* Use full width for print */
-                 padding: 0;
-                 box-shadow: none;
-            }
-            label { font-size: 10pt; }
-            input, select, textarea { font-size: 10pt; padding: 5px; }
-            .photo-box { width: 120px; height: 150px; }
-            .signature-box { height: 80px; }
-            .residence-table { font-size: 9pt; }
-            .residence-table th, .residence-table td { padding: 4px; }
+             #qrCode > div { font-size: 7pt; margin-bottom: 2px; }
+             #qrCode canvas, #qrCode img { max-width: 35mm; } /* Reduced QR size */
+
+            button, .no-print { display: none; }
+            /* Removed page-break-inside: avoid from form-group and date-input-group */
         }
 
         /* Container for date inputs */
-        .date-input-group {
-            display: flex;
-            gap: 10px;
-            align-items: center;
-        }
-        /* Individual date input fields */
-        .date-input-group input[type="number"] {
-            width: 70px; /* Fixed width for date parts */
-            flex: 0 0 auto; /* Prevent growing or shrinking */
-        }
-        .date-input-group input::placeholder { /* Style placeholder text */
-             font-size: 12px;
-             color: #999;
-        }
+        .date-input-group { display: flex; gap: 5px; align-items: center; }
+        .date-input-group input[type="number"] { width: 60px; flex: 0 0 auto; }
+        .date-input-group input::placeholder { font-size: 11px; color: #999; }
 
         /* Main form container */
         #form-to-print {
-            max-width: 800px; /* Max width for the form */
-            margin: 0 auto; /* Center the form */
-            padding: 20px;
-            box-sizing: border-box;
-            position: relative; /* Needed for absolute positioning if any */
-            background-color: #fff; /* White background for the form itself */
-            box-shadow: 0 0 15px rgba(0,0,0,0.1); /* Add subtle shadow */
-            border-radius: 8px; /* Rounded corners for the main form */
+            max-width: 800px; margin: 0 auto; padding: 15px; box-sizing: border-box;
+            position: relative; background-color: #fff; box-shadow: 0 0 10px rgba(0,0,0,0.1);
+            border-radius: 6px;
         }
 
         /* Toastify notification styling */
         .toastify {
-            font-family: Arial, sans-serif;
-            padding: 12px 20px;
-            color: #ffffff;
-            border-radius: 4px;
-            font-size: 14px;
-            z-index: 1001; /* Ensure toast is above loader */
+            font-family: Arial, sans-serif; padding: 10px 18px; color: #ffffff;
+            border-radius: 4px; font-size: 13px; z-index: 1001;
         }
-        .toastify.error {
-            background: linear-gradient(135deg, #ff4444, #cc0000);
-        }
-        .toastify.success {
-            background: linear-gradient(135deg, #00C851, #007E33);
-        }
+        .toastify.error { background: linear-gradient(135deg, #ff4444, #cc0000); }
+        .toastify.success { background: linear-gradient(135deg, #00C851, #007E33); }
 
         /* Responsive adjustments */
         @media (max-width: 768px) {
             body { padding: 10px; }
-            #form-to-print { padding: 15px; }
-            .form-row { flex-direction: column; gap: 10px; } /* Stack elements vertically */
-            .form-group { min-width: 100%; width: 100%; } /* Full width for groups */
-            .date-input-group { flex-wrap: wrap; } /* Allow date inputs to wrap */
-            .date-input-group input[type="number"] { width: calc(33% - 7px); } /* Adjust date input width */
-            .photo-box { width: 150px; height: 180px; }
-            .header h1 { font-size: 20px; }
-            .header h2 { font-size: 16px; }
-        }
-
-        @media (max-width: 480px) {
+            #form-to-print { padding: 10px; }
+            .form-row { 
+                flex-direction: column; 
+                gap: 5px;  /* Reducido de 8px a 5px */
+                margin-bottom: 5px; /* Añadido para reducir espacio vertical */
+            }
+            .form-group { 
+                min-width: 100%; 
+                width: 100%;
+                margin-bottom: 5px; /* Añadido para reducir espacio vertical */
+            }
+            .form-section {
+                margin-bottom: 10px; /* Reducido el margen inferior */
+                padding: 10px; /* Reducido el padding */
+            }
+            .date-input-group { 
+                flex-wrap: wrap; 
+                gap: 5px; 
+            }
+            .date-input-group input[type="number"] { width: calc(33% - 4px); }
+            .photo-box { width: 140px; height: 170px; }
             .header h1 { font-size: 18px; }
-            .header h2 { font-size: 14px; }
-            button { font-size: 16px; padding: 10px 20px; }
-            .date-input-group input[type="number"] { width: calc(33% - 5px); } /* Further adjust date input width */
-            .photo-box { width: 120px; height: 150px; }
-            label { font-size: 13px; }
-            input, select, textarea { font-size: 14px; }
+            .header h2 { font-size: 15px; }
+        }
+        @media (max-width: 480px) {
+            body { padding: 5px; }
+            #form-to-print { padding: 8px; }
+            .form-row {
+                gap: 3px; /* Reducido aún más para pantallas muy pequeñas */
+                margin-bottom: 3px; /* Reducido aún más para pantallas muy pequeñas */
+            }
+            .form-group {
+                margin-bottom: 3px; /* Reducido aún más para pantallas muy pequeñas */
+            }
+            .header h1 { font-size: 16px; }
+            .header h2 { font-size: 13px; }
+            button { font-size: 14px; padding: 8px 15px; }
+            .date-input-group input[type="number"] { width: calc(33% - 4px); }
+            .photo-box { width: 110px; height: 140px; }
+            label { font-size: 12px; }
+            input, select, textarea { 
+                font-size: 13px; 
+                padding: 6px;
+                margin-bottom: 2px; /* Añadido para reducir espacio vertical */
+            }
         }
 
     </style>
@@ -420,82 +293,87 @@
 
     <div id="form-to-print">
         <div class="header">
-            <h1>SOLICITUD DE PASAPORTE</h1>
+            <h1>SOLICITUD DE TRÁMITES CONSULARES</h1>
             <h2>REPÚBLICA DE CUBA</h2>
         </div>
 
         <div class="form-section">
-            <div class="form-title">DATOS BÁSICOS</div>
+            <div class="form-title">DATOS INICIALES</div>
             <div class="form-row">
-                <div class="form-group" style="flex: 1;"> <label>Foto del Solicitante</label>
+                <div class="form-group">
+                    <label for="fechaSolicitud">Fecha de Solicitud</label>
+                    <input type="date" id="fechaSolicitud" name="fechaSolicitud" required>
+                </div>
+                <div class="form-group">
+                    <label for="tramite">Tipo de Trámite:</label>
+                    <select id="tramite" name="tramite" required>
+                        <option value="">Seleccione</option>
+                        <option value="primera_vez">Pasaporte primera Vez</option>
+                        <option value="renovacion">Pasaporte Renovación</option>
+                        <option value="ccv">CCV</option>
+                        <option value="pe-1">H-1</option>
+                    </select>
+                </div>
+            </div>
+         <!-- </div>
+
+        <div class="form-section">  -->
+           
+            <div class="form-row">
+                <hr>
+                <div class="form-group" style="flex: 1;">
+                    <label>Foto del Solicitante</label>
                     <div class="photo-box">
                         FOTO<br>(4 x 4.5 cm)
                     </div>
                 </div>
-                <div class="form-group" style="flex: 2;"> <div style="margin-bottom: 20px;">
-                        <div class="form-row"> <div class="form-group">
-                                <label>Fecha de Solicitud</label>
-                                <div class="date-input-group">
-                                    <input type="number" id="diaSolicitud" name="diaSolicitud" placeholder="Día" min="1" max="31" required>
-                                    <input type="number" id="mesSolicitud" name="mesSolicitud" placeholder="Mes" min="1" max="12" required>
-                                    <input type="number" id="anoSolicitud" name="anoSolicitud" placeholder="Año" min="1900" max="2100" required>
-                                </div>
-                            </div>
-                            <div class="form-group">
-                                <label for="tramite">Tipo de Trámite:</label>
-                                <select id="tramite" name="tramite" required>
-                                    <option value="">Seleccione</option>
-                                    <option value="primera_vez">Primera Vez</option>
-                                    <option value="renovacion">Renovación</option>
-                                    <option value="prorroga">Prórroga</option>
-                                    <option value="ccv">CCV</option>
-                                    <option value="pe-1">PE-1</option>
-                                </select>
-                            </div>
-                        </div>
-                    </div>
+                <div class="form-group" style="flex: 2;">
                     <label>Firma del Solicitante</label>
                     <div class="signature-box">
                         Firmar dentro de este espacio
                     </div>
                 </div>
             </div>
-            <div class="declaration">
-                Declaro que los datos que aparecen en este formulario se ajustan a la realidad
-            </div>
-        </div>
+        <!-- </div>
 
-        <div class="form-section">
+        <div class="form-section"> -->
+            <br>
+         
             <div class="form-title">DATOS GENERALES</div>
             <div class="form-row">
-                <div class="form-group width-large"> <label for="paisResidencia">País de Residencia</label>
+                <div class="form-group"> <label for="paisResidencia">País de Residencia</label>
                     <select id="paisResidencia" name="paisResidencia" required>
                         <option value="">Seleccione</option>
                         </select>
                 </div>
-                <div class="form-group width-large"> <label for="consulado">Consulado</label>
+                <div class="form-group"> <label for="consulado">Consulado</label>
                     <select id="consulado" name="consulado" required disabled>
                         <option value="">Seleccione un consulado</option>
                         </select>
                 </div>
             </div>
             <div class="form-row">
-                 <div class="form-group width-medium"> <label for="numeroPasaporte">Número de Pasaporte</label>
-                    <input type="text" id="numeroPasaporte" name="numeroPasaporte" required>
+                 <div class="form-group"> <label for="numeroPasaporte">Número de Pasaporte</label>
+                    <input type="text" id="numeroPasaporte" name="numeroPasaporte" required> </div>
+                <div class="form-group"> <label for="carneIdentidad">Carné de Identidad</label>
+                    <input type="text" id="carneIdentidad" name="carneIdentidad" 
+                           pattern="[0-9]{11}" 
+                           oninput="this.value = this.value.replace(/[^0-9]/g, '').slice(0, 11)"
+                           onblur="validateCubanID(this)"
+                           title="Debe contener 11 dígitos y ser un carné de identidad válido">
                 </div>
-                <div class="form-group width-medium"> <label for="carneIdentidad">Carné de Identidad</label>
-                    <input type="text" id="carneIdentidad" name="carneIdentidad" required pattern="\d{11}" title="Debe contener 11 dígitos">
+                <div class="form-group">
+                    <label for="fechaNacimiento">Fecha de Nacimiento</label>
+                    <input type="date" id="fechaNacimiento" name="fechaNacimiento" required>
                 </div>
-                <div class="form-group width-small"> <label for="sexo">Sexo</label>
+                <div class="form-group"> <label for="sexo">Sexo</label>
                     <select id="sexo" name="sexo" required>
                         <option value="">Seleccione</option>
-                        <option value="masculino">Masculino</option>
-                        <option value="femenino">Femenino</option>
+                        <option value="masculino">M</option>
+                        <option value="femenino">F</option>
                     </select>
                 </div>
-                <div class="form-group width-small"> <label for="estatura">Estatura (cm)</label>
-                    <input type="number" id="estatura" name="estatura" min="100" max="250">
-                </div>
+
             </div>
             <div class="form-row">
                 <div class="form-group" style="flex: 1;"> <label for="primerApellido">Primer Apellido</label>
@@ -525,6 +403,26 @@
             </div>
             <div class="form-row">
                 <div class="form-group">
+                    <label for="paisNacimiento">País de Nacimiento</label>
+                    <select id="paisNacimiento" name="paisNacimiento" required>
+                        <option value="">Seleccione</option>
+                        </select>
+                </div>
+                <div class="form-group" id="provinciaNacimientoContainer">
+                    <label for="provinciaNacimiento">Provincia de Nacimiento</label>
+                    <select id="provinciaNacimiento" name="provinciaNacimiento" required disabled>
+                        <option value="">Seleccione país y año</option>
+                    </select>
+                    <input type="text" id="provinciaNacimientoText" name="provinciaNacimientoText" style="display: none;"> </div>
+                <div class="form-group" id="municipioNacimientoContainer">
+                    <label for="municipioNacimiento">Municipio de Nacimiento</label>
+                     <select id="municipioNacimiento" name="municipioNacimiento" required disabled>
+                        <option value="">Seleccione provincia</option>
+                    </select>
+                    <input type="text" id="municipioNacimientoText" name="municipioNacimientoText" style="display: none;"> </div>
+            </div>
+            <div class="form-row">
+                <div class="form-group">
                     <label for="colorOjos">Color de Ojos</label>
                     <select id="colorOjos" name="colorOjos">
                         <option value="">Seleccione</option>
@@ -544,8 +442,6 @@
                         <option value="albina">Albina</option>
                     </select>
                 </div>
-            </div>
-            <div class="form-row">
                 <div class="form-group">
                     <label for="colorCabello">Color de Cabello</label>
                     <select id="colorCabello" name="colorCabello">
@@ -558,19 +454,12 @@
                         <option value="otros">Otros</option>
                     </select>
                 </div>
-                <div class="form-group">
-                    <label for="caracteristicasEspeciales">Características Especiales</label>
-                    <input type="text" id="caracteristicasEspeciales" name="caracteristicasEspeciales" placeholder="Marcas, cicatrices, etc.">
-                </div>
             </div>
+
             <div class="form-row">
-                <div class="form-group">
-                    <label>Fecha de Nacimiento</label>
-                    <div class="date-input-group">
-                        <input type="number" id="diaNacimiento" name="diaNacimiento" placeholder="Día" min="1" max="31" required>
-                        <input type="number" id="mesNacimiento" name="mesNacimiento" placeholder="Mes" min="1" max="12" required>
-                        <input type="number" id="anoNacimiento" name="anoNacimiento" placeholder="Año" min="1900" max="2100" required>
-                    </div>
+
+                <div class="form-group width-small"> <label for="estatura">Estatura (cm)</label>
+                    <input type="number" id="estatura" name="estatura" min="100" max="250">
                 </div>
                  <div class="form-group"> <label for="estadoCivil">Estado Civil</label>
                     <select id="estadoCivil" name="estadoCivil">
@@ -579,41 +468,6 @@
                         <option value="casado">Casado</option>
                         <option value="viudo">Viudo</option>
                         <option value="divorciado">Divorciado</option>
-                    </select>
-                </div>
-            </div>
-            <div class="form-row">
-                <div class="form-group">
-                    <label for="paisNacimiento">País de Nacimiento</label>
-                    <select id="paisNacimiento" name="paisNacimiento" required>
-                        <option value="">Seleccione</option>
-                        </select>
-                </div>
-                <div class="form-group" id="provinciaNacimientoContainer">
-                    <label for="provinciaNacimiento">Provincia de Nacimiento</label>
-                    <select id="provinciaNacimiento" name="provinciaNacimiento" required disabled>
-                        <option value="">Seleccione país y año</option>
-                    </select>
-                </div>
-                <div class="form-group" id="municipioNacimientoContainer">
-                    <label for="municipioNacimiento">Municipio de Nacimiento</label>
-                     <select id="municipioNacimiento" name="municipioNacimiento" required disabled>
-                        <option value="">Seleccione provincia</option>
-                    </select>
-                </div>
-            </div>
-            <div class="form-row">
-                <div class="form-group">
-                    <label for="clasificacionMigratoria">Clasificación Migratoria al salir de Cuba</label>
-                    <select id="clasificacionMigratoria" name="clasificacionMigratoria">
-                        <option value="">Seleccione</option>
-                        <option value="PVE">PVE</option>
-                        <option value="PVT">PVT</option>
-                        <option value="PSE">PSE</option>
-                        <option value="AO">AO</option>
-                        <option value="PRE/PSI">PRE/PSI</option>
-                        <option value="PSI">PSI</option>
-                        <option value="ILEGAL">ILEGAL</option>
                     </select>
                 </div>
                 <div class="form-group">
@@ -625,14 +479,19 @@
                     </div>
                 </div>
             </div>
-        </div>
 
-        <div class="form-section">
+
+        <!-- </div>
+
+        <div class="form-section"> -->
+            <br>
+            <br>
+            
             <div class="form-title">LUGAR DE RESIDENCIA ACTUAL</div>
             <div class="form-row">
                 <div class="form-group" style="flex-basis: 60%;">
                     <label for="direccionResidencia">Dirección (calle, Ave. Nro. Entre Calles)</label>
-                    <input type="text" id="direccionResidencia" name="direccionResidencia">
+                    <input type="text" id="direccionResidencia" name="direccionResidencia" required>
                 </div>
                 <div class="form-group" style="flex-basis: 35%;"> <label for="codigoPostalResidencia">Código Postal</label>
                     <input type="text" id="codigoPostalResidencia" name="codigoPostalResidencia">
@@ -641,30 +500,36 @@
             <div class="form-row">
                 <div class="form-group">
                     <label for="provinciaEstadoResidencia">Provincia - Estado - Región</label>
-                    <input type="text" id="provinciaEstadoResidencia" name="provinciaEstadoResidencia">
+                    <input type="text" id="provinciaEstadoResidencia" name="provinciaEstadoResidencia" required>
                 </div>
                 <div class="form-group">
                     <label for="paisResidenciaActual">País</label>
-                    <input type="text" id="paisResidenciaActual" name="paisResidenciaActual">
+                    <select id="paisResidenciaActual" name="paisResidenciaActual" required></select>
                 </div>
             </div>
             <div class="form-row">
                 <div class="form-group">
                     <label for="telefonoResidencia">Teléfono</label>
-                    <input type="tel" id="telefonoResidencia" name="telefonoResidencia">
+                    <input type="tel" id="telefonoResidencia" name="telefonoResidencia" required>
                 </div>
                 <div class="form-group">
                     <label for="emailResidencia">E-Mail</label>
-                    <input type="email" id="emailResidencia" name="emailResidencia">
+                    <input type="email" id="emailResidencia" name="emailResidencia" required 
+                           oninput="this.value = this.value.toLowerCase()"
+                           pattern="[a-z0-9._%+-]+@[a-z0-9.-]+\.[a-z]{2,}$"
+                           title="Por favor introduzca una dirección de correo válida">
                 </div>
                 <div class="form-group">
                     <label for="faxResidencia">Fax</label>
                     <input type="tel" id="faxResidencia" name="faxResidencia">
                 </div>
             </div>
-        </div>
+        <!-- </div>
 
-        <div class="form-section">
+        <div class="form-section"> -->
+            <br>
+           
+
             <div class="form-title">DATOS LABORALES O DE ESTUDIO</div>
             <div class="form-row">
                 <div class="form-group full-width">
@@ -699,7 +564,7 @@
                 </div>
                 <div class="form-group">
                     <label for="paisTrabajo">País</label>
-                    <input type="text" id="paisTrabajo" name="paisTrabajo">
+                    <select id="paisTrabajo" name="paisTrabajo"></select>
                 </div>
             </div>
             <div class="form-row">
@@ -709,21 +574,32 @@
                 </div>
                 <div class="form-group">
                     <label for="emailTrabajo">E-Mail</label>
-                    <input type="email" id="emailTrabajo" name="emailTrabajo">
+                    <input type="email" id="emailTrabajo" name="emailTrabajo"
+                           oninput="this.value = this.value.toLowerCase()"
+                           pattern="[a-z0-9._%+-]+@[a-z0-9.-]+\.[a-z]{2,}$"
+                           title="Por favor introduzca una dirección de correo válida">
                 </div>
                 <div class="form-group">
                     <label for="faxTrabajo">Fax</label>
                     <input type="tel" id="faxTrabajo" name="faxTrabajo">
                 </div>
             </div>
-        </div>
+        <!-- </div>
 
-        <div class="form-section">
+        <div class="form-section"> -->
+           <br>
+       
             <div class="form-title">INFORMACIÓN ADICIONAL</div>
             <div class="form-row">
                 <div class="form-group">
                     <label for="nivelCultural">Nivel Cultural</label>
-                    <input type="text" id="nivelCultural" name="nivelCultural">
+                    <select id="nivelCultural" name="nivelCultural" required>
+                        <option value="">Seleccione</option>
+                        <option value="primaria">Primaria</option>
+                        <option value="secundaria">Secundaria</option>
+                        <option value="preuniversitario">Preuniversitario</option>
+                        <option value="universitario">Universitario</option>
+                    </select>
                 </div>
                 <div class="form-group">
                     <label for="ocupacionActual">Ocupación Actual</label>
@@ -735,15 +611,43 @@
                 </div>
             </div>
             <div class="form-row">
-                <div class="form-group full-width">
+                <div class="form-group" style="flex: 2;">
                     <label for="referenciaNombre">Nombre y Apellidos de la Referencia en Cuba</label>
                     <input type="text" id="referenciaNombre" name="referenciaNombre">
                 </div>
+                <div class="form-group" style="flex: 1;">
+                    <label for="tipoVinculo">Tipo de vínculo</label>
+                    <select id="tipoVinculo" name="tipoVinculo">
+                        <option value="">Seleccione</option>
+                        <option value="familiar">Familiar</option>
+                        <option value="padres">Padres</option>
+                        <option value="hijos">Hijos</option>
+                        <option value="hermanos">Hermanos</option>
+                        <option value="abuelos">Abuelos</option>
+                        <option value="tios">Tíos</option>
+                        <option value="primos">Primos</option>
+                        <option value="amigo">Amigo</option>
+                        <option value="conocido">Conocido</option>
+                        <option value="otro">Otro</option>
+                    </select>
+                </div>
             </div>
             <div class="form-row">
-                <div class="form-group full-width">
-                    <label for="referenciaDireccion">Dirección de la Referencia (incluir el municipio y la provincia)</label>
+                <div class="form-group" style="flex: 2;">
+                    <label for="referenciaDireccion">Dirección de la Referencia</label>
                     <input type="text" id="referenciaDireccion" name="referenciaDireccion">
+                </div>
+                <div class="form-group" style="flex: 1;">
+                    <label for="referenciaProvincia">Provincia</label>
+                    <select id="referenciaProvincia" name="referenciaProvincia">
+                        <option value="">Seleccione provincia</option>
+                    </select>
+                </div>
+                <div class="form-group" style="flex: 1;">
+                    <label for="referenciaMunicipio">Municipio</label>
+                    <select id="referenciaMunicipio" name="referenciaMunicipio" disabled>
+                        <option value="">Seleccione municipio</option>
+                    </select>
                 </div>
             </div>
             <div class="form-row">
@@ -759,34 +663,36 @@
                         </thead>
                         <tbody>
                             <tr>
-                                <td><input type="text" style="width: 100%;" name="direccionCuba1"></td>
-                                <td><input type="text" style="width: 100%;" name="desdeCuba1"></td>
-                                <td><input type="text" style="width: 100%;" name="hastaCuba1"></td>
+                                <td><input type="text" style="width: 100%;" name="direccionCuba1" id="direccionCuba1"></td>
+                                <td><input type="number" style="width: 100%;" name="desdeCuba1" id="desdeCuba1" min="1900" max="2025" placeholder="AAAA"></td>
+                                <td><input type="number" style="width: 100%;" name="hastaCuba1" id="hastaCuba1" min="1900" max="2025" placeholder="AAAA"></td>
                             </tr>
                             <tr>
-                                <td><input type="text" style="width: 100%;" name="direccionCuba2"></td>
-                                <td><input type="text" style="width: 100%;" name="desdeCuba2"></td>
-                                <td><input type="text" style="width: 100%;" name="hastaCuba2"></td>
+                                <td><input type="text" style="width: 100%;" name="direccionCuba2" id="direccionCuba2"></td>
+                                <td><input type="number" style="width: 100%;" name="desdeCuba2" id="desdeCuba2" min="1900" max="2025" placeholder="AAAA"></td>
+                                <td><input type="number" style="width: 100%;" name="hastaCuba2" id="hastaCuba2" min="1900" max="2025" placeholder="AAAA"></td>
                             </tr>
                         </tbody>
                     </table>
                 </div>
             </div>
-        </div>
+        <!-- </div>
 
-        <div class="form-section">
-            <div class="form-title">DOCUMENTOS PRESENTADOS</div>
+        <div class="form-section"> -->
+            <br>
+            <br>
+            <div class="form-title">DOCUMENTOS</div>
             <div class="form-row">
                 <div class="form-group full-width">
                     <label>Pasaporte vencido</label>
                     <div class="form-row"> <div class="form-group">
-                             <input type="text" placeholder="Número" name="pasaporteNumeroVencido">
+                             <input type="text" placeholder="Número" name="pasaporteNumeroVencido" id="pasaporteNumeroVencido">
                         </div>
                          <div class="form-group">
-                            <input type="text" placeholder="Fecha expedición" name="pasaporteFechaExpedicionVencido">
+                            <input type="text" placeholder="Fecha expedición" name="pasaporteFechaExpedicionVencido" id="pasaporteFechaExpedicionVencido">
                          </div>
                          <div class="form-group">
-                            <input type="text" placeholder="Lugar" name="pasaporteLugarExpedicionVencido">
+                            <input type="text" placeholder="Lugar" name="pasaporteLugarExpedicionVencido" id="pasaporteLugarExpedicionVencido">
                         </div>
                     </div>
                 </div>
@@ -795,13 +701,13 @@
                 <div class="form-group full-width">
                     <label>Certificación de Nacimiento</label>
                     <div class="form-row"> <div class="form-group">
-                            <input type="text" placeholder="Tomo" name="certNacimientoTomo">
+                            <input type="text" placeholder="Tomo" name="certNacimientoTomo" id="certNacimientoTomo">
                          </div>
                          <div class="form-group">
-                             <input type="text" placeholder="Folio" name="certNacimientoFolio">
+                             <input type="text" placeholder="Folio" name="certNacimientoFolio" id="certNacimientoFolio">
                          </div>
                          <div class="form-group">
-                            <input type="text" placeholder="Registro Civil" name="certNacimientoRegistroCivil">
+                            <input type="text" placeholder="Registro Civil" name="certNacimientoRegistroCivil" id="certNacimientoRegistroCivil">
                         </div>
                     </div>
                 </div>
@@ -809,35 +715,37 @@
             <div class="form-row">
                 <div class="form-group full-width">
                     <label>Inscripción Consular</label>
-                    <div class="form-row"> <div class="form-group">
-                            <input type="text" placeholder="Número" name="inscripcionConsularNumero">
-                         </div>
-                         <div class="form-group">
-                            <input type="text" placeholder="De Fecha" name="inscripcionConsularFecha">
-                         </div>
-                         <div class="form-group">
-                            <input type="text" placeholder="Arancel $" name="inscripcionConsularArancel">
+                    <div class="form-row">
+                        <div class="form-group">
+                            <input type="text" placeholder="Número" name="inscripcionConsularNumero" id="inscripcionConsularNumero">
+                        </div>
+                        <div class="form-group">
+                            <input type="text" placeholder="De Fecha" name="inscripcionConsularFecha" id="inscripcionConsularFecha">
                         </div>
                     </div>
                 </div>
-            </div>
-            <div class="form-row">
-                <div class="form-group full-width">
-                    <label for="valoracionConsular">Valoración Consular</label>
-                    <textarea rows="3" name="valoracionConsular" id="valoracionConsular"></textarea> </div>
             </div>
         </div>
 
         <div class="qr-container" id="qrCode">
              <div>Código de verificación del documento</div>
         </div>
-    </div> <div class="btn-container no-print">
-        <button type="button" onclick="generatePDF()">Finalizar y Generar PDF</button>
-        <button type="button" onclick="generateOnlyQR()">Generar solo QR</button>
     </div>
 
+    <div class="btn-container no-print">
+        <button type="button" onclick="generatePDF()">Finalizar y Generar PDF</button>
+        <button type="button" onclick="generateOnlyQR()" style="display: none;">Generar solo QR</button>
+        <button type="button" onclick="continueIteration()" id="continueBtn" style="display: none;">Continue to iterate?</button>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/toastify-js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/qrious/4.0.2/qrious.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.9.3/html2pdf.bundle.js"></script>
     <script>
-        // --- Constants and Global Variables ---
+        // --- Constantes y Variables Globales ---
+        // (countries, provinciasHistoricas, consuladosDataRawISO, etc. - sin cambios)
         const countries = [ /* Full list omitted for brevity - assumed present */
             {code: 'AF', name: 'Afganistán'}, {code: 'AL', name: 'Albania'}, {code: 'DE', name: 'Alemania'},
             {code: 'AD', name: 'Andorra'}, {code: 'AO', name: 'Angola'}, {code: 'AI', name: 'Anguila'},
@@ -922,976 +830,410 @@
             {code: 'DJ', name: 'Yibuti'}, {code: 'ZM', name: 'Zambia'}, {code: 'ZW', name: 'Zimbabue'}
         ];
         const provinciasHistoricas = { /* Full list omitted for brevity - assumed present */
-             before1976: [
-                { name: 'Pinar del Río', municipios: ['Pinar del Río', 'San Juan y Martínez', 'San Luis', 'Consolación del Sur', 'Los Palacios', 'Viñales'] },
-                { name: 'La Habana', municipios: ['La Habana', 'Marianao', 'Regla', 'Guanabacoa', 'Santiago de las Vegas', 'Bauta', 'San Antonio de los Baños'] },
-                { name: 'Matanzas', municipios: ['Matanzas', 'Cárdenas', 'Colón', 'Jagüey Grande', 'Jovellanos', 'Unión de Reyes'] },
-                { name: 'Las Villas', municipios: ['Santa Clara', 'Cienfuegos', 'Sancti Spíritus', 'Trinidad', 'Sagua la Grande', 'Remedios'] },
-                { name: 'Camagüey', municipios: ['Camagüey', 'Nuevitas', 'Florida', 'Morón', 'Ciego de Ávila'] },
-                { name: 'Oriente', municipios: ['Santiago de Cuba', 'Guantánamo', 'Bayamo', 'Holguín', 'Manzanillo', 'Las Tunas'] }
-            ],
-            after1976: [
-                { name: 'Pinar del Río', municipios: ['Sandino', 'Mantua', 'Minas de Matahambre', 'Viñales', 'La Palma', 'Los Palacios', 'Consolación del Sur', 'Pinar del Río', 'San Luis', 'San Juan y Martínez', 'Guane'] },
-                { name: 'La Habana', municipios: ['Playa', 'Plaza de la Revolución', 'Centro Habana', 'La Habana Vieja', 'Regla', 'La Habana del Este', 'Guanabacoa', 'San Miguel del Padrón', 'Diez de Octubre', 'Cerro', 'Marianao', 'La Lisa', 'Boyeros', 'Arroyo Naranjo', 'Cotorro'] },
-                { name: 'Matanzas', municipios: ['Matanzas', 'Cárdenas', 'Varadero', 'Jovellanos', 'Pedro Betancourt', 'Colón', 'Perico', 'Los Arabos', 'Calimete', 'Jagüey Grande', 'Limonar', 'Unión de Reyes', 'Ciénaga de Zapata'] },
-                { name: 'Villa Clara', municipios: ['Santa Clara', 'Remedios', 'Sagua la Grande', 'Placetas', 'Camajuaní', 'Caibarién', 'Cifuentes', 'Santo Domingo', 'Ranchuelo', 'Manicaragua', 'Quemado de Güines', 'Encrucijada', 'Corralillo'] },
-                { name: 'Cienfuegos', municipios: ['Cienfuegos', 'Aguada de Pasajeros', 'Rodas', 'Palmira', 'Lajas', 'Cruces', 'Cumanayagua', 'Abreus'] },
-                { name: 'Sancti Spíritus', municipios: ['Sancti Spíritus', 'Trinidad', 'Cabaiguán', 'Yaguajay', 'Jatibonico', 'Fomento', 'La Sierpe', 'Taguasco'] },
-                { name: 'Ciego de Ávila', municipios: ['Ciego de Ávila', 'Morón', 'Chambas', 'Venezuela', 'Baraguá', 'Bolivia', 'Primero de Enero', 'Florencia', 'Majagua', 'Ciro Redondo'] },
-                { name: 'Camagüey', municipios: ['Camagüey', 'Nuevitas', 'Florida', 'Esmeralda', 'Vertientes', 'Santa Cruz del Sur', 'Guáimaro', 'Sibanicú', 'Minas', 'Sierra de Cubitas', 'Najasa', 'Jimaguayú', 'Carlos Manuel de Céspedes'] },
-                { name: 'Las Tunas', municipios: ['Las Tunas', 'Puerto Padre', 'Jobabo', 'Colombia', 'Manatí', 'Majibacoa', 'Amancio', 'Jesús Menéndez'] },
-                { name: 'Holguín', municipios: ['Holguín', 'Gibara', 'Rafael Freyre', 'Banes', 'Antilla', 'Báguanos', 'Mayarí', 'Frank País', 'Sagua de Tánamo', 'Moa', 'Calixto García', 'Urbano Noris', 'Cueto', 'Cacocum'] },
-                { name: 'Granma', municipios: ['Bayamo', 'Manzanillo', 'Yara', 'Campechuela', 'Media Luna', 'Niquero', 'Pilón', 'Bartolomé Masó', 'Jiguaní', 'Buey Arriba', 'Guisa', 'Cauto Cristo', 'Río Cauto'] },
-                { name: 'Santiago de Cuba', municipios: ['Santiago de Cuba', 'Palma Soriano', 'Contramaestre', 'San Luis', 'Segundo Frente', 'Songo-La Maya', 'Mella', 'Tercer Frente', 'Guamá'] },
-                { name: 'Guantánamo', municipios: ['Guantánamo', 'Baracoa', 'Maisí', 'San Antonio del Sur', 'Yateras', 'El Salvador', 'Manuel Tames', 'Imías', 'Niceto Pérez', 'Caimanera'] },
-                { name: 'Isla de la Juventud', municipios: ['Nueva Gerona'] } // Technically a special municipality
-            ],
-            after2011: [
-                 { name: 'Pinar del Río', municipios: ['Sandino', 'Mantua', 'Minas de Matahambre', 'Viñales', 'La Palma', 'Los Palacios', 'Consolación del Sur', 'Pinar del Río', 'San Luis', 'San Juan y Martínez', 'Guane'] },
-                { name: 'Artemisa', municipios: ['Alquízar', 'Artemisa', 'Bauta', 'Caimito', 'Guanajay', 'Güira de Melena', 'Mariel', 'San Antonio de los Baños', 'Bahía Honda', 'San Cristóbal', 'Candelaria'] },
-                { name: 'La Habana', municipios: ['Playa', 'Plaza de la Revolución', 'Centro Habana', 'La Habana Vieja', 'Regla', 'Habana del Este', 'Guanabacoa', 'San Miguel del Padrón', 'Diez de Octubre', 'Cerro', 'Marianao', 'La Lisa', 'Boyeros', 'Arroyo Naranjo', 'Cotorro'] },
-                { name: 'Mayabeque', municipios: ['Bejucal', 'San José de las Lajas', 'Jaruco', 'Santa Cruz del Norte', 'Madruga', 'Nueva Paz', 'San Nicolás', 'Güines', 'Melena del Sur', 'Batabanó', 'Quivicán'] },
-                { name: 'Matanzas', municipios: ['Matanzas', 'Cárdenas', 'Varadero', 'Jovellanos', 'Pedro Betancourt', 'Colón', 'Perico', 'Los Arabos', 'Calimete', 'Jagüey Grande', 'Limonar', 'Unión de Reyes', 'Ciénaga de Zapata'] },
-                { name: 'Villa Clara', municipios: ['Santa Clara', 'Remedios', 'Sagua la Grande', 'Placetas', 'Camajuaní', 'Caibarién', 'Cifuentes', 'Santo Domingo', 'Ranchuelo', 'Manicaragua', 'Quemado de Güines', 'Encrucijada', 'Corralillo'] },
-                { name: 'Cienfuegos', municipios: ['Cienfuegos', 'Aguada de Pasajeros', 'Rodas', 'Palmira', 'Lajas', 'Cruces', 'Cumanayagua', 'Abreus'] },
-                { name: 'Sancti Spíritus', municipios: ['Sancti Spíritus', 'Trinidad', 'Cabaiguán', 'Yaguajay', 'Jatibonico', 'Fomento', 'La Sierpe', 'Taguasco'] },
-                { name: 'Ciego de Ávila', municipios: ['Ciego de Ávila', 'Morón', 'Chambas', 'Venezuela', 'Baraguá', 'Bolivia', 'Primero de Enero', 'Florencia', 'Majagua', 'Ciro Redondo'] },
-                { name: 'Camagüey', municipios: ['Camagüey', 'Nuevitas', 'Florida', 'Esmeralda', 'Vertientes', 'Santa Cruz del Sur', 'Guáimaro', 'Sibanicú', 'Minas', 'Sierra de Cubitas', 'Najasa', 'Jimaguayú', 'Carlos Manuel de Céspedes'] },
-                { name: 'Las Tunas', municipios: ['Las Tunas', 'Puerto Padre', 'Jobabo', 'Colombia', 'Manatí', 'Majibacoa', 'Amancio', 'Jesús Menéndez'] },
-                { name: 'Holguín', municipios: ['Holguín', 'Gibara', 'Rafael Freyre', 'Banes', 'Antilla', 'Báguanos', 'Mayarí', 'Frank País', 'Sagua de Tánamo', 'Moa', 'Calixto García', 'Urbano Noris', 'Cueto', 'Cacocum'] },
-                { name: 'Granma', municipios: ['Bayamo', 'Manzanillo', 'Yara', 'Campechuela', 'Media Luna', 'Niquero', 'Pilón', 'Bartolomé Masó', 'Jiguaní', 'Buey Arriba', 'Guisa', 'Cauto Cristo', 'Río Cauto'] },
-                { name: 'Santiago de Cuba', municipios: ['Santiago de Cuba', 'Palma Soriano', 'Contramaestre', 'San Luis', 'Segundo Frente', 'Songo-La Maya', 'Mella', 'Tercer Frente', 'Guamá'] },
-                { name: 'Guantánamo', municipios: ['Guantánamo', 'Baracoa', 'Maisí', 'San Antonio del Sur', 'Yateras', 'El Salvador', 'Manuel Tames', 'Imías', 'Niceto Pérez', 'Caimanera'] },
-                { name: 'Isla de la Juventud', municipios: ['Nueva Gerona'] } // Special municipality
-            ]
+             before1976: [ { name: 'Pinar del Río', municipios: ['Pinar del Río', 'San Juan y Martínez', 'San Luis', 'Consolación del Sur', 'Los Palacios', 'Viñales'] }, { name: 'La Habana', municipios: ['La Habana', 'Marianao', 'Regla', 'Guanabacoa', 'Santiago de las Vegas', 'Bauta', 'San Antonio de los Baños'] }, { name: 'Matanzas', municipios: ['Matanzas', 'Cárdenas', 'Colón', 'Jagüey Grande', 'Jovellanos', 'Unión de Reyes'] }, { name: 'Las Villas', municipios: ['Santa Clara', 'Cienfuegos', 'Sancti Spíritus', 'Trinidad', 'Sagua la Grande', 'Remedios'] }, { name: 'Camagüey', municipios: ['Camagüey', 'Nuevitas', 'Florida', 'Morón', 'Ciego de Ávila'] }, { name: 'Oriente', municipios: ['Santiago de Cuba', 'Guantánamo', 'Bayamo', 'Holguín', 'Manzanillo', 'Las Tunas'] } ],
+            after1976: [ { name: 'Pinar del Río', municipios: ['Sandino', 'Mantua', 'Minas de Matahambre', 'Viñales', 'La Palma', 'Los Palacios', 'Consolación del Sur', 'Pinar del Río', 'San Luis', 'San Juan y Martínez', 'Guane'] }, { name: 'La Habana', municipios: ['Playa', 'Plaza de la Revolución', 'Centro Habana', 'La Habana Vieja', 'Regla', 'La Habana del Este', 'Guanabacoa', 'San Miguel del Padrón', 'Diez de Octubre', 'Cerro', 'Marianao', 'La Lisa', 'Boyeros', 'Arroyo Naranjo', 'Cotorro'] }, { name: 'Matanzas', municipios: ['Matanzas', 'Cárdenas', 'Varadero', 'Jovellanos', 'Pedro Betancourt', 'Colón', 'Perico', 'Los Arabos', 'Calimete', 'Jagüey Grande', 'Limonar', 'Unión de Reyes', 'Ciénaga de Zapata'] }, { name: 'Villa Clara', municipios: ['Santa Clara', 'Remedios', 'Sagua la Grande', 'Placetas', 'Camajuaní', 'Caibarién', 'Cifuentes', 'Santo Domingo', 'Ranchuelo', 'Manicaragua', 'Quemado de Güines', 'Encrucijada', 'Corralillo'] }, { name: 'Cienfuegos', municipios: ['Cienfuegos', 'Aguada de Pasajeros', 'Rodas', 'Palmira', 'Lajas', 'Cruces', 'Cumanayagua', 'Abreus'] }, { name: 'Sancti Spíritus', municipios: ['Sancti Spíritus', 'Trinidad', 'Cabaiguán', 'Yaguajay', 'Jatibonico', 'Fomento', 'La Sierpe', 'Taguasco'] }, { name: 'Ciego de Ávila', municipios: ['Ciego de Ávila', 'Morón', 'Chambas', 'Venezuela', 'Baraguá', 'Bolivia', 'Primero de Enero', 'Florencia', 'Majagua', 'Ciro Redondo'] }, { name: 'Camagüey', municipios: ['Camagüey', 'Nuevitas', 'Florida', 'Esmeralda', 'Vertientes', 'Santa Cruz del Sur', 'Guáimaro', 'Sibanicú', 'Minas', 'Sierra de Cubitas', 'Najasa', 'Jimaguayú', 'Carlos Manuel de Céspedes'] }, { name: 'Las Tunas', municipios: ['Las Tunas', 'Puerto Padre', 'Jobabo', 'Colombia', 'Manatí', 'Majibacoa', 'Amancio', 'Jesús Menéndez'] }, { name: 'Holguín', municipios: ['Holguín', 'Gibara', 'Rafael Freyre', 'Banes', 'Antilla', 'Báguanos', 'Mayarí', 'Frank País', 'Sagua de Tánamo', 'Moa', 'Calixto García', 'Urbano Noris', 'Cueto', 'Cacocum'] }, { name: 'Granma', municipios: ['Bayamo', 'Manzanillo', 'Yara', 'Campechuela', 'Media Luna', 'Niquero', 'Pilón', 'Bartolomé Masó', 'Jiguaní', 'Buey Arriba', 'Guisa', 'Cauto Cristo', 'Río Cauto'] }, { name: 'Santiago de Cuba', municipios: ['Santiago de Cuba', 'Palma Soriano', 'Contramaestre', 'San Luis', 'Segundo Frente', 'Songo-La Maya', 'Mella', 'Tercer Frente', 'Guamá'] }, { name: 'Guantánamo', municipios: ['Guantánamo', 'Baracoa', 'Maisí', 'San Antonio del Sur', 'Yateras', 'El Salvador', 'Manuel Tames', 'Imías', 'Niceto Pérez', 'Caimanera'] }, { name: 'Isla de la Juventud', municipios: ['Nueva Gerona'] } ],
+            after2011: [ { name: 'Pinar del Río', municipios: ['Sandino', 'Mantua', 'Minas de Matahambre', 'Viñales', 'La Palma', 'Los Palacios', 'Consolación del Sur', 'Pinar del Río', 'San Luis', 'San Juan y Martínez', 'Guane'] }, { name: 'Artemisa', municipios: ['Alquízar', 'Artemisa', 'Bauta', 'Caimito', 'Guanajay', 'Güira de Melena', 'Mariel', 'San Antonio de los Baños', 'Bahía Honda', 'San Cristóbal', 'Candelaria'] }, { name: 'La Habana', municipios: ['Playa', 'Plaza de la Revolución', 'Centro Habana', 'La Habana Vieja', 'Regla', 'Habana del Este', 'Guanabacoa', 'San Miguel del Padrón', 'Diez de Octubre', 'Cerro', 'Marianao', 'La Lisa', 'Boyeros', 'Arroyo Naranjo', 'Cotorro'] }, { name: 'Mayabeque', municipios: ['Bejucal', 'San José de las Lajas', 'Jaruco', 'Santa Cruz del Norte', 'Madruga', 'Nueva Paz', 'San Nicolás', 'Güines', 'Melena del Sur', 'Batabanó', 'Quivicán'] }, { name: 'Matanzas', municipios: ['Matanzas', 'Cárdenas', 'Varadero', 'Jovellanos', 'Pedro Betancourt', 'Colón', 'Perico', 'Los Arabos', 'Calimete', 'Jagüey Grande', 'Limonar', 'Unión de Reyes', 'Ciénaga de Zapata'] }, { name: 'Villa Clara', municipios: ['Santa Clara', 'Remedios', 'Sagua la Grande', 'Placetas', 'Camajuaní', 'Caibarién', 'Cifuentes', 'Santo Domingo', 'Ranchuelo', 'Manicaragua', 'Quemado de Güines', 'Encrucijada', 'Corralillo'] }, { name: 'Cienfuegos', municipios: ['Cienfuegos', 'Aguada de Pasajeros', 'Rodas', 'Palmira', 'Lajas', 'Cruces', 'Cumanayagua', 'Abreus'] }, { name: 'Sancti Spíritus', municipios: ['Sancti Spíritus', 'Trinidad', 'Cabaiguán', 'Yaguajay', 'Jatibonico', 'Fomento', 'La Sierpe', 'Taguasco'] }, { name: 'Ciego de Ávila', municipios: ['Ciego de Ávila', 'Morón', 'Chambas', 'Venezuela', 'Baraguá', 'Bolivia', 'Primero de Enero', 'Florencia', 'Majagua', 'Ciro Redondo'] }, { name: 'Camagüey', municipios: ['Camagüey', 'Nuevitas', 'Florida', 'Esmeralda', 'Vertientes', 'Santa Cruz del Sur', 'Guáimaro', 'Sibanicú', 'Minas', 'Sierra de Cubitas', 'Najasa', 'Jimaguayú', 'Carlos Manuel de Céspedes'] }, { name: 'Las Tunas', municipios: ['Las Tunas', 'Puerto Padre', 'Jobabo', 'Colombia', 'Manatí', 'Majibacoa', 'Amancio', 'Jesús Menéndez'] }, { name: 'Holguín', municipios: ['Holguín', 'Gibara', 'Rafael Freyre', 'Banes', 'Antilla', 'Báguanos', 'Mayarí', 'Frank País', 'Sagua de Tánamo', 'Moa', 'Calixto García', 'Urbano Noris', 'Cueto', 'Cacocum'] }, { name: 'Granma', municipios: ['Bayamo', 'Manzanillo', 'Yara', 'Campechuela', 'Media Luna', 'Niquero', 'Pilón', 'Bartolomé Masó', 'Jiguaní', 'Buey Arriba', 'Guisa', 'Cauto Cristo', 'Río Cauto'] }, { name: 'Santiago de Cuba', municipios: ['Santiago de Cuba', 'Palma Soriano', 'Contramaestre', 'San Luis', 'Segundo Frente', 'Songo-La Maya', 'Mella', 'Tercer Frente', 'Guamá'] }, { name: 'Guantánamo', municipios: ['Guantánamo', 'Baracoa', 'Maisí', 'San Antonio del Sur', 'Yateras', 'El Salvador', 'Manuel Tames', 'Imías', 'Niceto Pérez', 'Caimanera'] }, { name: 'Isla de la Juventud', municipios: ['Nueva Gerona'] } ]
         };
-
-        // --- Consulate Data Processing (Using ISO Codes) ---
-        // Data format: ISO_CODE,PAÍS_NAME(optional),CONSULADO
-        const consuladosDataRawISO = `ISO_CODE,PAÍS,CONSULADO
-US,ESTADOS UNIDOS,WASHINGTON
-AG,ANTIGUA Y BARBUDA,Saint John
-AR,ARGENTINA,Buenos Aires
-BS,BAHAMAS,NasáBriu
-BB,BARBADOS,Bidgetown
-BZ,BELICE,Balmopán
-BO,BOLIVIA,La Paz
-BO,,Santa Cruz
-BR,BRASIL,Brasilia
-BR,,São Paulo
-CL,CHILE,Santiago de Chile
-CO,COLOMBIA,Bogotá
-CR,COSTA RICA,San José
-DM,DOMINICA,Roseau
-EC,ECUADOR,Quito
-SV,EL SALVADOR,San Salvador
-HT,HAITI,Puerto Príncipe
-HN,HONDURAS,Tegucigalpa
-JM,JAMAICA,Kingston
-GD,GRANADA,Saint George
-GT,GUATEMALA,Ciudad de Guatemala
-GY,GUYANA,Georgetown
-MX,MÉXICO,Cancún
-MX,,Ciudad de México
-MX,,Mérida
-MX,,Monterrey
-MX,,Veracruz
-NI,NICARAGUA,Managua
-PA,PANAMÁ,Panamá
-PY,PARAGUAY,Asunción
-PE,PERÚ,Lima
-DO,REPUBLICA DOMINICANA,Santo Domingo
-KN,SAINT KITTS Y NEVIS,Basseterre
-VC,SAN VICENTE Y LAS GRANADINAS,Kingstown
-LC,SANTA LUCIA,Castries
-SR,SURINAM,Paramaribo
-TT,TRINIDAD TOBAGO,Puerto España
-UY,URUGUAY,Montevideo
-VE,VENEZUELA,Caracas
-DE,Alemania,Berlin
-DE,,Bonn
-AT,Austria,Viena
-AZ,Azerbaiyan,Baku
-BY,Belarus,Minsk
-BE,Belgica,Bruselas
-BG,Bulgaria,Sofia
-CY,Chipre,Nicosia
-DK,Dinamarca,Copenhague
-SK,Eslovaquia,Bratislava
-ES,España,Madrid
-ES,,Barcelona
-ES,,Islas Canarias
-ES,,Galicia
-ES,,Sevilla
-FI,Finlandia,Helsinki
-FR,Francia,Paris
-GR,Grecia,Atenas
-HU,Hungria,Budapest
-IE,Irlanda,Dublin
-IT,Italia,Roma
-IT,,Milan
-KZ,Kazajstan,Astana
-RU,Rusia,Moscu
-NO,Noruega,Oslo
-NL,Paises Bajos,La Haya
-PL,Polonia,Varsovia
-PT,Portugal,Lisboa
-GB,Reino Unido De Gran Bretaña,Londres
-CZ,Republica Checa,Praga
-RO,Rumania,Bucarest
-RS,Serbia,Belgrado
-CH,Suiza,Berna
-TR,Turquia,Ankara
-TR,,Estambul
-CA,Canada,Montreal
-CA,,Toronto
-CA,,Ottawa
-SA,Arabia Saudita,Arabia Saudita
-DZ,Argelia,Argelia
-EG,Egipto,Egipto
-AE,EAU,EAU
-IR,Irán,Irán
-KW,Kuwait,Kuwait
-LB,Líbano,Líbano
-MA,Marruecos,Marruecos
-QA,Qatar,Qatar
-SY,Siria,Siria
-TN,Túnez,Túnez
-AO,Angola,Angola
-BJ,Benin,Benin
-BW,Bostwana,Bostwana
-BF,Burkina Faso,Burkina Faso
-CV,Cabo Verde,Cabo Verde
-CG,Congo Brazaville,Congo Brazaville
-CD,Congo Kinshasa,Congo Kinshasa
-DJ,Djibouti,Djibouti
-ET,Etiopía,Etiopía
-GA,Gabón,Gabón
-GM,Gambia,Gambia
-GH,Ghana,Ghana
-GW,Guinea Bissau,Guinea Bissau
-GN,Guinea Conakry,Guinea Conakry
-GQ,Guinea Ecuatorial,Guinea Ecuatorial
-SC,Islas Seychelles,Islas Seychelles
-KE,Kenya,Keny`;
-
-        const consuladosPorPaisISO = {}; // Use ISO code as key
-        const todosLosConsuladosISO = new Set();
-        let paisISOCodeActual = null;
-
-        consuladosDataRawISO.split('\n').slice(1).forEach(line => { // Skip header
-            line = line.trim();
-            if (!line) return;
-
-            const parts = line.split(',');
-            // Expecting ISO_CODE, PAIS_NAME (optional), CONSULADO
-            const isoCode = parts[0].trim().toUpperCase();
-            let consulado = null;
-
-             // Determine the consulate name based on the number of parts
-            if (parts.length >= 3) { // Standard line: ISO, PAIS, CONSULADO or ISO,,CONSULADO
-                consulado = parts[parts.length - 1].trim(); // Consulate is always the last part
-            } else if (parts.length === 2 && !isoCode) { // Continuation line: ,,CONSULADO (or similar if PAIS was missing)
-                consulado = parts[1].trim();
-            } else if (parts.length === 2 && isoCode) { // Line like: ISO,CONSULADO (Pais name omitted)
-                 consulado = parts[1].trim();
-            }
-
-            if (isoCode && consulado) { // New country entry or first entry for a country
-                paisISOCodeActual = isoCode;
-                if (!consuladosPorPaisISO[paisISOCodeActual]) {
-                    consuladosPorPaisISO[paisISOCodeActual] = [];
-                }
-                consuladosPorPaisISO[paisISOCodeActual].push(consulado);
-                todosLosConsuladosISO.add(consulado);
-            } else if (!isoCode && consulado && paisISOCodeActual) { // Continuation line for the last ISO code
-                consuladosPorPaisISO[paisISOCodeActual].push(consulado);
-                todosLosConsuladosISO.add(consulado);
-            }
-        });
-
-        // Convert Set to sorted array
+        const consuladosDataRawISO = `ISO_CODE,PAÍS,CONSULADO\nUS,ESTADOS UNIDOS,WASHINGTON\nAG,ANTIGUA Y BARBUDA,Saint John\nAR,ARGENTINA,Buenos Aires\nBS,BAHAMAS,NasáBriu\nBB,BARBADOS,Bidgetown\nBZ,BELICE,Balmopán\nBO,BOLIVIA,La Paz\nBO,,Santa Cruz\nBR,BRASIL,Brasilia\nBR,,São Paulo\nCL,CHILE,Santiago de Chile\nCO,COLOMBIA,Bogotá\nCR,COSTA RICA,San José\nDM,DOMINICA,Roseau\nEC,ECUADOR,Quito\nSV,EL SALVADOR,San Salvador\nHT,HAITI,Puerto Príncipe\nHN,HONDURAS,Tegucigalpa\nJM,JAMAICA,Kingston\nGD,GRANADA,Saint George\nGT,GUATEMALA,Ciudad de Guatemala\nGY,GUYANA,Georgetown\nMX,MÉXICO,Cancún\nMX,,Ciudad de México\nMX,,Mérida\nMX,,Monterrey\nMX,,Veracruz\nNI,NICARAGUA,Managua\nPA,PANAMÁ,Panamá\nPY,PARAGUAY,Asunción\nPE,PERÚ,Lima\nDO,REPUBLICA DOMINICANA,Santo Domingo\nKN,SAINT KITTS Y NEVIS,Basseterre\nVC,SAN VICENTE Y LAS GRANADINAS,Kingstown\nLC,SANTA LUCIA,Castries\nSR,SURINAM,Paramaribo\nTT,TRINIDAD TOBAGO,Puerto España\nUY,URUGUAY,Montevideo\nVE,VENEZUELA,Caracas\nDE,Alemania,Berlin\nDE,,Bonn\nAT,Austria,Viena\nAZ,Azerbaiyan,Baku\nBY,Belarus,Minsk\nBE,Belgica,Bruselas\nBG,Bulgaria,Sofia\nCY,Chipre,Nicosia\nDK,Dinamarca,Copenhague\nSK,Eslovaquia,Bratislava\nES,España,Madrid\nES,,Barcelona\nES,,Islas Canarias\nES,,Galicia\nES,,Sevilla\nFI,Finlandia,Helsinki\nFR,Francia,Paris\nGR,Grecia,Atenas\nHU,Hungria,Budapest\nIE,Irlanda,Dublin\nIT,Italia,Roma\nIT,,Milan\nKZ,Kazajstan,Astana\nRU,Rusia,Moscu\nNO,Noruega,Oslo\nNL,Paises Bajos,La Haya\nPL,Polonia,Varsovia\nPT,Portugal,Lisboa\nGB,Reino Unido De Gran Bretaña,Londres\nCZ,Republica Checa,Praga\nRO,Rumania,Bucarest\nRS,Serbia,Belgrado\nCH,Suiza,Berna\nTR,Turquia,Ankara\nTR,,Estambul\nCA,Canada,Montreal\nCA,,Toronto\nCA,,Ottawa\nSA,Arabia Saudita,Arabia Saudita\nDZ,Argelia,Argelia\nEG,Egipto,Egipto\nAE,EAU,EAU\nIR,Irán,Irán\nKW,Kuwait,Kuwait\nLB,Líbano,Líbano\nMA,Marruecos,Marruecos\nQA,Qatar,Qatar\nSY,Siria,Siria\nTN,Túnez,Túnez\nAO,Angola,Angola\nBJ,Benin,Benin\nBW,Bostwana,Bostwana\nBF,Burkina Faso,Burkina Faso\nCV,Cabo Verde,Cabo Verde\nCG,Congo Brazaville,Congo Brazaville\nCD,Congo Kinshasa,Congo Kinshasa\nDJ,Djibouti,Djibouti\nET,Etiopía,Etiopía\nGA,Gabón,Gabón\nGM,Gambia,Gambia\nGH,Ghana,Ghana\nGW,Guinea Bissau,Guinea Bissau`;
+        const consuladosPorPaisISO = {}; const todosLosConsuladosISO = new Set(); let paisISOCodeActual = null;
+        consuladosDataRawISO.split('\n').slice(1).forEach(line => { line = line.trim(); if (!line) return; const parts = line.split(','); const isoCode = parts[0].trim().toUpperCase(); let consulado = null; if (parts.length >= 3) { consulado = parts[parts.length - 1].trim(); } else if (parts.length === 2 && !isoCode) { consulado = parts[1].trim(); } else if (parts.length === 2 && isoCode) { consulado = parts[1].trim(); } if (isoCode && consulado) { paisISOCodeActual = isoCode; if (!consuladosPorPaisISO[paisISOCodeActual]) { consuladosPorPaisISO[paisISOCodeActual] = []; } consuladosPorPaisISO[paisISOCodeActual].push(consulado); todosLosConsuladosISO.add(consulado); } else if (!isoCode && consulado && paisISOCodeActual) { consuladosPorPaisISO[paisISOCodeActual].push(consulado); todosLosConsuladosISO.add(consulado); } });
         const allConsulatesISOSorted = Array.from(todosLosConsuladosISO).sort((a, b) => a.localeCompare(b));
 
+        // --- Funciones Auxiliares ---
+        // (populateSelect, populateCountrySelects, updateConsulados, getYearFromDateString, updateProvinciasMunicipiosByYear, handlePaisNacimientoChange - sin cambios)
+        function populateSelect(selectElement, items, placeholder) { if (!selectElement) return; const currentValue = selectElement.value; selectElement.innerHTML = ''; const placeholderOption = document.createElement('option'); placeholderOption.value = ''; placeholderOption.textContent = placeholder; placeholderOption.disabled = true; placeholderOption.selected = true; selectElement.appendChild(placeholderOption); items.forEach(item => { const option = document.createElement('option'); option.value = item.value; option.textContent = item.textContent; selectElement.appendChild(option); }); if (items.some(item => item.value === currentValue)) { selectElement.value = currentValue; } }
+        function populateCountrySelects() { const countrySelects = ['paisResidencia', 'paisNacimiento', 'paisResidenciaActual', 'paisTrabajo']; const sortedCountries = countries.sort((a, b) => a.name.localeCompare(b.name)); countrySelects.forEach(selectId => { const select = document.getElementById(selectId); if (select) { populateSelect(select, sortedCountries.map(country => ({ value: country.code, textContent: country.name })), 'Seleccione país'); } }); }
+        function updateConsulados() { const paisResidenciaSelect = document.getElementById('paisResidencia'); const consuladoSelect = document.getElementById('consulado'); const selectedCountryCode = paisResidenciaSelect.value; let optionsToShow = []; if (selectedCountryCode && consuladosPorPaisISO[selectedCountryCode]) { optionsToShow = consuladosPorPaisISO[selectedCountryCode].sort((a, b) => a.localeCompare(b)); consuladoSelect.disabled = false; } else if (selectedCountryCode) { optionsToShow = allConsulatesISOSorted; consuladoSelect.disabled = false; } else { consuladoSelect.disabled = true; } populateSelect(consuladoSelect, optionsToShow.map(c => ({ value: c, textContent: c })), 'Seleccione un consulado'); }
+        function getYearFromDateString(dateString) { if (!dateString) return null; const date = new Date(dateString); return isNaN(date.getFullYear()) ? null : date.getFullYear(); }
+        function updateProvinciasMunicipiosByYear(year) { const provinciaSelect = document.getElementById('provinciaNacimiento'); const municipioSelect = document.getElementById('municipioNacimiento'); let provincias; if (!year) { provincias = []; } else if (year < 1976) { provincias = provinciasHistoricas.before1976; } else if (year < 2011) { provincias = provinciasHistoricas.after1976; } else { provincias = provinciasHistoricas.after2011; } populateSelect(provinciaSelect, provincias.map(p => ({ value: p.name.toLowerCase().replace(/\s+/g, '_'), textContent: p.name })), 'Seleccione provincia'); provinciaSelect.disabled = provincias.length === 0; populateSelect(municipioSelect, [], 'Seleccione municipio'); municipioSelect.disabled = true; provinciaSelect.onchange = function() { const selectedProvinciaData = provincias.find(p => p.name.toLowerCase().replace(/\s+/g, '_') === this.value ); if (selectedProvinciaData) { populateSelect(municipioSelect, selectedProvinciaData.municipios.map(m => ({ value: m.toLowerCase().replace(/\s+/g, '_'), textContent: m })), 'Seleccione municipio' ); municipioSelect.disabled = false; } else { populateSelect(municipioSelect, [], 'Seleccione municipio'); municipioSelect.disabled = true; } }; if (provinciaSelect.value) { provinciaSelect.dispatchEvent(new Event('change')); } }
+        function handlePaisNacimientoChange() { const paisNacimiento = document.getElementById('paisNacimiento').value; const fechaNacimiento = document.getElementById('fechaNacimiento').value; const provinciaSelect = document.getElementById('provinciaNacimiento'); const municipioSelect = document.getElementById('municipioNacimiento'); const provinciaText = document.getElementById('provinciaNacimientoText'); const municipioText = document.getElementById('municipioNacimientoText'); const provinciaContainer = document.getElementById('provinciaNacimientoContainer'); const municipioContainer = document.getElementById('municipioNacimientoContainer'); provinciaContainer.style.display = 'block'; municipioContainer.style.display = 'block'; if (paisNacimiento === 'CU') { provinciaSelect.style.display = 'block'; municipioSelect.style.display = 'block'; provinciaText.style.display = 'none'; municipioText.style.display = 'none'; provinciaSelect.required = true; municipioSelect.required = true; provinciaText.required = false; municipioText.required = false; const year = getYearFromDateString(fechaNacimiento); updateProvinciasMunicipiosByYear(year); } else { provinciaSelect.style.display = 'none'; municipioSelect.style.display = 'none'; provinciaText.style.display = 'block'; municipioText.style.display = 'block'; provinciaSelect.required = false; municipioSelect.required = false; provinciaText.required = true; municipioText.required = true; provinciaText.disabled = false; municipioText.disabled = false; populateSelect(provinciaSelect, [], 'Seleccione provincia'); populateSelect(municipioSelect, [], 'Seleccione municipio'); provinciaSelect.disabled = true; municipioSelect.disabled = true; } }
 
-        // --- Utility Functions ---
+        // --- Event Listeners y Población del Formulario ---
+        // (DOMContentLoaded - sin cambios significativos)
+        document.addEventListener('DOMContentLoaded', function() {
+            const fechaSolicitudInput = document.getElementById('fechaSolicitud'); if (fechaSolicitudInput) { const today = new Date().toISOString().split('T')[0]; fechaSolicitudInput.value = today; }
+            populateCountrySelects();
+            const paisNacimientoSelect = document.getElementById('paisNacimiento'); if (paisNacimientoSelect) { paisNacimientoSelect.value = 'CU'; }
+            fetch('https://ipapi.co/json/') .then(response => response.ok ? response.json() : Promise.reject('Failed to fetch IP info')) .then(data => { if (data && data.country_code) { const paisResidenciaSelect = document.getElementById('paisResidencia'); const paisResidenciaActualSelect = document.getElementById('paisResidenciaActual'); if (paisResidenciaSelect && !paisResidenciaSelect.value) { paisResidenciaSelect.value = data.country_code; paisResidenciaSelect.dispatchEvent(new Event('change')); } if (paisResidenciaActualSelect && !paisResidenciaActualSelect.value) { paisResidenciaActualSelect.value = data.country_code; } } }) .catch(error => { console.warn('Could not fetch IP info:', error); updateConsulados(); }) .finally(() => { handlePaisNacimientoChange(); updateConsulados(); });
+            document.getElementById('paisResidencia').addEventListener('change', updateConsulados); document.getElementById('paisNacimiento').addEventListener('change', handlePaisNacimientoChange); document.getElementById('fechaNacimiento').addEventListener('change', handlePaisNacimientoChange);
+            const referenceProvinciaSelect = document.getElementById('referenciaProvincia'); const referenciaMunicipioSelect = document.getElementById('referenciaMunicipio'); const currentProvinces = provinciasHistoricas.after2011; populateSelect(referenceProvinciaSelect, currentProvinces.map(p => ({ value: p.name.toLowerCase().replace(/\s+/g, '_'), textContent: p.name })), 'Seleccione provincia' ); referenceProvinciaSelect.addEventListener('change', function() { const selectedProvincia = currentProvinces.find(p => p.name.toLowerCase().replace(/\s+/g, '_') === this.value ); if (selectedProvincia) { populateSelect(referenciaMunicipioSelect, selectedProvincia.municipios.map(m => ({ value: m.toLowerCase().replace(/\s+/g, '_'), textContent: m })), 'Seleccione municipio' ); referenciaMunicipioSelect.disabled = false; } else { populateSelect(referenciaMunicipioSelect, [], 'Seleccione municipio'); referenciaMunicipioSelect.disabled = true; } });
+        });
 
-        /**
-         * Shows a notification message using Toastify.
-         * @param {string} message - The message to display.
-         * @param {string} type - 'success' or 'error'.
-         */
-        function showNotification(message, type = 'error') {
-            Toastify({
-                text: message,
-                duration: 4000, // Longer duration
-                gravity: "top",
-                position: "center",
-                className: type, // 'success' or 'error'
-                stopOnFocus: true,
-                escapeMarkup: false, // Allow HTML in message if needed
-                style: { // Additional styling if needed
-                    fontSize: "15px",
-                    lineHeight: "1.5"
-                }
-            }).showToast();
-        }
+        // --- Mapeo de Campos ---
+        // (fieldMapping - sin cambios)
+        const fieldMapping = [ {id: 1, field: 'fechaSolicitud', label: 'Fecha de Solicitud'}, {id: 2, field: 'tramite', label: 'Tipo de Trámite'}, {id: 3, field: 'paisResidencia', label: 'País de Residencia'}, {id: 4, field: 'consulado', label: 'Consulado'}, {id: 5, field: 'numeroPasaporte', label: 'Número de Pasaporte'}, {id: 6, field: 'carneIdentidad', label: 'Carné de Identidad'}, {id: 7, field: 'fechaNacimiento', label: 'Fecha de Nacimiento'}, {id: 8, field: 'sexo', label: 'Sexo'}, {id: 9, field: 'primerApellido', label: 'Primer Apellido'}, {id: 10, field: 'segundoApellido', label: 'Segundo Apellido'}, {id: 11, field: 'primerNombre', label: 'Primer Nombre'}, {id: 12, field: 'segundoNombre', label: 'Segundo Nombre'}, {id: 13, field: 'nombrePadre', label: 'Nombre del Padre'}, {id: 14, field: 'nombreMadre', label: 'Nombre de la Madre'}, {id: 15, field: 'paisNacimiento', label: 'País de Nacimiento'}, {id: 16, field: 'provinciaNacimiento', label: 'Provincia Nacimiento (Cuba)', conditional: (data) => data[15] === 'CU'}, {id: 17, field: 'municipioNacimiento', label: 'Municipio Nacimiento (Cuba)', conditional: (data) => data[15] === 'CU'}, {id: 16.1, field: 'provinciaNacimientoText', label: 'Provincia Nacimiento (Otro)', conditional: (data) => data[15] !== 'CU'}, {id: 17.1, field: 'municipioNacimientoText', label: 'Municipio Nacimiento (Otro)', conditional: (data) => data[15] !== 'CU'}, {id: 18, field: 'colorOjos', label: 'Color de Ojos'}, {id: 19, field: 'colorPiel', label: 'Color de Piel'}, {id: 20, field: 'colorCabello', label: 'Color de Cabello'}, {id: 21, field: 'estatura', label: 'Estatura'}, {id: 22, field: 'estadoCivil', label: 'Estado Civil'}, {id: 23, field: 'diaSalida', label: 'Día de Salida'}, {id: 24, field: 'mesSalida', label: 'Mes de Salida'}, {id: 25, field: 'anoSalida', label: 'Año de Salida'}, {id: 26, field: 'direccionResidencia', label: 'Dirección de Residencia'}, {id: 27, field: 'codigoPostalResidencia', label: 'Código Postal Residencia'}, {id: 28, field: 'provinciaEstadoResidencia', label: 'Provincia/Estado Residencia'}, {id: 29, field: 'paisResidenciaActual', label: 'País de Residencia Actual'}, {id: 30, field: 'telefonoResidencia', label: 'Teléfono Residencia'}, {id: 31, field: 'emailResidencia', label: 'Email Residencia'}, {id: 32, field: 'faxResidencia', label: 'Fax Residencia'}, {id: 33, field: 'nombreCentroTrabajo', label: 'Centro de Trabajo/Estudio'}, {id: 34, field: 'profesionTrabajo', label: 'Profesión'}, {id: 35, field: 'ocupacionTrabajo', label: 'Ocupación'}, {id: 36, field: 'direccionTrabajo', label: 'Dirección Trabajo'}, {id: 37, field: 'codigoPostalTrabajo', label: 'Código Postal Trabajo'}, {id: 38, field: 'provinciaEstadoTrabajo', label: 'Provincia/Estado Trabajo'}, {id: 39, field: 'paisTrabajo', label: 'País Trabajo'}, {id: 40, field: 'telefonoTrabajo', label: 'Teléfono Trabajo'}, {id: 41, field: 'emailTrabajo', label: 'Email Trabajo'}, {id: 42, field: 'faxTrabajo', label: 'Fax Trabajo'}, {id: 43, field: 'nivelCultural', label: 'Nivel Cultural'}, {id: 44, field: 'ocupacionActual', label: 'Ocupación Actual'}, {id: 45, field: 'profesionOficio', label: 'Profesión u Oficio'}, {id: 46, field: 'referenciaNombre', label: 'Nombre Referencia'}, {id: 47, field: 'tipoVinculo', label: 'Tipo de Vínculo'}, {id: 48, field: 'referenciaDireccion', label: 'Dirección Referencia'}, {id: 49, field: 'referenciaProvincia', label: 'Provincia Referencia'}, {id: 50, field: 'referenciaMunicipio', label: 'Municipio Referencia'}, {id: 51, field: 'direccionCuba1', label: 'Dirección Cuba 1'}, {id: 52, field: 'desdeCuba1', label: 'Desde Cuba 1'}, {id: 53, field: 'hastaCuba1', label: 'Hasta Cuba 1'}, {id: 54, field: 'direccionCuba2', label: 'Dirección Cuba 2'}, {id: 55, field: 'desdeCuba2', label: 'Desde Cuba 2'}, {id: 56, field: 'hastaCuba2', label: 'Hasta Cuba 2'}, {id: 57, field: 'pasaporteNumeroVencido', label: 'Número Pasaporte Vencido'}, {id: 58, field: 'pasaporteFechaExpedicionVencido', label: 'Fecha Expedición Pasaporte'}, {id: 59, field: 'pasaporteLugarExpedicionVencido', label: 'Lugar Expedición Pasaporte'}, {id: 60, field: 'certNacimientoTomo', label: 'Tomo Nacimiento'}, {id: 61, field: 'certNacimientoFolio', label: 'Folio Nacimiento'}, {id: 62, field: 'certNacimientoRegistroCivil', label: 'Registro Civil'}, {id: 63, field: 'inscripcionConsularNumero', label: 'Número Inscripción Consular'}, {id: 64, field: 'inscripcionConsularFecha', label: 'Fecha Inscripción Consular'} ];
 
-        /**
-         * Scrolls the page to the first element with the 'error-field' class.
-         */
-        function scrollToFirstError() {
-            const firstError = document.querySelector('.error-field');
-            if (firstError) {
-                firstError.scrollIntoView({ behavior: 'smooth', block: 'center' });
-                // Optionally focus after scrolling
-                setTimeout(() => firstError.focus(), 300);
-            }
-        }
-
-        /**
-         * Validates a date given day, month, and year. Checks basic validity and range.
-         * @param {string|number} dia - Day.
-         * @param {string|number} mes - Month.
-         * @param {string|number} ano - Year.
-         * @returns {boolean} - True if the date is valid, false otherwise.
-         */
-        function validarFecha(dia, mes, ano) {
-            dia = parseInt(dia);
-            mes = parseInt(mes);
-            ano = parseInt(ano);
-
-            if (isNaN(dia) || isNaN(mes) || isNaN(ano)) return false;
-            // Basic year check (e.g., 1900 to current year + 1)
-            const currentYear = new Date().getFullYear();
-            if (ano < 1900 || ano > currentYear + 1) return false;
-            if (mes < 1 || mes > 12) return false;
-            if (dia < 1 || dia > 31) return false;
-
-
-            const diasPorMes = [31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31];
-            // Adjust for leap year
-            if (mes === 2 && ((ano % 4 === 0 && ano % 100 !== 0) || ano % 400 === 0)) {
-                diasPorMes[1] = 29;
-            }
-
-            if (dia > diasPorMes[mes - 1]) return false;
-
-            // Check if the date is in the future (only relevant for birth date in this context)
-            // This check might be better placed specifically where birth date is validated
-            // const inputDate = new Date(ano, mes - 1, dia);
-            // if (inputDate > new Date()) return false; // Cannot be a future date
-
-            return true;
-        }
-
-        /**
-         * Checks if a given year is valid (numeric and within a reasonable range).
-         * @param {string|number} year - The year to validate.
-         * @returns {boolean} - True if the year is valid, false otherwise.
-         */
-        function isValidBirthYear(year) {
-            const yearNum = parseInt(year);
-            const currentYear = new Date().getFullYear();
-            return !isNaN(yearNum) && yearNum >= 1900 && yearNum <= currentYear;
-        }
-
-
-        /**
-         * Validates a Cuban Carné de Identidad (ID card number).
-         * Checks length (11 digits) and if the first 6 digits form a valid date.
-         * @param {string} ci - The ID card number.
-         * @returns {boolean} - True if valid, false otherwise.
-         */
-        function validarCI(ci) {
-            if (!ci || ci.length !== 11 || !/^\d{11}$/.test(ci)) {
-                return false;
-            }
-            // Basic date check from CI digits
-            const yearDigits = parseInt(ci.substring(0, 2));
-            const month = parseInt(ci.substring(2, 4));
-            const day = parseInt(ci.substring(4, 6));
-
-            // Determine century (simple assumption, might need refinement for edge cases)
-            const currentYearLastTwoDigits = new Date().getFullYear() % 100;
-            const century = (yearDigits <= currentYearLastTwoDigits) ? 2000 : 1900;
-            const year = century + yearDigits;
-
-            return validarFecha(day, month, year); // Use the date validation function
-        }
-
-        /**
-         * Validates a generic input field against a regex.
-         * Adds/removes 'error-field' class and shows notification on error.
-         * @param {HTMLInputElement} input - The input element.
-         * @param {RegExp} regex - The regular expression to test against.
-         * @param {string} mensaje - The error message to show.
-         * @returns {boolean} - True if valid, false otherwise.
-         */
-        function validarCampo(input, regex, mensaje) {
-            if (!input) return true; // Skip if input doesn't exist
-            if (!regex.test(input.value)) {
-                input.classList.add('error-field');
-                showNotification(`${input.previousElementSibling?.textContent || input.name || input.id}: ${mensaje}`);
-                return false;
-            }
-            input.classList.remove('error-field');
-            return true;
-        }
-
-        // --- Form Population and Dynamic Updates ---
-
-        /**
-         * Populates a select dropdown with options.
-         * @param {HTMLSelectElement} selectElement - The select element to populate.
-         * @param {Array<object>} items - Array of objects with 'value' and 'textContent'.
-         * @param {string} placeholder - Text for the default disabled option.
-         */
-        function populateSelect(selectElement, items, placeholder) {
-            if (!selectElement) return;
-            // Store current value if needed
-            const currentValue = selectElement.value;
-            selectElement.innerHTML = `<option value="">${placeholder}</option>`; // Clear existing options
-            items.forEach(item => {
-                const option = document.createElement('option');
-                option.value = item.value;
-                option.textContent = item.textContent;
-                selectElement.appendChild(option);
-            });
-             // Try to restore previous value if it exists in the new options
-             if (items.some(item => item.value === currentValue)) {
-                selectElement.value = currentValue;
-            }
-        }
-
-        /**
-         * Replaces the element inside a container (usually swapping input/select).
-         * @param {HTMLElement} container - The parent container element.
-         * @param {HTMLElement} newElement - The new element (input or select) to insert.
-         */
-        function replaceElementInContainer(container, newElement) {
-            if (!container) return;
-            // Remove existing input or select
-            const existingElement = container.querySelector('input, select');
-            if (existingElement) {
-                container.removeChild(existingElement);
-            }
-            // Append the new element
-            container.appendChild(newElement);
-        }
-
-
-        /**
-         * Updates the Provincia and Municipio fields based on the selected country and birth year.
-         */
-        function handlePaisNacimientoChange() {
-            const paisSelect = document.getElementById('paisNacimiento');
-            const provinciaContainer = document.getElementById('provinciaNacimientoContainer');
-            const municipioContainer = document.getElementById('municipioNacimientoContainer');
-            const yearInput = document.getElementById('anoNacimiento');
-            const selectedCountryCode = paisSelect.value;
-            const year = yearInput.value; // Get year value as string initially
-            const isYearValid = isValidBirthYear(year); // Validate the year
-
-            let provinciaElement;
-            let municipioElement;
-
-            // Clear previous errors on these fields
-            provinciaContainer.querySelector('input, select')?.classList.remove('error-field');
-            municipioContainer.querySelector('input, select')?.classList.remove('error-field');
-
-
-            if (selectedCountryCode === 'CU') {
-                // --- Cuba Selected ---
-                // Ensure elements are selects
-                provinciaElement = provinciaContainer.querySelector('select');
-                if (!provinciaElement) {
-                    provinciaElement = document.createElement('select');
-                    provinciaElement.id = 'provinciaNacimiento';
-                    provinciaElement.name = 'provinciaNacimiento';
-                    provinciaElement.required = true; // Make required when Cuba is selected
-                    replaceElementInContainer(provinciaContainer, provinciaElement);
-                     // Re-attach listener if we created a new select
-                     provinciaElement.addEventListener('change', handleProvinciaChange);
-                }
-
-                municipioElement = municipioContainer.querySelector('select');
-                 if (!municipioElement) {
-                    municipioElement = document.createElement('select');
-                    municipioElement.id = 'municipioNacimiento';
-                    municipioElement.name = 'municipioNacimiento';
-                    municipioElement.required = true; // Make required when Cuba is selected
-                    replaceElementInContainer(municipioContainer, municipioElement);
-                }
-
-                 // Add listener if it wasn't there (e.g., switched from input)
-                 if (!provinciaElement.onchange) {
-                     provinciaElement.addEventListener('change', handleProvinciaChange);
-                 }
-
-                if (isYearValid) {
-                    // Valid year: Populate and enable province, disable municipality initially
-                    updateProvinciasMunicipiosByYear(parseInt(year)); // Pass parsed year
-                    provinciaElement.disabled = false;
-                    // Municipality is handled by updateProvinciasMunicipiosByYear and handleProvinciaChange
-                } else {
-                    // Invalid/missing year: Disable and clear selects
-                    populateSelect(provinciaElement, [], 'Ingrese año válido');
-                    populateSelect(municipioElement, [], 'Seleccione provincia');
-                    provinciaElement.disabled = true;
-                    municipioElement.disabled = true;
-                }
-
-            } else if (selectedCountryCode) {
-                // --- Other Country Selected ---
-                // Ensure elements are inputs
-                 provinciaElement = provinciaContainer.querySelector('input');
-                 if (!provinciaElement) {
-                    provinciaElement = document.createElement('input');
-                    provinciaElement.type = 'text';
-                    provinciaElement.id = 'provinciaNacimiento';
-                    provinciaElement.name = 'provinciaNacimiento';
-                    provinciaElement.required = true; // Make required for other countries too
-                    replaceElementInContainer(provinciaContainer, provinciaElement);
-                 }
-
-                 municipioElement = municipioContainer.querySelector('input');
-                 if (!municipioElement) {
-                    municipioElement = document.createElement('input');
-                    municipioElement.type = 'text';
-                    municipioElement.id = 'municipioNacimiento';
-                    municipioElement.name = 'municipioNacimiento';
-                    municipioElement.required = true; // Make required for other countries too
-                    replaceElementInContainer(municipioContainer, municipioElement);
-                 }
-
-                // Enable and clear inputs
-                provinciaElement.disabled = false;
-                municipioElement.disabled = false;
-                provinciaElement.value = '';
-                municipioElement.value = '';
-
-            } else {
-                // --- No Country Selected ---
-                 // Ensure elements are selects (or inputs, doesn't strictly matter as they are disabled)
-                 // Let's default to selects for consistency
-                 provinciaElement = provinciaContainer.querySelector('select');
-                 if (!provinciaElement) {
-                     provinciaElement = document.createElement('select');
-                     provinciaElement.id = 'provinciaNacimiento';
-                     provinciaElement.name = 'provinciaNacimiento';
-                     replaceElementInContainer(provinciaContainer, provinciaElement);
-                 }
-                 municipioElement = municipioContainer.querySelector('select');
-                 if (!municipioElement) {
-                     municipioElement = document.createElement('select');
-                     municipioElement.id = 'municipioNacimiento';
-                     municipioElement.name = 'municipioNacimiento';
-                     replaceElementInContainer(municipioContainer, municipioElement);
-                 }
-
-                // Disable and clear/reset selects
-                populateSelect(provinciaElement, [], 'Seleccione país');
-                populateSelect(municipioElement, [], 'Seleccione país');
-                provinciaElement.disabled = true;
-                municipioElement.disabled = true;
-                provinciaElement.required = false; // Not required if no country selected
-                municipioElement.required = false;
-            }
-        }
-
-
-        /**
-         * Updates the Provincia and Municipio selects based on the birth year (only if Cuba is selected).
-         * @param {number} year - The valid year of birth.
-         */
-        function updateProvinciasMunicipiosByYear(year) {
-            const provinciaSelect = document.getElementById('provinciaNacimiento');
-            const municipioSelect = document.getElementById('municipioNacimiento');
-            // Ensure elements exist and are selects, and Cuba is selected
-            if (!provinciaSelect || provinciaSelect.tagName !== 'SELECT' ||
-                !municipioSelect || municipioSelect.tagName !== 'SELECT' ||
-                document.getElementById('paisNacimiento').value !== 'CU') {
-                return;
-            }
-
-            let provinciasData;
-            if (year < 1976) {
-                provinciasData = provinciasHistoricas.before1976;
-            } else if (year < 2011) {
-                provinciasData = provinciasHistoricas.after1976;
-            } else {
-                provinciasData = provinciasHistoricas.after2011;
-            }
-
-            // Populate provinces
-            populateSelect(provinciaSelect,
-                           provinciasData.map(p => ({ value: p.name, textContent: p.name })),
-                           'Seleccione una provincia');
-            provinciaSelect.disabled = false; // Enable province selection
-            // Reset and disable municipality until province is selected
-            populateSelect(municipioSelect, [], 'Seleccione provincia');
-            municipioSelect.disabled = true;
-        }
-
-
-        /**
-         * Handles the change event for the Provincia select, populating the Municipio select.
-         */
-        function handleProvinciaChange() {
-            const provinciaSelect = document.getElementById('provinciaNacimiento');
-            const municipioSelect = document.getElementById('municipioNacimiento');
-            // Ensure elements exist and are selects
-            if (!provinciaSelect || provinciaSelect.tagName !== 'SELECT' ||
-                !municipioSelect || municipioSelect.tagName !== 'SELECT') {
-                return;
-            }
-
-            const year = parseInt(document.getElementById('anoNacimiento').value); // Re-check year
-            const selectedProvinciaName = provinciaSelect.value;
-
-            // Ensure year is valid and Cuba is selected
-            if (!selectedProvinciaName || !isValidBirthYear(year) || document.getElementById('paisNacimiento').value !== 'CU') {
-                populateSelect(municipioSelect, [], 'Seleccione provincia');
-                municipioSelect.disabled = true;
-                return;
-            }
-
-            let provinciasData;
-             if (year < 1976) {
-                provinciasData = provinciasHistoricas.before1976;
-            } else if (year < 2011) {
-                provinciasData = provinciasHistoricas.after1976;
-            } else {
-                provinciasData = provinciasHistoricas.after2011;
-            }
-
-            const selectedProvinciaData = provinciasData.find(p => p.name === selectedProvinciaName);
-
-            if (selectedProvinciaData && selectedProvinciaData.municipios) {
-                 populateSelect(municipioSelect,
-                               selectedProvinciaData.municipios.map(m => ({ value: m, textContent: m })),
-                               'Seleccione un municipio');
-                 municipioSelect.disabled = false; // Enable municipality selection
-            } else {
-                 populateSelect(municipioSelect, [], 'Seleccione provincia');
-                 municipioSelect.disabled = true;
-            }
-        }
-
-        /**
-         * Updates the Consulado dropdown based on the selected País de Residencia ISO code.
-         */
-        function updateConsulados() {
-            const paisResidenciaSelect = document.getElementById('paisResidencia');
-            const consuladoSelect = document.getElementById('consulado');
-            const selectedCountryCode = paisResidenciaSelect.value; // This is the ISO code
-
-            let optionsToShow = [];
-
-            // Directly use the ISO code (selectedCountryCode) as the key
-            if (selectedCountryCode && consuladosPorPaisISO[selectedCountryCode]) {
-                // Country ISO code found in consulate data, show specific consulates
-                optionsToShow = consuladosPorPaisISO[selectedCountryCode].sort((a, b) => a.localeCompare(b));
-                consuladoSelect.disabled = false;
-            } else if (selectedCountryCode) {
-                // Country selected, but ISO code not found in consulate data, show all consulates
-                optionsToShow = allConsulatesISOSorted; // Use the new sorted list of all consulates
-                consuladoSelect.disabled = false;
-            } else {
-                // No country selected, disable consulate select
-                consuladoSelect.disabled = true;
-                optionsToShow = [];
-            }
-
-            // Populate the consulate select
-            populateSelect(consuladoSelect,
-                           optionsToShow.map(c => ({ value: c, textContent: c })),
-                           'Seleccione un consulado');
-        }
-
-
-        // --- Form Validation ---
-
-        /**
-         * Validates the entire form before submission or QR generation.
-         * @returns {boolean} - True if the form is valid, false otherwise.
-         */
+        // --- Generación de PDF y QR ---
+        // Función para validar el formulario
         function validateForm() {
+            // Obtener todos los campos requeridos
+            const requiredFields = document.querySelectorAll('[required]');
             let isValid = true;
-            const requiredFields = document.querySelectorAll('#form-to-print [required]');
-            const errorMessages = []; // Collect specific error messages
+            let firstInvalidField = null;
+            let errorMessage = '';
 
-            // Clear previous errors
+            // Limpiar errores previos
             document.querySelectorAll('.error-field').forEach(field => {
                 field.classList.remove('error-field');
             });
 
-            // 1. Check required fields that are NOT disabled
-            requiredFields.forEach(field => {
-                if (field.disabled) return; // Skip disabled fields
+            // Validar todas las fechas
+            const today = new Date();
+            const minYear = 1900;
 
-                const fieldLabel = field.previousElementSibling?.textContent || field.name || field.id;
-                if ((field.tagName === 'SELECT' && field.value === '') ||
-                    (field.tagName === 'INPUT' && !field.value.trim())) {
-                    field.classList.add('error-field');
-                    errorMessages.push(`El campo "${fieldLabel}" es obligatorio.`);
-                    isValid = false;
+            // Función auxiliar para validar fechas
+            function validateDateField(field, fieldName) {
+                if (field && field.value) {
+                    const date = new Date(field.value);
+                    if (isNaN(date.getTime())) {
+                        field.classList.add('error-field');
+                        isValid = false;
+                        errorMessage = `La fecha ${fieldName} no es válida`;
+                        if (!firstInvalidField) firstInvalidField = field;
+                        return false;
+                    }
+                    
+                    const year = date.getFullYear();
+                    if (year < minYear) {
+                        field.classList.add('error-field');
+                        isValid = false;
+                        errorMessage = `La fecha ${fieldName} no puede ser anterior a ${minYear}`;
+                        if (!firstInvalidField) firstInvalidField = field;
+                        return false;
+                    }
+                    
+                    if (date > today) {
+                        field.classList.add('error-field');
+                        isValid = false;
+                        errorMessage = `La fecha ${fieldName} no puede ser posterior a hoy`;
+                        if (!firstInvalidField) firstInvalidField = field;
+                        return false;
+                    }
+                }
+                return true;
+            }
+
+            // Validar fecha de solicitud
+            validateDateField(document.getElementById('fechaSolicitud'), 'de solicitud');
+
+            // Validar fecha de nacimiento
+            validateDateField(document.getElementById('fechaNacimiento'), 'de nacimiento');
+
+            // Validar años en la tabla de residencias en Cuba
+            const yearFields = ['desdeCuba1', 'hastaCuba1', 'desdeCuba2', 'hastaCuba2'];
+            yearFields.forEach(fieldId => {
+                const field = document.getElementById(fieldId);
+                if (field && field.value) {
+                    const year = parseInt(field.value);
+                    if (isNaN(year) || year < minYear || year > today.getFullYear()) {
+                        field.classList.add('error-field');
+                        isValid = false;
+                        errorMessage = `El año debe estar entre ${minYear} y ${today.getFullYear()}`;
+                        if (!firstInvalidField) firstInvalidField = field;
+                    }
                 }
             });
 
-             // 2. Specific Field Validations
-            const ciInput = document.getElementById('carneIdentidad');
-            if (ciInput && ciInput.value && !validarCI(ciInput.value)) {
-                ciInput.classList.add('error-field');
-                errorMessages.push("El Carné de Identidad es inválido (debe tener 11 dígitos y formar una fecha válida).");
-                isValid = false;
-            }
-
-            // Validate Birth Date parts
-            const diaNacInput = document.getElementById('diaNacimiento');
-            const mesNacInput = document.getElementById('mesNacimiento');
-            const anoNacInput = document.getElementById('anoNacimiento');
-            const diaNac = diaNacInput.value;
-            const mesNac = mesNacInput.value;
-            const anoNac = anoNacInput.value;
-
-            if (diaNacInput.required && (!diaNac || !mesNac || !anoNac)) {
-                 // Already handled by general required check, but double-check
-                 if (!diaNac) diaNacInput.classList.add('error-field');
-                 if (!mesNac) mesNacInput.classList.add('error-field');
-                 if (!anoNac) anoNacInput.classList.add('error-field');
-                 // errorMessages.push("La Fecha de Nacimiento es obligatoria."); // Avoid duplicate message
-                 isValid = false;
-            } else if (diaNac && mesNac && anoNac) { // Only validate if all parts are present
-                if (!validarFecha(diaNac, mesNac, anoNac)) {
-                    [diaNacInput, mesNacInput, anoNacInput].forEach(el => el.classList.add('error-field'));
-                    errorMessages.push("La Fecha de Nacimiento es inválida.");
+            // Validar el carné de identidad si tiene valor
+            const carneIdentidad = document.getElementById('carneIdentidad');
+            if (carneIdentidad && carneIdentidad.value) {
+                const value = carneIdentidad.value;
+                
+                if (!/^\d{11}$/.test(value)) {
+                    carneIdentidad.classList.add('error-field');
                     isValid = false;
+                    errorMessage = 'El carné de identidad debe tener exactamente 11 dígitos';
+                    if (!firstInvalidField) firstInvalidField = carneIdentidad;
                 } else {
-                    const fechaNacimiento = new Date(anoNac, mesNac - 1, diaNac);
-                    if (fechaNacimiento > new Date()) {
-                         [diaNacInput, mesNacInput, anoNacInput].forEach(el => el.classList.add('error-field'));
-                         errorMessages.push("La Fecha de Nacimiento no puede ser futura.");
-                         isValid = false;
+                    // Validar fecha del carné
+                    const year = parseInt(value.substring(0, 2));
+                    const month = parseInt(value.substring(2, 4));
+                    const day = parseInt(value.substring(4, 6));
+
+                    const currentYear = new Date().getFullYear() % 100;
+                    const century = year <= currentYear ? 2000 : 1900;
+                    const fullYear = century + year;
+                    
+                    const date = new Date(fullYear, month - 1, day);
+                    const isValidDate = date.getMonth() === month - 1 && 
+                                    date.getDate() === day && 
+                                    date.getFullYear() === fullYear;
+
+                    if (!isValidDate || fullYear < minYear) {
+                        carneIdentidad.classList.add('error-field');
+                        isValid = false;
+                        errorMessage = 'La fecha en el carné de identidad no es válida o es anterior a 1900';
+                        if (!firstInvalidField) firstInvalidField = carneIdentidad;
+                    } else {
+                        // Verificar que la fecha no sea futura
+                        if (date > today) {
+                            carneIdentidad.classList.add('error-field');
+                            isValid = false;
+                            errorMessage = 'La fecha del carné no puede ser futura';
+                            if (!firstInvalidField) firstInvalidField = carneIdentidad;
+                        }
+
+                        // Verificar edad mínima de 16 años
+                        const age = today.getFullYear() - fullYear;
+                        if (age < 16 || (age === 16 && today.getMonth() < date.getMonth()) || 
+                           (age === 16 && today.getMonth() === date.getMonth() && today.getDate() < date.getDate())) {
+                            carneIdentidad.classList.add('error-field');
+                            isValid = false;
+                            errorMessage = 'La persona debe tener al menos 16 años';
+                            if (!firstInvalidField) firstInvalidField = carneIdentidad;
+                        }
                     }
                 }
             }
 
+            // Validar formato de correos electrónicos
+            const emailFields = ['emailResidencia', 'emailTrabajo'];
+            const emailPattern = /^[a-z0-9._%+-]+@[a-z0-9.-]+\.[a-z]{2,}$/;
 
-            const diaSal = document.getElementById('diaSalida').value;
-            const mesSal = document.getElementById('mesSalida').value;
-            const anoSal = document.getElementById('anoSalida').value;
-            if (diaSal && mesSal && anoSal) { // Only validate if all parts are present
-                if (!validarFecha(diaSal, mesSal, anoSal)) {
-                     ['diaSalida', 'mesSalida', 'anoSalida'].forEach(id => document.getElementById(id)?.classList.add('error-field'));
-                    errorMessages.push("La Fecha de Salida de Cuba es inválida.");
+            emailFields.forEach(fieldId => {
+                const emailField = document.getElementById(fieldId);
+                if (emailField && emailField.value) {
+                    const email = emailField.value.toLowerCase();
+                    if (!emailPattern.test(email)) {
+                        emailField.classList.add('error-field');
+                        isValid = false;
+                        errorMessage = 'El formato del correo electrónico no es válido';
+                        if (!firstInvalidField) firstInvalidField = emailField;
+                    }
+                }
+            });
+
+            // Validar la fecha de salida de Cuba (día, mes, año)
+            const diaSalida = document.getElementById('diaSalida');
+            const mesSalida = document.getElementById('mesSalida');
+            const anoSalida = document.getElementById('anoSalida');
+
+            if ((diaSalida && diaSalida.value) || 
+                (mesSalida && mesSalida.value) || 
+                (anoSalida && anoSalida.value)) {
+                
+                const dia = parseInt(diaSalida.value) || 1;
+                const mes = parseInt(mesSalida.value) || 1;
+                const ano = parseInt(anoSalida.value);
+
+                if (ano) {
+                    if (ano < minYear || ano > today.getFullYear()) {
+                        anoSalida.classList.add('error-field');
+                        isValid = false;
+                        errorMessage = `El año de salida debe estar entre ${minYear} y ${today.getFullYear()}`;
+                        if (!firstInvalidField) firstInvalidField = anoSalida;
+                    } else {
+                        const fechaSalida = new Date(ano, mes - 1, dia);
+                        if (fechaSalida > today) {
+                            const campoConError = dia !== 1 ? diaSalida : 
+                                                mes !== 1 ? mesSalida : anoSalida;
+                            campoConError.classList.add('error-field');
+                            isValid = false;
+                            errorMessage = 'La fecha de salida no puede ser posterior a hoy';
+                            if (!firstInvalidField) firstInvalidField = campoConError;
+                        }
+                    }
+                }
+            }
+
+            // Validar campos requeridos
+            requiredFields.forEach(field => {
+                if (!field.value.trim()) {
+                    field.classList.add('error-field');
                     isValid = false;
-                } else if (diaNac && mesNac && anoNac && validarFecha(diaNac, mesNac, anoNac)) { // Check against valid birth date
-                    const fechaNacimiento = new Date(anoNac, mesNac - 1, diaNac);
-                    const fechaSalida = new Date(anoSal, mesSal - 1, diaSal);
-                    if (fechaSalida < fechaNacimiento) {
-                         ['diaSalida', 'mesSalida', 'anoSalida'].forEach(id => document.getElementById(id)?.classList.add('error-field'));
-                         errorMessages.push("La Fecha de Salida debe ser posterior a la Fecha de Nacimiento.");
-                         isValid = false;
-                    }
-                     if (fechaSalida > new Date()) {
-                         ['diaSalida', 'mesSalida', 'anoSalida'].forEach(id => document.getElementById(id)?.classList.add('error-field'));
-                         errorMessages.push("La Fecha de Salida no puede ser futura.");
-                         isValid = false;
+                    if (!firstInvalidField) {
+                        firstInvalidField = field;
+                        errorMessage = 'Por favor, complete todos los campos obligatorios';
                     }
                 }
-            }
+            });
 
-            // Email validation (optional fields)
-            const emailResidenciaInput = document.getElementById('emailResidencia');
-            const emailTrabajoInput = document.getElementById('emailTrabajo');
-            const emailRegex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
-            if (emailResidenciaInput && emailResidenciaInput.value && !emailRegex.test(emailResidenciaInput.value)) {
-                emailResidenciaInput.classList.add('error-field');
-                errorMessages.push("El E-Mail de residencia no es válido.");
-                isValid = false;
-            }
-             if (emailTrabajoInput && emailTrabajoInput.value && !emailRegex.test(emailTrabajoInput.value)) {
-                emailTrabajoInput.classList.add('error-field');
-                errorMessages.push("El E-Mail de trabajo no es válido.");
-                isValid = false;
-            }
-
-             // Estatura validation
-            const estaturaInput = document.getElementById('estatura');
-            if (estaturaInput && estaturaInput.value) {
-                const estatura = parseInt(estaturaInput.value);
-                if (isNaN(estatura) || estatura < 100 || estatura > 250) {
-                    estaturaInput.classList.add('error-field');
-                    errorMessages.push("La Estatura debe ser un número entre 100 y 250 cm.");
-                    isValid = false;
-                }
-            }
-
-
-            // Show combined error messages if any
+            // Si hay campos inválidos, mostrar mensaje y enfocar el primer campo
             if (!isValid) {
-                // Filter out duplicate "obligatorio" messages if they exist
-                const uniqueMessages = [...new Set(errorMessages)];
-                 showNotification("Por favor corrija los siguientes errores:<br>- " + uniqueMessages.join("<br>- "));
-                scrollToFirstError();
+                Toastify({
+                    text: errorMessage,
+                    duration: 5000,
+                    gravity: "top",
+                    position: 'right',
+                    className: "error"
+                }).showToast();
+
+                if (firstInvalidField) {
+                    firstInvalidField.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                    firstInvalidField.focus();
+                }
             }
 
             return isValid;
         }
 
-        // --- Data Collection and QR/PDF Generation ---
-
-        /**
-         * Collects form data into a JSON object.
-         * Excludes empty fields. Formats dates.
-         * @returns {object} - The form data as a JSON object.
-         */
-        function formToJSON() {
-            const formData = {};
-            const formElements = document.querySelectorAll('#form-to-print input, #form-to-print select, #form-to-print textarea');
-
-            formElements.forEach(field => {
-                // Only include fields with a name, value, and that are not disabled
-                if (field.name && field.value && field.value.trim() !== '' && !field.disabled) {
-                    if (field.type === 'checkbox') {
-                        formData[field.name] = field.checked;
-                    } else if (field.type === 'radio') {
-                        if (field.checked) {
-                            formData[field.name] = field.value.trim();
-                        }
-                    } else {
-                        formData[field.name] = field.value.trim();
-                    }
-                }
-            });
-
-            // Format dates if all parts are present
-            const formatDate = (dayId, monthId, yearId, fieldName) => {
-                const dia = document.getElementById(dayId)?.value.trim();
-                const mes = document.getElementById(monthId)?.value.trim();
-                const ano = document.getElementById(yearId)?.value.trim();
-                if (dia && mes && ano) {
-                    // Add leading zeros if needed (optional, but good practice)
-                    const formattedDia = dia.padStart(2, '0');
-                    const formattedMes = mes.padStart(2, '0');
-                    formData[fieldName] = `${formattedDia}/${formattedMes}/${ano}`;
-                    // Remove individual date parts if they were added
-                    delete formData[dayId];
-                    delete formData[monthId];
-                    delete formData[yearId];
-                }
-            };
-
-            formatDate('diaNacimiento', 'mesNacimiento', 'anoNacimiento', 'fechaNacimiento');
-            formatDate('diaSolicitud', 'mesSolicitud', 'anoSolicitud', 'fechaSolicitud');
-            formatDate('diaSalida', 'mesSalida', 'anoSalida', 'fechaSalida');
-
-            console.log("Datos del formulario en JSON:", formData); // For debugging
-            return formData;
-        }
-
-        /**
-         * Generates a QR code from JSON data and displays it.
-         * Uses LZString compression for potentially large data.
-         * @param {object} data - The JSON data to encode.
-         * @returns {boolean} - True if QR generation was successful, false otherwise.
-         */
-        function generateQRWithJSON(data) {
-            const qrContainer = document.getElementById('qrCode');
-            // Clear previous QR code but keep the title div
-            qrContainer.innerHTML = '<div style="font-weight: bold; margin-bottom: 8px;">Código de verificación del documento</div>';
+        async function generatePDF() {
+            if (!validateForm()) return;
 
             try {
-                const jsonStr = JSON.stringify(data);
-                const compressed = LZString.compressToBase64(jsonStr);
-                console.log(`JSON Length: ${jsonStr.length}, Compressed Length: ${compressed.length}`); // Debug lengths
+                document.getElementById('loader').style.display = 'flex';
 
-                 if (compressed.length > 2953) { // Approx limit for QR Code version 40, Level M
-                    console.warn("Compressed data might be too large for QR code.");
-                     showNotification("Advertencia: La cantidad de datos podría ser demasiada para el código QR. Intente omitir campos opcionales.", "error");
-                     // Optionally, try lower correction level or truncate data
-                }
-
-                new QRCode(qrContainer, {
-                    text: compressed,
-                    width: 200, // Adjusted size
-                    height: 200,
-                    colorDark: "#000000",
-                    colorLight: "#ffffff",
-                    correctLevel: QRCode.CorrectLevel.M // Medium correction level
+                // Recopilar todos los datos del formulario (excepto foto y firma)
+                const formData = [];
+                const formElements = document.querySelectorAll('input, select, textarea');
+                formElements.forEach(element => {
+                    if (element.id && 
+                        element.id !== 'photoInput' && 
+                        element.id !== 'signatureInput') {
+                        formData.push(element.value || '');
+                    }
                 });
-                return true;
-            } catch (error) {
-                console.error("Error al generar QR:", error);
-                showNotification("Error crítico al generar el código QR. Verifique la consola.");
-                qrContainer.innerHTML += '<p style="color: red;">Error al generar QR.</p>'; // Show error in container
-                return false;
-            }
-        }
 
-        /**
-         * Generates a PDF from the form content.
-         * Validates the form, generates QR, then creates the PDF.
-         */
-        function generatePDF() {
-            if (!validateForm()) {
-                // Notification is shown by validateForm()
-                return;
-            }
+                // Generar datos para el QR con codificación UTF-8
+                const qrData = formData.join('|');
+                const encoder = new TextEncoder();
+                const decoder = new TextDecoder('utf-8');
+                const encodedData = encoder.encode(qrData);
+                const utf8Data = decoder.decode(encodedData);
 
-            document.getElementById('loader').style.display = 'flex'; // Show loader
+                // Generar el QR con QRious
+                const qrContainer = document.getElementById('qrCode');
+                qrContainer.innerHTML = '<div>Código de verificación del documento</div><canvas id="qr"></canvas>';
+                
+                new QRious({
+                    element: document.getElementById('qr'),
+                    value: utf8Data,
+                    size: 300,
+                    level: 'L',
+                    background: 'white',
+                    foreground: 'black'
+                });
 
-            const jsonData = formToJSON();
-            const qrGenerated = generateQRWithJSON(jsonData); // Generate QR first
+                // Esperar a que se genere el QR
+                await new Promise(resolve => setTimeout(resolve, 200));
 
-            if (!qrGenerated) {
-                 document.getElementById('loader').style.display = 'none'; // Hide loader if QR fails
-                 showNotification("No se pudo generar el código QR, la generación de PDF fue cancelada.", "error");
-                return;
-            }
-
-            // Allow time for QR code rendering before capturing for PDF
-            setTimeout(() => {
+                // Generar el PDF
                 const element = document.getElementById('form-to-print');
-                const pdfFilename = `solicitud_pasaporte_${jsonData.primerApellido || 'cuba'}_${jsonData.primerNombre || ''}.pdf`.replace(/ /g, '_').toLowerCase();
-
                 const opt = {
-                    margin: [10, 5, 10, 5], // Margins: top, left, bottom, right (in mm)
-                    filename: pdfFilename,
-                    image: { type: 'jpeg', quality: 0.95 }, // Use JPEG for better compression
-                    html2canvas: {
-                        scale: 2, // Increase scale for better resolution
-                        logging: false,
-                        useCORS: true, // Important for external resources if any
-                        scrollY: -window.scrollY // Capture from top of element
-                     },
-                    jsPDF: {
+                    margin: [8, 5, 8, 5],
+                    filename: 'solicitud_pasaporte.pdf',
+                    image: { type: 'jpeg', quality: 0.95 },
+                    html2canvas: { 
+                        scale: 2,
+                        useCORS: true,
+                        logging: false
+                    },
+                    jsPDF: { 
                         unit: 'mm',
                         format: 'a4',
                         orientation: 'portrait'
-                    },
-                    pagebreak: { mode: ['avoid-all', 'css', 'legacy'] } // Try to avoid breaking elements
+                    }
                 };
 
-                html2pdf().set(opt).from(element).save()
-                    .then(() => {
-                        console.log("PDF generado con éxito.");
-                        showNotification("PDF generado con éxito: " + pdfFilename, "success");
-                    })
-                    .catch((error) => {
-                        console.error("Error generando PDF:", error);
-                        showNotification("Ocurrió un error al generar el PDF. Revise la consola.", "error");
-                    })
-                    .finally(() => {
-                         // Ensure loader is hidden even if there's an error during save
-                         document.getElementById('loader').style.display = 'none';
-                    });
+                await html2pdf().from(element).set(opt).save();
 
-            }, 500); // Delay to ensure QR renders
-        }
+                Toastify({
+                    text: "PDF generado exitosamente",
+                    duration: 3000,
+                    gravity: "top",
+                    position: 'right',
+                    className: "success"
+                }).showToast();
 
-         /**
-         * Generates only the QR code without creating a PDF.
-         */
-        function generateOnlyQR() {
-            if (!validateForm()) {
-                return;
+            } catch (error) {
+                console.error('Error generando PDF:', error);
+                Toastify({
+                    text: "Error generando el PDF: " + error.message,
+                    duration: 5000,
+                    gravity: "top",
+                    position: 'right',
+                    className: "error"
+                }).showToast();
+            } finally {
+                document.getElementById('loader').style.display = 'none';
             }
-            const jsonData = formToJSON();
-            const qrGenerated = generateQRWithJSON(jsonData);
-             if (qrGenerated) {
-                 showNotification("Código QR generado.", "success");
-                 document.getElementById('qrCode').scrollIntoView({ behavior: 'smooth', block: 'center' });
-             } else {
-                 showNotification("Error al generar el código QR.", "error");
-             }
         }
 
+        // Add continue iteration functionality
+        function continueIteration() {
+            // Show the QR code generation options again
+            document.getElementById('continueBtn').style.display = 'none';
+            // Clear the previous QR code
+            document.getElementById('qrCode').innerHTML = '<div>Código de verificación del documento</div>';
+        }
 
-        // --- Event Listeners and Initialization ---
+        // Modify generateOnlyQR to show continue button after generation
+        function generateOnlyQR() {
+            if (!validateForm()) return;
 
-        // Set default application date and attach listeners on DOMContentLoaded
-        window.addEventListener('DOMContentLoaded', () => {
-            // Set current date for application date fields
-            const fechaActual = new Date();
-            document.getElementById('diaSolicitud').value = fechaActual.getDate();
-            document.getElementById('mesSolicitud').value = fechaActual.getMonth() + 1;
-            document.getElementById('anoSolicitud').value = fechaActual.getFullYear();
-
-            // Populate Countries dropdowns
-            const paisResidenciaSelect = document.getElementById('paisResidencia');
-            const paisNacimientoSelect = document.getElementById('paisNacimiento');
-
-            const countryOptions = countries
-                .sort((a, b) => a.name.localeCompare(b.name)) // Sort alphabetically
-                .map(country => ({ value: country.code, textContent: country.name }));
-
-            // Populate both country dropdowns with the full list
-            populateSelect(paisResidenciaSelect, countryOptions, 'Seleccione país');
-            populateSelect(paisNacimientoSelect, countryOptions, 'Seleccione país');
-
-
-            // Attempt to set default residence country based on IP (optional)
-            fetch('https://ipapi.co/json/')
-                .then(response => response.ok ? response.json() : Promise.reject('Failed to fetch IP info'))
-                .then(data => {
-                    if (data && data.country_code) {
-                         // Use country_code which matches ISO 3166-1 alpha-2
-                        paisResidenciaSelect.value = data.country_code;
-                        // Trigger change event to update consulates
-                        paisResidenciaSelect.dispatchEvent(new Event('change'));
+            try {
+                // Crear objeto con todos los datos del formulario
+                const qrData = {
+                    // Solo recopilar primer nombre y primer apellido
+                    primerNombre: document.getElementById('primerNombre').value,
+                    primerApellido: document.getElementById('primerApellido').value,
+                    // Agregar datos de residencia en Cuba
+                    residenciaCuba: {
+                        direccion1: {
+                            direccion: document.querySelector('input[name="direccionCuba1"]').value,
+                            desde: document.querySelector('input[name="desdeCuba1"]').value,
+                            hasta: document.querySelector('input[name="hastaCuba1"]').value
+                        },
+                        direccion2: {
+                            direccion: document.querySelector('input[name="direccionCuba2"]').value,
+                            desde: document.querySelector('input[name="desdeCuba2"]').value,
+                            hasta: document.querySelector('input[name="hastaCuba2"]').value
+                        }
+                    },
+                    // Agregar datos de documentos
+                    documentos: {
+                        certNacimiento: {
+                            tomo: document.querySelector('input[name="certNacimientoTomo"]').value,
+                            folio: document.querySelector('input[name="certNacimientoFolio"]').value,
+                            registroCivil: document.querySelector('input[name="certNacimientoRegistroCivil"]').value
+                        },
+                        inscripcionConsular: {
+                            numero: document.querySelector('input[name="inscripcionConsularNumero"]').value,
+                            fecha: document.querySelector('input[name="inscripcionConsularFecha"]').value
+                        }
                     }
-                })
-                .catch(error => {
-                    console.warn('Could not automatically set country based on IP:', error);
-                    // If IP fetch fails, still call updateConsulados to potentially show all
-                    updateConsulados();
+                };
+
+                // Convertir datos a cadena JSON con codificación UTF-8
+                const jsonData = new TextEncoder().encode(JSON.stringify(qrData));
+                const jsonDataUTF8 = new TextDecoder('utf-8').decode(jsonData);
+
+                // Generar QR usando QRious
+                const qrContainer = document.getElementById('qrCode');
+                qrContainer.innerHTML = '<div>Código de verificación del documento</div><canvas id="qr"></canvas>';
+                
+                new QRious({
+                    element: document.getElementById('qr'),
+                    value: jsonDataUTF8,
+                    size: 300,
+                    level: 'L',
+                    background: 'white',
+                    foreground: 'black'
                 });
 
-             // Add event listeners
-             document.getElementById('paisResidencia').addEventListener('change', updateConsulados); // Listener for consulate update
-             document.getElementById('paisNacimiento').addEventListener('change', handlePaisNacimientoChange); // Listener for birth province/municipality update
+                // After successful QR generation, show the continue button
+                document.getElementById('continueBtn').style.display = 'inline-block';
 
-             // Listener for birth year input - triggers update for province/municipality if Cuba is selected
-             document.getElementById('anoNacimiento').addEventListener('input', () => {
-                 // Directly call handlePaisNacimientoChange which now includes year validation check
-                 handlePaisNacimientoChange();
-             });
+                // Mostrar mensaje de éxito
+                Toastify({
+                    text: "Código QR generado exitosamente",
+                    duration: 3000,
+                    gravity: "top",
+                    position: 'right',
+                    className: "success"
+                }).showToast();
 
-             // Initial setup for birth province/municipality based on default country/year
-             handlePaisNacimientoChange();
-
-             // Add blur listeners for instant validation feedback (optional but helpful)
-            document.getElementById('carneIdentidad').addEventListener('blur', function() {
-                if (this.value && !validarCI(this.value)) {
-                    this.classList.add('error-field');
-                    showNotification("Carné de Identidad inválido.", "error");
-                } else {
-                    this.classList.remove('error-field');
-                }
-            });
-             document.getElementById('estatura').addEventListener('blur', function() {
-                 if (this.value) {
-                     const estatura = parseInt(this.value);
-                     if (isNaN(estatura) || estatura < 100 || estatura > 250) {
-                         this.classList.add('error-field');
-                         showNotification("Estatura inválida (100-250 cm).", "error");
-                     } else {
-                         this.classList.remove('error-field');
-                     }
-                 } else {
-                      this.classList.remove('error-field'); // Clear error if field is emptied
-                 }
-             });
-             // Add more blur listeners as needed for other fields...
-
-             // Initial call to populate consulates if a default country is set (e.g., by IP)
-             updateConsulados();
-
-        }); // End DOMContentLoaded
-
+            } catch (error) {
+                console.error('Error generando QR:', error);
+                Toastify({
+                    text: "Error generando el código QR: " + error.message,
+                    duration: 5000,
+                    gravity: "top",
+                    position: 'right',
+                    className: "error"
+                }).showToast();
+            }
+        }
     </script>
 </body>
 </html>
