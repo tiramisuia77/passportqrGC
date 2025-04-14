@@ -3,25 +3,28 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Convertidor QR</title>
+    <title>Lector de Códigos QR Flexible</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://unpkg.com/html5-qrcode" type="text/javascript"></script>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <style>
+        /* Basic styling for the body */
         body {
             font-family: 'Inter', sans-serif;
             background: linear-gradient(135deg, #f8fafc 0%, #e2e8f0 100%);
             min-height: 100vh;
         }
+        /* Banner styling */
         .banner {
             width: 100%;
             height: 180px;
             object-fit: cover;
             margin-bottom: 2rem;
-            border-bottom: 4px solid #3b82f6;
+            border-bottom: 4px solid #3b82f6; /* Blue border */
             box-shadow: 0 4px 12px rgba(59, 130, 246, 0.15);
             position: relative;
         }
+        /* Banner overlay gradient */
         .banner::after {
             content: '';
             position: absolute;
@@ -31,11 +34,13 @@
             bottom: 0;
             background: linear-gradient(to bottom, rgba(59, 130, 246, 0.1), rgba(59, 130, 246, 0.2));
         }
+        /* Container styling */
         .container {
             max-width: 1000px;
             margin: 0 auto;
             padding: 0 1.5rem;
         }
+        /* Card styling */
         .card {
             background: rgba(255, 255, 255, 0.98);
             border-radius: 20px;
@@ -45,10 +50,12 @@
             transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
             padding: 2.5rem;
         }
+        /* Card hover effect */
         .card:hover {
             transform: translateY(-6px);
             box-shadow: 0 25px 50px rgba(0, 0, 0, 0.12);
         }
+        /* QR reader element styling */
         #qr-reader {
             width: 100%;
             max-width: 450px;
@@ -59,8 +66,9 @@
             box-shadow: 0 8px 24px rgba(59, 130, 246, 0.15);
             background: white;
         }
+        /* Button base styling */
         .btn {
-            padding: 0.875rem 2.5rem;
+            padding: 0.75rem 1.5rem; /* Slightly smaller padding */
             border-radius: 12px;
             font-weight: 600;
             letter-spacing: 0.3px;
@@ -69,16 +77,52 @@
             align-items: center;
             justify-content: center;
             gap: 8px;
+            cursor: pointer;
+            text-align: center; /* Center text */
         }
+        /* Primary button styling */
         .btn-primary {
             background: linear-gradient(135deg, #3b82f6 0%, #2563eb 100%);
             color: white;
             border: none;
         }
-        .btn-primary:hover {
+        /* Primary button hover effect */
+        .btn-primary:hover:not(:disabled) {
             transform: translateY(-2px);
             box-shadow: 0 8px 20px rgba(59, 130, 246, 0.25);
         }
+        /* Secondary button styling */
+        .btn-secondary {
+            background: linear-gradient(135deg, #e2e8f0 0%, #cbd5e1 100%);
+            color: #1e293b;
+            border: 1px solid #cbd5e1;
+        }
+        /* Secondary button hover effect */
+        .btn-secondary:hover:not(:disabled) {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
+        }
+         /* Accent button styling (for Convert) */
+        .btn-accent {
+            background: linear-gradient(135deg, #10b981 0%, #059669 100%); /* Green gradient */
+            color: white;
+            border: none;
+        }
+        /* Accent button hover effect */
+        .btn-accent:hover:not(:disabled) {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 20px rgba(16, 185, 129, 0.25);
+        }
+        /* Disabled button styling */
+        .btn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+            background: #e2e8f0;
+            color: #64748b;
+            box-shadow: none;
+            transform: none;
+        }
+        /* Main heading styling */
         h1 {
             font-size: 2.5rem;
             font-weight: 700;
@@ -89,6 +133,7 @@
             margin-bottom: 1.5rem;
             letter-spacing: -0.02em;
         }
+        /* Scanned data display styling */
         #scanned-data {
             background: #f8fafc;
             padding: 1.5rem;
@@ -98,7 +143,12 @@
             line-height: 1.6;
             box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.06);
             border: 1px solid rgba(0, 0, 0, 0.1);
+            color: #334155;
+            white-space: pre-wrap;
+            word-break: break-all;
+            min-height: 100px; /* Ensure it has some height */
         }
+        /* Message box base styling */
         .message-box {
             margin-top: 1.5rem;
             padding: 1rem 1.5rem;
@@ -106,17 +156,27 @@
             animation: slideIn 0.5s cubic-bezier(0.4, 0, 0.2, 1);
             box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
             font-weight: 500;
+            display: none; /* Hidden by default */
         }
+        /* Success message styling */
         .message-success {
             background: linear-gradient(135deg, #dcfce7 0%, #bbf7d0 100%);
             color: #166534;
             border: none;
         }
+        /* Error message styling */
         .message-error {
             background: linear-gradient(135deg, #fee2e2 0%, #fecaca 100%);
             color: #991b1b;
             border: none;
         }
+         /* Info message styling */
+        .message-info {
+            background: linear-gradient(135deg, #e0f2fe 0%, #bfdbfe 100%); /* Light blue */
+            color: #1e40af; /* Dark blue text */
+            border: none;
+        }
+        /* Animation for message box */
         @keyframes slideIn {
             from {
                 transform: translateY(-10px) scale(0.98);
@@ -127,9 +187,11 @@
                 opacity: 1;
             }
         }
+        /* Result container transition */
         #result-container {
             transition: all 0.4s ease;
         }
+        /* Instructions section styling */
         .instructions {
             background: linear-gradient(135deg, #e0f2fe 0%, #bfdbfe 100%);
             padding: 1.5rem;
@@ -137,11 +199,13 @@
             margin-bottom: 2rem;
             box-shadow: 0 4px 6px rgba(59, 130, 246, 0.1);
         }
+        /* Instructions list styling */
         .instructions-list {
             list-style-type: none;
             padding: 0;
             margin: 0;
         }
+        /* Instruction list item styling */
         .instructions-list li {
             display: flex;
             align-items: center;
@@ -149,12 +213,14 @@
             color: #1e40af;
             font-size: 0.95rem;
         }
+        /* Instruction list item bullet */
         .instructions-list li:before {
             content: "→";
             margin-right: 0.5rem;
             color: #3b82f6;
             font-weight: bold;
         }
+        /* Scan area container styling */
         .scan-area {
             position: relative;
             padding: 1rem;
@@ -162,6 +228,7 @@
             border-radius: 16px;
             margin-bottom: 2rem;
         }
+        /* Scan area overlay styling */
         .scan-overlay {
             position: absolute;
             top: 0;
@@ -172,22 +239,26 @@
             border-radius: 16px;
             pointer-events: none;
         }
+        /* Action buttons container */
+        .action-buttons {
+            display: flex;
+            flex-wrap: wrap; /* Allow buttons to wrap on smaller screens */
+            gap: 1rem; /* Space between buttons */
+            margin-top: 1.5rem;
+            justify-content: center; /* Center buttons */
+        }
     </style>
+    <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono&display=swap" rel="stylesheet">
 </head>
 <body class="min-h-screen">
-    <img src="https://cubaminrex.cu/sites/default/files/inline-images/banner_1.jpg" alt="Banner" class="banner shadow-lg object-left object-cover">
-    
     <div class="container mx-auto px-4 py-8">
         <div class="card p-8 max-w-2xl mx-auto">
-            <h1 class="text-3xl font-bold text-center mb-6">Lector de Códigos QR</h1>
-            
+            <h1 class="text-3xl font-bold text-center mb-6">Lector de Códigos QR Flexible</h1>
+
             <div class="instructions">
-                <h2 class="text-lg font-semibold mb-3 text-gray-800">Instrucciones:</h2>
                 <ul class="instructions-list">
-                    <li>Asegúrese de tener una buena iluminación</li>
-                    <li>Centre el código QR en el recuadro de escaneo</li>
-                    <li>Mantenga el dispositivo estable durante el escaneo</li>
-                    <li>El proceso es automático una vez detectado el código</li>
+                    <li>Presione "Iniciar Escaneo" y apunte la cámara al código QR.</li>
+                    <li>Los datos crudos se mostrarán al detectar un código.</li>
                 </ul>
             </div>
 
@@ -201,7 +272,7 @@
             <div class="flex justify-center">
                 <button id="start-scan-btn" class="btn btn-primary">
                     <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
-                        <path fill-rule="evenodd" d="M4 5a2 2 0 012-2h8a2 2 0 012 2v10a2 2 0 01-2 2H6a2 2 0 01-2-2V5zm2-2h8a2 2 0 012 2v10a2 2 0 01-2 2H6a2 2 0 01-2-2V5a2 2 0 012-2z" clip-rule="evenodd"/>
+                        <path fill-rule="evenodd" d="M0 4a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v12a2 2 0 0 1-2 2H2a2 2 0 0 1-2-2V4zm11 1H9v2h2V5zm-2 4H7v2h2V9zm4 0h-2v2h2V9zm2 0h-2v2h2V9zM7 5h2v2H7V5zm4 4h-2v2h2V9zm4 0h-2v2h2V9zm2-4h-2v2h2V5zm-4 4H9v2h2V9zm4-4h-2v2h2V5z" clip-rule="evenodd" />
                     </svg>
                     Iniciar Escaneo
                 </button>
@@ -210,12 +281,27 @@
             <div id="result-container" class="mt-8 hidden">
                 <h2 class="text-xl font-semibold mb-4 text-gray-700">Datos Escaneados:</h2>
                 <pre id="scanned-data" class="overflow-x-auto"></pre>
-                <button id="download-json-btn" class="btn btn-secondary w-full mt-4" disabled>
-                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
-                        <path fill-rule="evenodd" d="M3 17a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zm3.293-7.707a1 1 0 011.414 0L9 10.586V3a1 1 0 112 0v7.586l1.293-1.293a1 1 0 111.414 1.414l-3 3a1 1 0 01-1.414 0l-3-3a1 1 0 010-1.414z" clip-rule="evenodd"/>
-                    </svg>
-                    Descargar JSON
-                </button>
+
+                <div class="action-buttons">
+                    <button id="convert-to-json-btn" class="btn btn-accent" disabled>
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                          <path stroke-linecap="round" stroke-linejoin="round" d="M10 20l4-16m4 4l4 4-4 4M6 16l-4-4 4-4" />
+                        </svg>
+                        Intentar Convertir a JSON
+                    </button>
+                    <button id="download-raw-btn" class="btn btn-secondary" disabled>
+                         <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
+                            <path fill-rule="evenodd" d="M3 17a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zm3.293-7.707a1 1 0 011.414 0L9 10.586V3a1 1 0 112 0v7.586l1.293-1.293a1 1 0 111.414 1.414l-3 3a1 1 0 01-1.414 0l-3-3a1 1 0 010-1.414z" clip-rule="evenodd"/>
+                        </svg>
+                        Descargar Datos Crudos (.txt)
+                    </button>
+                    <button id="download-json-btn" class="btn btn-secondary" disabled>
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
+                           <path fill-rule="evenodd" d="M3 17a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zm3.293-7.707a1 1 0 011.414 0L9 10.586V3a1 1 0 112 0v7.586l1.293-1.293a1 1 0 111.414 1.414l-3 3a1 1 0 01-1.414 0l-3-3a1 1 0 010-1.414z" clip-rule="evenodd"/>
+                       </svg>
+                        Descargar JSON (.json)
+                    </button>
+                </div>
             </div>
 
             <div id="message-box" class="message-box">
@@ -225,245 +311,325 @@
     </div>
 
     <script>
-        // --- Variables Globales ---
-        let html5QrCode = null; // Instancia del lector QR
-        let jsonData = null; // Datos JSON generados
-        let isScanning = false; // Estado del escaneo
-        let chunkedData = new Map(); // Para manejar datos en chunks
-        let totalChunks = 0; // Número total de chunks esperados
+        // --- Global Variables ---
+        let html5QrCode = null; // Instance of the QR code reader
+        let rawDecodedText = null; // Store the raw text from the QR
+        let jsonData = null; // Store the parsed JSON object (if successful)
+        let isScanning = false; // Flag to track scanning state
 
-        // --- Elementos del DOM ---
+        // --- DOM Elements ---
         const qrReaderElement = document.getElementById('qr-reader');
         const resultContainer = document.getElementById('result-container');
         const scannedDataElement = document.getElementById('scanned-data');
         const startScanBtn = document.getElementById('start-scan-btn');
+        const convertToJsonBtn = document.getElementById('convert-to-json-btn');
+        const downloadRawBtn = document.getElementById('download-raw-btn');
         const downloadJsonBtn = document.getElementById('download-json-btn');
         const messageBox = document.getElementById('message-box');
         const messageText = document.getElementById('message-text');
+        const qrReaderResults = document.getElementById('qr-reader-results');
 
-        // --- Funciones ---
+        // --- Functions ---
 
-        // Muestra mensajes al usuario (éxito o error)
-        function showMessage(message, type = 'success') {
+        /**
+         * Displays messages to the user.
+         * @param {string} message - The message text.
+         * @param {string} [type='info'] - Message type ('success', 'error', 'info').
+         */
+        function showMessage(message, type = 'info') {
             messageText.textContent = message;
-            messageBox.className = `message-box message-${type}`; // Reinicia clases y aplica la nueva
+            messageBox.className = `message-box message-${type}`; // Apply type class
             messageBox.style.display = 'block';
-            // Ocultar mensaje después de 5 segundos
+            // Auto-hide after 5 seconds
             setTimeout(() => {
-                 messageBox.style.display = 'none';
+                 if (messageBox.style.display === 'block') {
+                    messageBox.style.display = 'none';
+                 }
             }, 5000);
         }
 
-        // Intenta parsear los datos del QR a un objeto JSON
+        /**
+         * Attempts to parse text data as a JSON object.
+         * @param {string} data - The raw string data.
+         * @returns {object|null} - The parsed JSON object or null if parsing fails.
+         */
         function parseQrData(data) {
-            try {            
-                return JSON.parse(data);
+            if (!data) return null; // Handle null or empty input
+            try {
+                const parsedData = JSON.parse(data);
+                if (typeof parsedData === 'object' && parsedData !== null) {
+                    return parsedData; // Success
+                }
+                console.error('Parsed data is not a valid object:', parsedData);
+                return null;
             } catch (error) {
-                console.error('Error al procesar datos QR:', error);
-                return { error: 'Error al procesar datos', rawData: data };
+                console.error('Error parsing data as JSON:', error);
+                // Optional: Add more decoding attempts here if needed
+                return null; // Parsing failed
             }
         }
 
-        // Maneja datos que vienen en chunks
-        function handleChunkedData(data) {
-            try {
-                // Formato esperado: CHUNK:index:total:data
-                const [, index, total, chunkData] = data.split(':');
-                const chunkIndex = parseInt(index);
-                const totalExpected = parseInt(total);
-
-                if (totalChunks === 0) {
-                    totalChunks = totalExpected;
-                    chunkedData.clear();
-                }
-
-                chunkedData.set(chunkIndex, chunkData);
-
-                // Verifica si tenemos todos los chunks
-                if (chunkedData.size === totalChunks) {
-                    // Reconstruye los datos originales
-                    const completeData = Array.from({ length: totalChunks }, (_, i) => 
-                        chunkedData.get(i)
-                    ).join('');
-
-                    // Limpia el buffer de chunks
-                    chunkedData.clear();
-                    totalChunks = 0;
-
-                    // Intenta parsear los datos completos
-                    return parseQrData(completeData);
-                }
-
-                // Si aún faltan chunks, devuelve un estado parcial
-                return {
-                    partial: true,
-                    progress: `${chunkedData.size}/${totalChunks}`,
-                    message: `Escaneando parte ${chunkedData.size} de ${totalChunks}...`
-                };
-            } catch (error) {
-                console.error('Error handling chunked data:', error);
-                return { error: 'Error processing chunked data', rawData: data };
-            }
-        }    
-
-        // Callback cuando se escanea un QR exitosamente
+        /**
+         * Callback function for successful QR code scans.
+         * @param {string} decodedText - The decoded text string.
+         * @param {object} decodedResult - Detailed scan result info.
+         */
         function onScanSuccess(decodedText, decodedResult) {
-            console.log('QR escaneado, procesando datos...');
-            
-            const result = parseQrData(decodedText);
-            
-            // Verificar si los datos son válidos
-            if (result.error || result.rawData) {
-                showMessage('El código QR no contiene datos válidos', 'error');
-                return;
-            }
+            console.log("Raw decoded text:", decodedText);
+            qrReaderResults.textContent = "Código QR detectado.";
 
-            // Continuar con el procesamiento normal
-            isScanning = false;
-            
-            if (html5QrCode && html5QrCode.isScanning) {
-                html5QrCode.stop().then(() => {
-                    qrReaderElement.style.display = 'none';
-                    startScanBtn.textContent = 'Volver a Escanear';
-                    startScanBtn.disabled = false;
-                });
-            }
+            // Store the raw text
+            rawDecodedText = decodedText;
+            jsonData = null; // Reset any previously parsed JSON
 
-            // Mostrar los datos procesados
-            jsonData = result;
-            scannedDataElement.textContent = JSON.stringify(result, null, 2);
-            resultContainer.classList.remove('hidden');
-            
-            // Habilitar descarga
-            downloadJsonBtn.disabled = false;
-            downloadJsonBtn.classList.remove('btn-disabled');
-            downloadJsonBtn.classList.add('btn-primary');
-            
-            showMessage('¡Datos escaneados correctamente!', 'success');
-        }
+            // Display the raw text
+            scannedDataElement.textContent = rawDecodedText;
+            resultContainer.classList.remove('hidden'); // Show results area
 
-        // Callback para errores durante el escaneo (no necesariamente un error fatal)
-        function onScanFailure(error) {
-            // A menudo se llama aunque no haya QR, no es necesariamente un 'error'
-            // console.warn(`Error de escaneo: ${error}`);
-        }
-
-        // Inicia el proceso de escaneo
-        function startScanning() {
-            if (isScanning) return; // Evita iniciar múltiples veces
-
-            // Oculta resultados anteriores y mensajes
-            resultContainer.classList.add('hidden');
-            messageBox.style.display = 'none';
-            downloadJsonBtn.disabled = true; // Deshabilita descarga
-            downloadJsonBtn.classList.add('btn-disabled');
+            // Update button states
+            convertToJsonBtn.disabled = false; // Enable conversion attempt
+            downloadRawBtn.disabled = false;   // Enable raw download
+            downloadJsonBtn.disabled = true;   // Disable JSON download initially
+            downloadJsonBtn.classList.add('btn-secondary'); // Ensure secondary style
             downloadJsonBtn.classList.remove('btn-primary');
-            downloadJsonBtn.classList.add('btn-secondary'); // Estilo secundario mientras está deshabilitado
 
+            showMessage('Datos crudos escaneados. Puede intentar convertirlos a JSON o descargarlos.', 'info');
 
-            // Muestra el visor de la cámara
-            qrReaderElement.style.display = 'block';
-
-            // Crea una nueva instancia del lector si no existe
-             if (!html5QrCode) {
-                html5QrCode = new Html5Qrcode("qr-reader");
-             }
-
-
-            const config = { fps: 10, qrbox: { width: 250, height: 250 } };
-
-            // Intenta obtener la cámara trasera preferentemente
-            Html5Qrcode.getCameras().then(devices => {
-                if (devices && devices.length) {
-                    // Busca la cámara trasera (suele tener 'back' o 'environment' en la etiqueta)
-                    let cameraId = devices.length > 1
-                        ? devices.find(d => d.label.toLowerCase().includes('back') || d.label.toLowerCase().includes('environment'))?.id
-                        : devices[0].id; // Usa la primera si no hay trasera o solo hay una
-
-                    if (!cameraId && devices.length > 0) {
-                        cameraId = devices[0].id; // Fallback a la primera cámara si no se encontró trasera
-                    }
-
-                    console.log("Usando cámara ID:", cameraId);
-
-                    isScanning = true;
-                    startScanBtn.textContent = 'Escaneando...';
-                    startScanBtn.disabled = true; // Deshabilita mientras escanea
-
-                    html5QrCode.start(
-                        cameraId,     // Usa la cámara seleccionada
-                        config,       // Configuración del lector
-                        onScanSuccess,// Callback de éxito
-                        onScanFailure // Callback de fallo/no detectado
-                    ).catch(err => {
-                        console.error("Error al iniciar el lector QR:", err);
-                        showMessage(`Error al iniciar la cámara: ${err.message}`, 'error');
-                        qrReaderElement.style.display = 'none'; // Oculta si falla
-                        isScanning = false;
-                        startScanBtn.textContent = 'Iniciar Escaneo';
-                        startScanBtn.disabled = false;
-                    });
-                } else {
-                     console.error("No se encontraron cámaras.");
-                     showMessage("No se encontraron cámaras en este dispositivo.", 'error');
-                }
-            }).catch(err => {
-                console.error("Error al obtener cámaras:", err);
-                 showMessage(`Error al acceder a las cámaras: ${err.message}. Asegúrate de dar permiso.`, 'error');
-            });
+            // Stop scanning after successful detection
+            if (html5QrCode && html5QrCode.isScanning) {
+                stopScanning();
+            }
+             // Update main button text
+            startScanBtn.textContent = 'Volver a Escanear';
         }
 
-        // Descarga los datos JSON como un archivo
-        function downloadJsonFile() {
-            if (!jsonData) {
-                showMessage("No hay datos para descargar.", 'error');
+        /**
+         * Callback function for scan failures or no QR code detected.
+         * @param {string} error - Error message.
+         */
+        function onScanFailure(error) {
+            if (!isScanning) return;
+            // Avoid logging frequent "not found" messages
+            if (!error.toLowerCase().includes("qr code not found")) {
+                 console.warn(`Scan Failure: ${error}`);
+            }
+             // qrReaderResults.textContent = "Buscando código QR...";
+        }
+
+        /**
+         * Stops the QR scanning process and resets UI elements.
+         */
+        function stopScanning() {
+             if (html5QrCode && html5QrCode.isScanning) {
+                html5QrCode.stop().then(() => {
+                    console.log("QR Scanning stopped.");
+                    isScanning = false;
+                    qrReaderElement.style.display = 'none';
+                    startScanBtn.textContent = rawDecodedText ? 'Volver a Escanear' : 'Iniciar Escaneo'; // Keep 'Volver' if data exists
+                    startScanBtn.disabled = false;
+                    qrReaderResults.textContent = "Escaneo detenido.";
+                }).catch(err => {
+                    console.error("Error stopping scanner:", err);
+                    isScanning = false; // Force state update
+                    qrReaderElement.style.display = 'none';
+                    startScanBtn.textContent = rawDecodedText ? 'Volver a Escanear' : 'Iniciar Escaneo';
+                    startScanBtn.disabled = false;
+                    qrReaderResults.textContent = "Error al detener.";
+                });
+            } else {
+                 isScanning = false;
+                 qrReaderElement.style.display = 'none';
+                 startScanBtn.textContent = rawDecodedText ? 'Volver a Escanear' : 'Iniciar Escaneo';
+                 startScanBtn.disabled = false;
+                 qrReaderResults.textContent = "";
+            }
+            // Don't hide results container if data was scanned
+            // resultContainer.classList.add('hidden');
+            // convertToJsonBtn.disabled = true;
+            // downloadRawBtn.disabled = true;
+            // downloadJsonBtn.disabled = true;
+        }
+
+        /**
+         * Starts the QR code scanning process.
+         */
+        function startScanning() {
+            if (isScanning) return;
+
+            // Reset UI before starting scan
+            resultContainer.classList.add('hidden'); // Hide results initially
+            messageBox.style.display = 'none';
+            convertToJsonBtn.disabled = true;
+            downloadRawBtn.disabled = true;
+            downloadJsonBtn.disabled = true;
+            rawDecodedText = null; // Clear previous raw data
+            jsonData = null; // Clear previous json data
+            scannedDataElement.textContent = ''; // Clear display area
+
+            qrReaderElement.style.display = 'block';
+            qrReaderResults.textContent = "Iniciando cámara...";
+
+            if (!html5QrCode) {
+                try {
+                    html5QrCode = new Html5Qrcode("qr-reader", { verbose: false }); // Verbose false is usually fine
+                } catch (e) {
+                     console.error("Failed to initialize Html5Qrcode:", e);
+                     showMessage("Error al inicializar el lector QR.", "error");
+                     qrReaderElement.style.display = 'none';
+                     return;
+                }
+            }
+
+            const config = {
+                fps: 10,
+                qrbox: (viewfinderWidth, viewfinderHeight) => {
+                    const size = Math.min(viewfinderWidth, viewfinderHeight) * 0.7;
+                    return { width: size, height: size };
+                },
+                rememberLastUsedCamera: true,
+                supportedScanTypes: [Html5QrcodeScanType.SCAN_TYPE_CAMERA]
+            };
+
+            isScanning = true;
+            startScanBtn.textContent = 'Detener Escaneo';
+            startScanBtn.disabled = false; // Allow stopping
+            qrReaderResults.textContent = "Buscando código QR...";
+
+            html5QrCode.start( { facingMode: "environment" }, config, onScanSuccess, onScanFailure)
+                .catch(err => {
+                    console.error("Error starting rear camera:", err);
+                    qrReaderResults.textContent = "Intentando cámara frontal...";
+                    html5QrCode.start({ facingMode: "user" }, config, onScanSuccess, onScanFailure)
+                        .catch(errFront => {
+                            console.error("Error starting front camera:", errFront);
+                            showMessage(`No se pudo iniciar ninguna cámara: ${errFront.message || errFront}`, 'error');
+                            qrReaderElement.style.display = 'none';
+                            isScanning = false;
+                            startScanBtn.textContent = 'Iniciar Escaneo';
+                            startScanBtn.disabled = false;
+                            qrReaderResults.textContent = "Error de cámara.";
+                        });
+                });
+        }
+
+        /**
+         * Handles the click event for the main scan/stop button.
+         */
+        function handleScanButtonClick() {
+            if (isScanning) {
+                stopScanning();
+            } else {
+                startScanning(); // This now resets UI internally
+            }
+        }
+
+        /**
+         * Attempts to convert the raw scanned text to JSON and updates the display.
+         */
+        function handleConvertToJsonClick() {
+            if (!rawDecodedText) {
+                showMessage("No hay datos crudos para convertir.", "error");
                 return;
             }
 
-            try {
-                // Extraer datos necesarios para el nombre del archivo
-                const primerNombre = jsonData.primerNombre || 'desconocido';
-                const numeroPasaporte = jsonData.numeroPasaporte || 'sinPasaporte';
-                const fechaSolicitud = jsonData.fechaSolicitud || new Date().toISOString().split('T')[0].replace(/-/g, '');
+            jsonData = parseQrData(rawDecodedText); // Attempt parsing
 
-                // Construir nombre del archivo
-                const fileName = `${primerNombre}_${numeroPasaporte}_${fechaSolicitud}.json`;
+            if (jsonData) {
+                // Success: Display formatted JSON
+                scannedDataElement.textContent = JSON.stringify(jsonData, null, 2);
+                showMessage("Conversión a JSON exitosa.", "success");
+                downloadJsonBtn.disabled = false; // Enable JSON download
+                downloadJsonBtn.classList.remove('btn-secondary'); // Use primary style for enabled JSON download
+                downloadJsonBtn.classList.add('btn-primary');
+                convertToJsonBtn.disabled = true; // Disable further conversion attempts
+            } else {
+                // Failure: Show error, keep raw data displayed
+                showMessage("No se pudo convertir los datos a formato JSON válido.", "error");
+                scannedDataElement.textContent = rawDecodedText; // Ensure raw text is still shown
+                downloadJsonBtn.disabled = true; // Keep JSON download disabled
+                downloadJsonBtn.classList.add('btn-secondary');
+                downloadJsonBtn.classList.remove('btn-primary');
+            }
+        }
 
-                const dataStr = JSON.stringify(jsonData, null, 2);
-                const dataBlob = new Blob([dataStr], { type: 'application/json' });
+        /**
+         * Downloads data as a file.
+         * @param {string} dataString - The string content to download.
+         * @param {string} baseFilename - The base name for the file.
+         * @param {string} extension - The file extension (e.g., 'txt', 'json').
+         * @param {string} mimeType - The MIME type for the Blob.
+         */
+        function downloadFile(dataString, baseFilename, extension, mimeType) {
+             try {
+                const filename = `${baseFilename}_${new Date().toISOString().split('T')[0].replace(/-/g, '')}.${extension}`;
+                const dataBlob = new Blob([dataString], { type: `${mimeType};charset=utf-8` });
                 const url = URL.createObjectURL(dataBlob);
 
                 const link = document.createElement('a');
                 link.href = url;
-                link.download = fileName.toUpperCase(); // Convertir a mayúsculas
+                link.download = filename.toUpperCase();
 
                 document.body.appendChild(link);
                 link.click();
                 document.body.removeChild(link);
                 URL.revokeObjectURL(url);
 
-                showMessage(`Archivo guardado como: ${fileName}`, 'success');
+                showMessage(`Archivo guardado como: ${filename.toUpperCase()}`, 'success');
             } catch (error) {
-                console.error('Error al generar archivo:', error);
-                showMessage('Error al generar el archivo. Intente nuevamente.', 'error');
+                console.error(`Error generating or downloading ${extension} file:`, error);
+                showMessage(`Error al generar o descargar el archivo ${extension}. Verifique la consola.`, 'error');
             }
         }
 
-        // --- Event Listeners ---
-        startScanBtn.addEventListener('click', startScanning);
-        downloadJsonBtn.addEventListener('click', downloadJsonFile);
-
-        // --- Inicialización ---
-        // Opcional: Verificar si la API es compatible al cargar
-        if (typeof navigator.mediaDevices === 'undefined' || typeof navigator.mediaDevices.getUserMedia === 'undefined') {
-             showMessage("La API de cámara no es compatible con tu navegador.", 'error');
-             startScanBtn.disabled = true;
-             startScanBtn.classList.add('btn-disabled');
+        /**
+         * Handles downloading the raw scanned text.
+         */
+        function handleDownloadRawClick() {
+            if (!rawDecodedText) {
+                showMessage("No hay datos crudos para descargar.", "error");
+                return;
+            }
+            // Try to get a base filename from JSON if available, otherwise use default
+            const base = jsonData?.primerNombre || jsonData?.name || 'datos_crudos';
+            downloadFile(rawDecodedText, base, 'txt', 'text/plain');
         }
-         // Asegurar que el lector se detenga si el usuario navega fuera de la página
+
+        /**
+         * Handles downloading the data as JSON (only if conversion was successful).
+         */
+        function handleDownloadJsonClick() {
+            if (!jsonData) {
+                showMessage("No hay datos JSON válidos para descargar (intente convertir primero).", "error");
+                return;
+            }
+             // Try to get a base filename from JSON data
+             const base = jsonData?.primerNombre || jsonData?.name || 'datos_json';
+            downloadFile(JSON.stringify(jsonData, null, 2), base, 'json', 'application/json');
+        }
+
+
+        // --- Event Listeners ---
+        startScanBtn.addEventListener('click', handleScanButtonClick);
+        convertToJsonBtn.addEventListener('click', handleConvertToJsonClick);
+        downloadRawBtn.addEventListener('click', handleDownloadRawClick);
+        downloadJsonBtn.addEventListener('click', handleDownloadJsonClick);
+
+        // --- Initialization ---
+        document.addEventListener('DOMContentLoaded', () => {
+            // Check for camera API compatibility
+            if (typeof navigator.mediaDevices === 'undefined' || typeof navigator.mediaDevices.getUserMedia === 'undefined') {
+                 showMessage("La API de la cámara no es compatible con este navegador.", 'error');
+                 startScanBtn.disabled = true;
+                 startScanBtn.classList.add('btn-disabled'); // Use general disabled style
+                 startScanBtn.textContent = 'Cámara no Soportada';
+            }
+        });
+
+        // Stop scanner on page unload
         window.addEventListener('beforeunload', () => {
             if (html5QrCode && html5QrCode.isScanning) {
-                html5QrCode.stop().catch(err => console.error("Error al detener QR al salir:", err));
+                stopScanning();
+                console.log("Attempted to stop scanner on page unload.");
             }
         });
 
