@@ -7,7 +7,6 @@
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://unpkg.com/html5-qrcode" type="text/javascript"></script>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/lz-string/1.4.4/lz-string.min.js"></script>
     <style>
         body {
             font-family: 'Inter', sans-serif;
@@ -257,26 +256,8 @@
 
         // Intenta parsear los datos del QR a un objeto JSON
         function parseQrData(data) {
-            try {
-                // Intenta descomprimir primero con LZString
-                const decompressed = LZString.decompressFromBase64(data);
-                if (decompressed) {
-                    try {
-                        const jsonData = JSON.parse(decompressed);
-                        console.log('Datos descomprimidos exitosamente:', jsonData);
-                        return jsonData;
-                    } catch (e) {
-                        console.warn('Datos descomprimidos pero no son JSON válido:', decompressed);
-                    }
-                }
-
-                // Si la descompresión falla, intenta parsear como JSON normal
-                try {
-                    return JSON.parse(data);
-                } catch (e) {
-                    console.warn('No se pudo parsear como JSON, probando otros formatos');
-                    return { rawData: data };
-                }
+            try {            
+                return JSON.parse(data);
             } catch (error) {
                 console.error('Error al procesar datos QR:', error);
                 return { error: 'Error al procesar datos', rawData: data };
@@ -323,28 +304,7 @@
                 console.error('Error handling chunked data:', error);
                 return { error: 'Error processing chunked data', rawData: data };
             }
-        }
-
-        // Función auxiliar para descomprimir datos (si están comprimidos)
-        function decompressData(compressedData) {
-            try {
-                // Intenta descomprimir usando LZString
-                const decompressed = LZString.decompressFromBase64(compressedData);
-                if (!decompressed) {
-                    throw new Error('Failed to decompress data');
-                }
-                return decompressed;
-            } catch (error) {
-                console.error('Error decompressing with LZString:', error);
-                // Fallback: intenta decodificar como base64 normal
-                try {
-                    return atob(compressedData);
-                } catch (e) {
-                    console.error('Error decompressing as base64:', e);
-                    return compressedData;
-                }
-            }
-        }
+        }    
 
         // Callback cuando se escanea un QR exitosamente
         function onScanSuccess(decodedText, decodedResult) {
@@ -379,7 +339,7 @@
             downloadJsonBtn.classList.remove('btn-disabled');
             downloadJsonBtn.classList.add('btn-primary');
             
-            showMessage('¡Datos escaneados y descomprimidos correctamente!', 'success');
+            showMessage('¡Datos escaneados correctamente!', 'success');
         }
 
         // Callback para errores durante el escaneo (no necesariamente un error fatal)
