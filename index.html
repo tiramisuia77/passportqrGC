@@ -1,9 +1,61 @@
 <!DOCTYPE html>
 <html lang="en"
-  
   data-color-mode="auto" data-light-theme="light" data-dark-theme="dark"
-  data-a11y-animated-images="system" data-a11y-link-underlines="true"
-  
-  >
-  <body>hola</body>
+  data-a11y-animated-images="system" data-a11y-link-underlines="true">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sistema de QR para Pasaportes</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        .header {
+            text-align: center;
+            margin-bottom: 40px;
+        }
+        .shortcuts {
+            display: flex;
+            justify-content: center;
+            gap: 20px;
+            margin-bottom: 40px;
+        }
+        .shortcut-btn {
+            padding: 15px 30px;
+            font-size: 1.2em;
+            border-radius: 5px;
+            border: none;
+            background-color: #0066cc;
+            color: white;
+            cursor: pointer;
+            text-decoration: none;
+        }
+        .footer {
+            text-align: center;
+            margin-top: 40px;
+            color: #666;
+            border-top: 1px solid #ddd;
+            padding-top: 20px;
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <h1>Sistema de QR para Pasaportes</h1>
+        <p>Bienvenido al sistema de generación y lectura de códigos QR para pasaportes</p>
+    </div>
+
+    <div class="shortcuts">
+        <a href="form.html" class="shortcut-btn">Generador de QR</a>
+        <a href="reader.html" class="shortcut-btn">Lector de QR</a>
+    </div>
+
+    <div class="footer">
+        <p>Versión 1.0.0</p>
+        <p>Desarrollado para MINREX © 2024</p>
+    </div>
+</body>
 </html>
