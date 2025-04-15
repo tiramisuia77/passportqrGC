@@ -32,7 +32,7 @@
             right: 0;
             width: 100%;
             height: 100%;
-            background-image: url('img/escudo_cuba_lineas_azul.png'); /* Placeholder */
+           /* background-image: url('img/escudo_cuba_lineas_azul.png'); /* Placeholder */*/
             background-position: center 15px;
             background-repeat: no-repeat;
             opacity: 0.1;
@@ -79,7 +79,8 @@
             width: 100%; padding: 8px; border: 1px solid #ccc; border-radius: 5px;
             box-sizing: border-box; font-size: 14px;
         }
-        input[type="text"], input[type="email"], input[type="tel"], textarea { text-transform: uppercase; }
+        input[type="text"], input[type="tel"], textarea { text-transform: uppercase; }
+        input[type="email"]{text-transform: lowercase;}
         input[type="number"] { -webkit-appearance: none; -moz-appearance: textfield; appearance: textfield; margin: 0; }
         input[type="number"]::-webkit-inner-spin-button, input[type="number"]::-webkit-outer-spin-button { -webkit-appearance: none; margin: 0; }
         select:disabled, input:disabled { background-color: #e9ecef; cursor: not-allowed; opacity: 0.7; }
@@ -141,6 +142,9 @@
                 padding: 0;
                 font-size: 8.5pt; /* Further reduced base font size */
                 line-height: 1.25; /* Further reduced line-height */
+                -webkit-print-color-adjust: exact !important;
+                print-color-adjust: exact !important;
+
             }
             #form-to-print {
                  max-width: 100%;
@@ -206,8 +210,11 @@
              #qrCode > div { font-size: 7pt; margin-bottom: 2px; }
              #qrCode canvas, #qrCode img { max-width: 35mm; } /* Reduced QR size */
 
-            button, .no-print { display: none; }
+             .no-print, .no-print * { /* Aplica a todos los hijos */
+                display: none !important; 
+            }
             /* Removed page-break-inside: avoid from form-group and date-input-group */
+        
         }
 
         /* Container for date inputs */
@@ -255,7 +262,7 @@
                 gap: 5px; 
             }
             .date-input-group input[type="number"] { width: calc(33% - 4px); }
-            .photo-box { width: 140px; height: 170px; }
+            /* .photo-box { width: 140px; height: 170px; } */
             .header h1 { font-size: 18px; }
             .header h2 { font-size: 15px; }
         }
@@ -273,7 +280,7 @@
             .header h2 { font-size: 13px; }
             button { font-size: 14px; padding: 8px 15px; }
             .date-input-group input[type="number"] { width: calc(33% - 4px); }
-            .photo-box { width: 110px; height: 140px; }
+            /* .photo-box { width: 110px; height: 140px; } */
             label { font-size: 12px; }
             input, select, textarea { 
                 font-size: 13px; 
@@ -324,8 +331,27 @@
                 <hr>
                 <div class="form-group" style="flex: 1;">
                     <label>Foto del Solicitante</label>
-                    <div class="photo-box">
-                        FOTO<br>(4 x 4.5 cm)
+                    <div class="photo-box" id="photoPreviewContainer">
+                        <input type="file" id="photoInput" accept="image/*" style="display: none;" onchange="handlePhotoUpload(this)">
+                        <div id="photoPreview">
+                            <div id="photoPlaceholder">
+                                FOTO<br>(4 x 4.5 cm)<br>
+                                <small style="font-size: 11px;">
+                                    - Fondo blanco<br>
+                                    - Rostro centrado<br>
+                                    - Sin lentes ni accesorios<br>
+                                    - Formato JPG/PNG
+                                </small>
+                            </div>
+                            <img id="uploadedPhoto" style="display: none; max-width: 100%; max-height: 100%; object-fit: contain;">
+                        </div>
+                    </div>
+                    <div class="no-print" style="text-align: center; width: 150px;">
+                        <button type="button" onclick="document.getElementById('photoInput').click()" 
+                                style="background-color: #007bff; color: white; border: none; width: 100%;
+                                       padding: 5px; border-radius: 3px; font-size: 12px; cursor: pointer;">
+                            Subir Foto  
+                        </button>
                     </div>
                 </div>
                 <div class="form-group" style="flex: 2;">
@@ -361,7 +387,8 @@
                            pattern="[0-9]{11}" 
                            oninput="this.value = this.value.replace(/[^0-9]/g, '').slice(0, 11)"
                            onblur="validateCubanID(this)"
-                           title="Debe contener 11 dígitos y ser un carné de identidad válido">
+                           title="Debe contener 11 dígitos y ser un carné de identidad válido"
+                           >
                 </div>
                 <div class="form-group">
                     <label for="fechaNacimiento">Fecha de Nacimiento</label>
@@ -529,7 +556,7 @@
 
         <div class="form-section"> -->
             <br>
-           
+            <br>
 
             <div class="form-title">DATOS LABORALES O DE ESTUDIO</div>
             <div class="form-row">
@@ -539,6 +566,16 @@
                 </div>
             </div>
             <div class="form-row">
+                <div class="form-group">
+                    <label for="nivelCultural">Nivel Cultural</label>
+                    <select id="nivelCultural" name="nivelCultural" required>
+                        <option value="">Seleccione</option>
+                        <option value="primaria">Primaria</option>
+                        <option value="secundaria">Secundaria</option>
+                        <option value="preuniversitario">Preuniversitario</option>
+                        <option value="universitario">Universitario</option>
+                    </select>
+                </div>
                 <div class="form-group">
                     <label for="profesionTrabajo">Profesión</label>
                     <input type="text" id="profesionTrabajo" name="profesionTrabajo">
@@ -589,28 +626,8 @@
 
         <div class="form-section"> -->
            <br>
-       
+           <br>
             <div class="form-title">INFORMACIÓN ADICIONAL</div>
-            <div class="form-row">
-                <div class="form-group">
-                    <label for="nivelCultural">Nivel Cultural</label>
-                    <select id="nivelCultural" name="nivelCultural" required>
-                        <option value="">Seleccione</option>
-                        <option value="primaria">Primaria</option>
-                        <option value="secundaria">Secundaria</option>
-                        <option value="preuniversitario">Preuniversitario</option>
-                        <option value="universitario">Universitario</option>
-                    </select>
-                </div>
-                <div class="form-group">
-                    <label for="ocupacionActual">Ocupación Actual</label>
-                    <input type="text" id="ocupacionActual" name="ocupacionActual">
-                </div>
-                <div class="form-group">
-                    <label for="profesionOficio">Profesión u Oficio</label>
-                    <input type="text" id="profesionOficio" name="profesionOficio">
-                </div>
-            </div>
             <div class="form-row">
                 <div class="form-group" style="flex: 2;">
                     <label for="referenciaNombre">Nombre y Apellidos de la Referencia en Cuba</label>
@@ -729,14 +746,13 @@
         </div>
 
         <div class="qr-container" id="qrCode">
-             <div>Código de verificación del documento</div>
+             <div>Verificación del QR</div>
         </div>
     </div>
 
     <div class="btn-container no-print">
         <button type="button" onclick="generatePDF()">Finalizar y Generar PDF</button>
         <button type="button" onclick="generateOnlyQR()" style="display: none;">Generar solo QR</button>
-        <button type="button" onclick="continueIteration()" id="continueBtn" style="display: none;">Continue to iterate?</button>
     </div>
 
     <script src="https://cdn.jsdelivr.net/npm/toastify-js"></script>
@@ -1074,6 +1090,27 @@
             try {
                 document.getElementById('loader').style.display = 'flex';
 
+                // Ajustar el tamaño de la fuente para todos los campos de texto
+                document.querySelectorAll('input[type="text"], input[type="tel"], input[type="email"], textarea').forEach(input => {
+                    const tempSpan = document.createElement('span');
+                    tempSpan.style.visibility = 'hidden';
+                    tempSpan.style.position = 'absolute';
+                    tempSpan.style.whiteSpace = 'nowrap';
+                    tempSpan.textContent = input.value;
+                    document.body.appendChild(tempSpan);
+
+                    const inputWidth = input.offsetWidth;
+                    const textWidth = tempSpan.offsetWidth;
+
+                    document.body.removeChild(tempSpan);
+
+                    if (textWidth > inputWidth) {
+                        const ratio = inputWidth / textWidth;
+                        const newFontSize = Math.max(8, Math.floor(14 * ratio)); // No permitir tamaño menor a 8px
+                        input.style.fontSize = `${newFontSize}px`;
+                    }
+                });
+
                 // Recopilar todos los datos del formulario (excepto foto y firma)
                 const formData = [];
                 const formElements = document.querySelectorAll('input, select, textarea');
@@ -1100,7 +1137,7 @@
                     element: document.getElementById('qr'),
                     value: utf8Data,
                     size: 300,
-                    level: 'L',
+                    level: 'M',
                     background: 'white',
                     foreground: 'black'
                 });
@@ -1128,6 +1165,11 @@
 
                 await html2pdf().from(element).set(opt).save();
 
+                // Restaurar el tamaño de fuente original después de generar el PDF
+                document.querySelectorAll('input[type="text"], input[type="tel"], input[type="email"], textarea').forEach(input => {
+                    input.style.fontSize = '14px'; // Restaurar al tamaño original
+                });
+
                 Toastify({
                     text: "PDF generado exitosamente",
                     duration: 3000,
@@ -1152,10 +1194,61 @@
 
         // Add continue iteration functionality
         function continueIteration() {
-            // Show the QR code generation options again
+            // Reset form fields but keep the header information
+            const fieldsToKeep = ['fechaSolicitud', 'tramite', 'paisResidencia', 'consulado'];
+            const savedValues = {};
+            
+            // Save values we want to keep
+            fieldsToKeep.forEach(fieldId => {
+                const element = document.getElementById(fieldId);
+                if (element) {
+                    savedValues[fieldId] = element.value;
+                }
+            });
+            
+            // Reset form
+            document.querySelectorAll('input, select, textarea').forEach(element => {
+                if (element.type === 'file') {
+                    // Reset file input
+                    element.value = '';
+                    // Reset photo preview if exists
+                    const photoPreview = document.getElementById('uploadedPhoto');
+                    if (photoPreview) {
+                        photoPreview.style.display = 'none';
+                    }
+                    const photoPlaceholder = document.getElementById('photoPlaceholder');
+                    if (photoPlaceholder) {
+                        photoPlaceholder.style.display = 'block';
+                    }
+                } else {
+                    element.value = '';
+                }
+            });
+            
+            // Restore saved values
+            Object.entries(savedValues).forEach(([fieldId, value]) => {
+                const element = document.getElementById(fieldId);
+                if (element) {
+                    element.value = value;
+                }
+            });
+            
+            // Hide the continue button
             document.getElementById('continueBtn').style.display = 'none';
-            // Clear the previous QR code
-            document.getElementById('qrCode').innerHTML = '<div>Código de verificación del documento</div>';
+            
+            // Scroll to top
+            window.scrollTo(0, 0);
+            
+            // Show a confirmation message
+            Toastify({
+                text: "Form reset for next entry. Header information preserved.",
+                duration: 3000,
+                gravity: "top",
+                position: 'center',
+                style: {
+                    background: "linear-gradient(135deg, #00C851, #007E33)"
+                }
+            }).showToast();
         }
 
         // Modify generateOnlyQR to show continue button after generation
@@ -1234,6 +1327,70 @@
                     className: "error"
                 }).showToast();
             }
+        }
+
+        function handlePhotoUpload(input) {
+            const file = input.files[0];
+            const photoPreview = document.getElementById('uploadedPhoto');
+            const photoPlaceholder = document.getElementById('photoPlaceholder');
+            
+            if (!file) return;
+            
+            // Validación de tipo de archivo
+            if (!file.type.startsWith('image/')) {
+                showToast('Por favor, seleccione un archivo de imagen válido (JPG o PNG)', 'error');
+                input.value = '';
+                return;
+            }
+            
+            // Validación de tamaño (max 5MB)
+            if (file.size > 5 * 1024 * 1024) {
+                showToast('La imagen no debe exceder 5MB', 'error');
+                input.value = '';
+                return;
+            }
+            
+            const img = new Image();
+            img.onload = function() {
+                // Validar dimensiones (proporción aproximada 4:4.5)
+                const aspectRatio = this.width / this.height;
+                const expectedRatio = 4 / 4.5;
+                const tolerance = 0.2; // 20% de tolerancia
+                
+                if (Math.abs(aspectRatio - expectedRatio) > tolerance) {
+                    showToast('La imagen debe tener una proporción aproximada de 4:4.5 cm', 'error');
+                    input.value = '';
+                    photoPreview.style.display = 'none';
+                    photoPlaceholder.style.display = 'block';
+                    return;
+                }
+                
+                // Mostrar la imagen
+                photoPreview.src = URL.createObjectURL(file);
+                photoPreview.style.display = 'block';
+                photoPlaceholder.style.display = 'none';
+            };
+            
+            img.onerror = function() {
+                showToast('Error al cargar la imagen. Por favor, intente con otra.', 'error');
+                input.value = '';
+            };
+            
+            img.src = URL.createObjectURL(file);
+        }
+
+        function showToast(message, type = 'error') {
+            Toastify({
+                text: message,
+                duration: 3000,
+                gravity: "top",
+                position: "center",
+                className: type,
+                style: {
+                    background: type === 'error' ? "linear-gradient(to right, #ff4444, #cc0000)" : 
+                                             "linear-gradient(to right, #00C851, #007E33)"
+                }
+            }).showToast();
         }
     </script>
 </body>
