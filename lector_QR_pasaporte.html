@@ -312,10 +312,10 @@
 
     <script>
         // --- Global Variables ---
-        let html5QrCode = null; // Instance of the QR code reader
-        let rawDecodedText = null; // Store the raw text from the QR
-        let jsonData = null; // Store the parsed JSON object (if successful)
-        let isScanning = false; // Flag to track scanning state
+        let html5QrCode = null;
+        let rawDecodedText = null;
+        let jsonData = null;
+        let isScanning = false;
 
         // --- DOM Elements ---
         const qrReaderElement = document.getElementById('qr-reader');
@@ -329,179 +329,115 @@
         const messageText = document.getElementById('message-text');
         const qrReaderResults = document.getElementById('qr-reader-results');
 
-        // --- Functions ---
-
-        /**
-         * Displays messages to the user.
-         * @param {string} message - The message text.
-         * @param {string} [type='info'] - Message type ('success', 'error', 'info').
-         */
+        // Utilidad para mostrar mensajes
         function showMessage(message, type = 'info') {
             messageText.textContent = message;
-            messageBox.className = `message-box message-${type}`; // Apply type class
+            messageBox.className = `message-box message-${type}`;
             messageBox.style.display = 'block';
-            // Auto-hide after 5 seconds
-            setTimeout(() => {
-                 if (messageBox.style.display === 'block') {
-                    messageBox.style.display = 'none';
-                 }
+            clearTimeout(showMessage.timeoutId);
+            showMessage.timeoutId = setTimeout(() => {
+                messageBox.style.display = 'none';
             }, 5000);
         }
 
-        /**
-         * Attempts to parse text data as a JSON object.
-         * @param {string} data - The raw string data.
-         * @returns {object|null} - The parsed JSON object or null if parsing fails.
-         */
+        // Intentar parsear JSON
         function parseQrData(data) {
-            if (!data) return null; // Handle null or empty input
+            if (!data) return null;
             try {
-                const parsedData = JSON.parse(data);
-                if (typeof parsedData === 'object' && parsedData !== null) {
-                    return parsedData; // Success
-                }
-                console.error('Parsed data is not a valid object:', parsedData);
+                const parsed = JSON.parse(data);
+                return typeof parsed === 'object' && parsed !== null ? parsed : null;
+            } catch {
                 return null;
-            } catch (error) {
-                console.error('Error parsing data as JSON:', error);
-                // Optional: Add more decoding attempts here if needed
-                return null; // Parsing failed
             }
         }
 
-        /**
-         * Callback function for successful QR code scans.
-         * @param {string} decodedText - The decoded text string.
-         * @param {object} decodedResult - Detailed scan result info.
-         */
-        function onScanSuccess(decodedText, decodedResult) {
-            console.log("Raw decoded text:", decodedText);
+        // Manejo de escaneo exitoso
+        function onScanSuccess(decodedText) {
             qrReaderResults.textContent = "Código QR detectado.";
-
-            // Store the raw text
             rawDecodedText = decodedText;
-            jsonData = null; // Reset any previously parsed JSON
-
-            // Display the raw text
+            jsonData = null;
             scannedDataElement.textContent = rawDecodedText;
-            resultContainer.classList.remove('hidden'); // Show results area
-
-            // Update button states
-            convertToJsonBtn.disabled = false; // Enable conversion attempt
-            downloadRawBtn.disabled = false;   // Enable raw download
-            downloadJsonBtn.disabled = true;   // Disable JSON download initially
-            downloadJsonBtn.classList.add('btn-secondary'); // Ensure secondary style
+            resultContainer.classList.remove('hidden');
+            convertToJsonBtn.disabled = false;
+            downloadRawBtn.disabled = false;
+            downloadJsonBtn.disabled = true;
+            downloadJsonBtn.classList.add('btn-secondary');
             downloadJsonBtn.classList.remove('btn-primary');
-
             showMessage('Datos crudos escaneados. Puede intentar convertirlos a JSON o descargarlos.', 'info');
-
-            // Stop scanning after successful detection
-            if (html5QrCode && html5QrCode.isScanning) {
-                stopScanning();
-            }
-             // Update main button text
+            if (html5QrCode && html5QrCode.isScanning) stopScanning();
             startScanBtn.textContent = 'Volver a Escanear';
         }
 
-        /**
-         * Callback function for scan failures or no QR code detected.
-         * @param {string} error - Error message.
-         */
+        // Manejo de error de escaneo
         function onScanFailure(error) {
             if (!isScanning) return;
-            // Avoid logging frequent "not found" messages
             if (!error.toLowerCase().includes("qr code not found")) {
-                 console.warn(`Scan Failure: ${error}`);
+                console.warn(`Scan Failure: ${error}`);
             }
-             // qrReaderResults.textContent = "Buscando código QR...";
         }
 
-        /**
-         * Stops the QR scanning process and resets UI elements.
-         */
+        // Detener escaneo
         function stopScanning() {
-             if (html5QrCode && html5QrCode.isScanning) {
+            if (html5QrCode && html5QrCode.isScanning) {
                 html5QrCode.stop().then(() => {
-                    console.log("QR Scanning stopped.");
                     isScanning = false;
                     qrReaderElement.style.display = 'none';
-                    startScanBtn.textContent = rawDecodedText ? 'Volver a Escanear' : 'Iniciar Escaneo'; // Keep 'Volver' if data exists
+                    startScanBtn.textContent = rawDecodedText ? 'Volver a Escanear' : 'Iniciar Escaneo';
                     startScanBtn.disabled = false;
                     qrReaderResults.textContent = "Escaneo detenido.";
-                }).catch(err => {
-                    console.error("Error stopping scanner:", err);
-                    isScanning = false; // Force state update
+                }).catch(() => {
+                    isScanning = false;
                     qrReaderElement.style.display = 'none';
                     startScanBtn.textContent = rawDecodedText ? 'Volver a Escanear' : 'Iniciar Escaneo';
                     startScanBtn.disabled = false;
                     qrReaderResults.textContent = "Error al detener.";
                 });
             } else {
-                 isScanning = false;
-                 qrReaderElement.style.display = 'none';
-                 startScanBtn.textContent = rawDecodedText ? 'Volver a Escanear' : 'Iniciar Escaneo';
-                 startScanBtn.disabled = false;
-                 qrReaderResults.textContent = "";
+                isScanning = false;
+                qrReaderElement.style.display = 'none';
+                startScanBtn.textContent = rawDecodedText ? 'Volver a Escanear' : 'Iniciar Escaneo';
+                startScanBtn.disabled = false;
+                qrReaderResults.textContent = "";
             }
-            // Don't hide results container if data was scanned
-            // resultContainer.classList.add('hidden');
-            // convertToJsonBtn.disabled = true;
-            // downloadRawBtn.disabled = true;
-            // downloadJsonBtn.disabled = true;
         }
 
-        /**
-         * Starts the QR code scanning process.
-         */
+        // Iniciar escaneo
         function startScanning() {
             if (isScanning) return;
-
-            // Reset UI before starting scan
-            resultContainer.classList.add('hidden'); // Hide results initially
+            resultContainer.classList.add('hidden');
             messageBox.style.display = 'none';
             convertToJsonBtn.disabled = true;
             downloadRawBtn.disabled = true;
             downloadJsonBtn.disabled = true;
-            rawDecodedText = null; // Clear previous raw data
-            jsonData = null; // Clear previous json data
-            scannedDataElement.textContent = ''; // Clear display area
-
+            rawDecodedText = null;
+            jsonData = null;
+            scannedDataElement.textContent = '';
             qrReaderElement.style.display = 'block';
             qrReaderResults.textContent = "Iniciando cámara...";
-
             if (!html5QrCode) {
                 try {
-                    html5QrCode = new Html5Qrcode("qr-reader", { verbose: false }); // Verbose false is usually fine
-                } catch (e) {
-                     console.error("Failed to initialize Html5Qrcode:", e);
-                     showMessage("Error al inicializar el lector QR.", "error");
-                     qrReaderElement.style.display = 'none';
-                     return;
+                    html5QrCode = new Html5Qrcode("qr-reader", { verbose: false });
+                } catch {
+                    showMessage("Error al inicializar el lector QR.", "error");
+                    qrReaderElement.style.display = 'none';
+                    return;
                 }
             }
-
             const config = {
                 fps: 10,
-                qrbox: (viewfinderWidth, viewfinderHeight) => {
-                    const size = Math.min(viewfinderWidth, viewfinderHeight) * 0.7;
-                    return { width: size, height: size };
-                },
+                qrbox: (w, h) => { const s = Math.min(w, h) * 0.7; return { width: s, height: s }; },
                 rememberLastUsedCamera: true,
                 supportedScanTypes: [Html5QrcodeScanType.SCAN_TYPE_CAMERA]
             };
-
             isScanning = true;
             startScanBtn.textContent = 'Detener Escaneo';
-            startScanBtn.disabled = false; // Allow stopping
+            startScanBtn.disabled = false;
             qrReaderResults.textContent = "Buscando código QR...";
-
-            html5QrCode.start( { facingMode: "environment" }, config, onScanSuccess, onScanFailure)
-                .catch(err => {
-                    console.error("Error starting rear camera:", err);
+            html5QrCode.start({ facingMode: "environment" }, config, onScanSuccess, onScanFailure)
+                .catch(() => {
                     qrReaderResults.textContent = "Intentando cámara frontal...";
                     html5QrCode.start({ facingMode: "user" }, config, onScanSuccess, onScanFailure)
                         .catch(errFront => {
-                            console.error("Error starting front camera:", errFront);
                             showMessage(`No se pudo iniciar ninguna cámara: ${errFront.message || errFront}`, 'error');
                             qrReaderElement.style.display = 'none';
                             isScanning = false;
@@ -512,127 +448,86 @@
                 });
         }
 
-        /**
-         * Handles the click event for the main scan/stop button.
-         */
-        function handleScanButtonClick() {
-            if (isScanning) {
-                stopScanning();
-            } else {
-                startScanning(); // This now resets UI internally
-            }
-        }
+        // Botón principal
+        startScanBtn.addEventListener('click', () => {
+            isScanning ? stopScanning() : startScanning();
+        });
 
-        /**
-         * Attempts to convert the raw scanned text to JSON and updates the display.
-         */
-        function handleConvertToJsonClick() {
+        // Convertir a JSON
+        convertToJsonBtn.addEventListener('click', () => {
             if (!rawDecodedText) {
                 showMessage("No hay datos crudos para convertir.", "error");
                 return;
             }
-
-            jsonData = parseQrData(rawDecodedText); // Attempt parsing
-
+            jsonData = parseQrData(rawDecodedText);
             if (jsonData) {
-                // Success: Display formatted JSON
                 scannedDataElement.textContent = JSON.stringify(jsonData, null, 2);
                 showMessage("Conversión a JSON exitosa.", "success");
-                downloadJsonBtn.disabled = false; // Enable JSON download
-                downloadJsonBtn.classList.remove('btn-secondary'); // Use primary style for enabled JSON download
+                downloadJsonBtn.disabled = false;
+                downloadJsonBtn.classList.remove('btn-secondary');
                 downloadJsonBtn.classList.add('btn-primary');
-                convertToJsonBtn.disabled = true; // Disable further conversion attempts
+                convertToJsonBtn.disabled = true;
             } else {
-                // Failure: Show error, keep raw data displayed
                 showMessage("No se pudo convertir los datos a formato JSON válido.", "error");
-                scannedDataElement.textContent = rawDecodedText; // Ensure raw text is still shown
-                downloadJsonBtn.disabled = true; // Keep JSON download disabled
+                scannedDataElement.textContent = rawDecodedText;
+                downloadJsonBtn.disabled = true;
                 downloadJsonBtn.classList.add('btn-secondary');
                 downloadJsonBtn.classList.remove('btn-primary');
             }
-        }
+        });
 
-        /**
-         * Downloads data as a file.
-         * @param {string} dataString - The string content to download.
-         * @param {string} baseFilename - The base name for the file.
-         * @param {string} extension - The file extension (e.g., 'txt', 'json').
-         * @param {string} mimeType - The MIME type for the Blob.
-         */
-        function downloadFile(dataString, baseFilename, extension, mimeType) {
-             try {
-                const filename = `${baseFilename}_${new Date().toISOString().split('T')[0].replace(/-/g, '')}.${extension}`;
-                const dataBlob = new Blob([dataString], { type: `${mimeType};charset=utf-8` });
-                const url = URL.createObjectURL(dataBlob);
-
-                const link = document.createElement('a');
-                link.href = url;
-                link.download = filename.toUpperCase();
-
-                document.body.appendChild(link);
-                link.click();
-                document.body.removeChild(link);
-                URL.revokeObjectURL(url);
-
-                showMessage(`Archivo guardado como: ${filename.toUpperCase()}`, 'success');
-            } catch (error) {
-                console.error(`Error generating or downloading ${extension} file:`, error);
-                showMessage(`Error al generar o descargar el archivo ${extension}. Verifique la consola.`, 'error');
-            }
-        }
-
-        /**
-         * Handles downloading the raw scanned text.
-         */
-        function handleDownloadRawClick() {
+        // Descargar datos crudos
+        downloadRawBtn.addEventListener('click', () => {
             if (!rawDecodedText) {
                 showMessage("No hay datos crudos para descargar.", "error");
                 return;
             }
-            // Try to get a base filename from JSON if available, otherwise use default
             const base = jsonData?.primerNombre || jsonData?.name || 'datos_crudos';
             downloadFile(rawDecodedText, base, 'txt', 'text/plain');
-        }
+        });
 
-        /**
-         * Handles downloading the data as JSON (only if conversion was successful).
-         */
-        function handleDownloadJsonClick() {
+        // Descargar JSON
+        downloadJsonBtn.addEventListener('click', () => {
             if (!jsonData) {
                 showMessage("No hay datos JSON válidos para descargar (intente convertir primero).", "error");
                 return;
             }
-             // Try to get a base filename from JSON data
-             const base = jsonData?.primerNombre || jsonData?.name || 'datos_json';
+            const base = jsonData?.primerNombre || jsonData?.name || 'datos_json';
             downloadFile(JSON.stringify(jsonData, null, 2), base, 'json', 'application/json');
+        });
+
+        // Utilidad para descargar archivos
+        function downloadFile(dataString, baseFilename, extension, mimeType) {
+            try {
+                const filename = `${baseFilename}_${new Date().toISOString().split('T')[0].replace(/-/g, '')}.${extension}`;
+                const dataBlob = new Blob([dataString], { type: `${mimeType};charset=utf-8` });
+                const url = URL.createObjectURL(dataBlob);
+                const link = document.createElement('a');
+                link.href = url;
+                link.download = filename.toUpperCase();
+                document.body.appendChild(link);
+                link.click();
+                document.body.removeChild(link);
+                URL.revokeObjectURL(url);
+                showMessage(`Archivo guardado como: ${filename.toUpperCase()}`, 'success');
+            } catch {
+                showMessage(`Error al generar o descargar el archivo ${extension}. Verifique la consola.`, 'error');
+            }
         }
 
-
-        // --- Event Listeners ---
-        startScanBtn.addEventListener('click', handleScanButtonClick);
-        convertToJsonBtn.addEventListener('click', handleConvertToJsonClick);
-        downloadRawBtn.addEventListener('click', handleDownloadRawClick);
-        downloadJsonBtn.addEventListener('click', handleDownloadJsonClick);
-
-        // --- Initialization ---
+        // Inicialización
         document.addEventListener('DOMContentLoaded', () => {
-            // Check for camera API compatibility
-            if (typeof navigator.mediaDevices === 'undefined' || typeof navigator.mediaDevices.getUserMedia === 'undefined') {
-                 showMessage("La API de la cámara no es compatible con este navegador.", 'error');
-                 startScanBtn.disabled = true;
-                 startScanBtn.classList.add('btn-disabled'); // Use general disabled style
-                 startScanBtn.textContent = 'Cámara no Soportada';
+            if (!navigator.mediaDevices?.getUserMedia) {
+                showMessage("La API de la cámara no es compatible con este navegador.", 'error');
+                startScanBtn.disabled = true;
+                startScanBtn.classList.add('btn-disabled');
+                startScanBtn.textContent = 'Cámara no Soportada';
             }
         });
 
-        // Stop scanner on page unload
         window.addEventListener('beforeunload', () => {
-            if (html5QrCode && html5QrCode.isScanning) {
-                stopScanning();
-                console.log("Attempted to stop scanner on page unload.");
-            }
+            if (html5QrCode && html5QrCode.isScanning) stopScanning();
         });
-
     </script>
 
 </body>
