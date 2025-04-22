@@ -32,7 +32,7 @@
             right: 0;
             width: 100%;
             height: 100%;
-           /* background-image: url('img/escudo_cuba_lineas_azul.png'); /* Placeholder */*/
+            background-image: url('img/escudo_cuba_lineas_azul.png');
             background-position: center 15px;
             background-repeat: no-repeat;
             opacity: 0.1;
@@ -109,6 +109,9 @@
             border-radius: 5px; cursor: pointer; font-size: 16px; transition: background-color 0.3s ease; margin: 5px;
         }
         button:hover { background-color: #0056b3; }
+        button:hover:enabled {
+            background-color: #0056b3;
+        }
 
         .residence-table { width: 100%; border-collapse: collapse; margin: 10px 0; font-size: 13px; }
         .residence-table th, .residence-table td { border: 1px solid #ddd; padding: 5px; text-align: left; }
@@ -872,7 +875,13 @@
             populateCountrySelects();
             const paisNacimientoSelect = document.getElementById('paisNacimiento'); if (paisNacimientoSelect) { paisNacimientoSelect.value = 'CU'; }
             fetch('https://ipapi.co/json/') .then(response => response.ok ? response.json() : Promise.reject('Failed to fetch IP info')) .then(data => { if (data && data.country_code) { const paisResidenciaSelect = document.getElementById('paisResidencia'); const paisResidenciaActualSelect = document.getElementById('paisResidenciaActual'); if (paisResidenciaSelect && !paisResidenciaSelect.value) { paisResidenciaSelect.value = data.country_code; paisResidenciaSelect.dispatchEvent(new Event('change')); } if (paisResidenciaActualSelect && !paisResidenciaActualSelect.value) { paisResidenciaActualSelect.value = data.country_code; } } }) .catch(error => { console.warn('Could not fetch IP info:', error); updateConsulados(); }) .finally(() => { handlePaisNacimientoChange(); updateConsulados(); });
-            document.getElementById('paisResidencia').addEventListener('change', updateConsulados); document.getElementById('paisNacimiento').addEventListener('change', handlePaisNacimientoChange); document.getElementById('fechaNacimiento').addEventListener('change', handlePaisNacimientoChange);
+            ['paisResidencia','paisNacimiento','fechaNacimiento'].forEach(id => {
+                const el = document.getElementById(id);
+                if (el) el.addEventListener('change', () => {
+                    if (id === 'paisResidencia') updateConsulados();
+                    if (id === 'paisNacimiento' || id === 'fechaNacimiento') handlePaisNacimientoChange();
+                });
+            });
             const referenceProvinciaSelect = document.getElementById('referenciaProvincia'); const referenciaMunicipioSelect = document.getElementById('referenciaMunicipio'); const currentProvinces = provinciasHistoricas.after2011; populateSelect(referenceProvinciaSelect, currentProvinces.map(p => ({ value: p.name.toLowerCase().replace(/\s+/g, '_'), textContent: p.name })), 'Seleccione provincia' ); referenceProvinciaSelect.addEventListener('change', function() { const selectedProvincia = currentProvinces.find(p => p.name.toLowerCase().replace(/\s+/g, '_') === this.value ); if (selectedProvincia) { populateSelect(referenciaMunicipioSelect, selectedProvincia.municipios.map(m => ({ value: m.toLowerCase().replace(/\s+/g, '_'), textContent: m })), 'Seleccione municipio' ); referenciaMunicipioSelect.disabled = false; } else { populateSelect(referenciaMunicipioSelect, [], 'Seleccione municipio'); referenciaMunicipioSelect.disabled = true; } });
         });
 
