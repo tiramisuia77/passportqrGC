@@ -23,6 +23,7 @@
             display: flex;
             flex-direction: column;
             align-items: center;
+            padding-bottom: 70px; /* Espacio para el footer */
         }
 
         body::before {
@@ -638,6 +639,66 @@
                 /* Añadido para reducir espacio vertical */
             }
         }
+
+        /* Estilo para el footer fijo */
+        .fixed-footer {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            background-color: #f8f9fa;
+            box-shadow: 0 -2px 10px rgba(0, 0, 0, 0.1);
+            padding: 10px 0;
+            text-align: center;
+            z-index: 1000;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            border-top: 1px solid #ddd;
+        }
+
+        .fixed-footer button {
+            margin: 0 10px;
+        }
+
+        @media print {
+            .fixed-footer {
+                display: none !important;
+            }
+        }
+
+        /* Media queries responsivas para el footer */
+        @media (max-width: 768px) {
+            body {
+                padding-bottom: 60px;
+            }
+            
+            .fixed-footer {
+                padding: 8px 0;
+            }
+            
+            .fixed-footer button {
+                padding: 8px 15px;
+                font-size: 14px;
+                margin: 0 5px;
+            }
+        }
+
+        @media (max-width: 480px) {
+            body {
+                padding-bottom: 50px;
+            }
+            
+            .fixed-footer {
+                padding: 6px 0;
+            }
+            
+            .fixed-footer button {
+                padding: 6px 12px;
+                font-size: 13px;
+                margin: 0 3px;
+            }
+        }
     </style>
 </head>
 
@@ -1117,7 +1178,8 @@
         </div>
     </div>
 
-    <div class="btn-container no-print">
+    <!-- Footer fijo con botones de acción -->
+    <div class="fixed-footer no-print">
         <button type="button" onclick="generatePDF()">Finalizar y Generar PDF</button>
         <button type="button" onclick="generateOnlyQR()" style="display: none;">Generar solo QR</button>
     </div>
@@ -1459,19 +1521,20 @@
 
         // Función común para generar el código QR
         function generateQR() {
-            // Recopilar todos los datos del formulario en un objeto JSON
-            const formDataObj = {};
+            // Recopilar solo los valores del formulario
+            const formValues = [];
             const formElements = document.querySelectorAll('input, select, textarea');
+            
             formElements.forEach(element => {
-                if (element.id &&
-                    element.id !== 'photoInput' &&
+                if (element.id && 
+                    element.id !== 'photoInput' && 
                     element.id !== 'signatureInput') {
-                    formDataObj[element.id] = element.value || '';
+                    formValues.push(element.value || '');
                 }
             });
 
             // Generar datos para el QR con codificación UTF-8 en formato JSON
-            const qrData = JSON.stringify(formDataObj);
+            const qrData = JSON.stringify(formValues);
             const encoder = new TextEncoder();
             const decoder = new TextDecoder('utf-8');
             const encodedData = encoder.encode(qrData);
