@@ -1,28 +1,38 @@
 <!DOCTYPE html>
-<html lang="en"
-  data-color-mode="auto" data-light-theme="light" data-dark-theme="dark"
-  data-a11y-animated-images="system" data-a11y-link-underlines="true">
+<html lang="es" data-color-mode="auto" data-light-theme="light" data-dark-theme="dark"
+    data-a11y-animated-images="system" data-a11y-link-underlines="true">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description"
+        content="Sistema de generación y lectura de códigos QR para pasaportes y trámites consulares">
+    <meta name="theme-color" content="#0066cc">
+    <link rel="icon" href="favicon.ico" type="image/x-icon">
     <title>Sistema de QR para Pasaportes</title>
+    <link rel="stylesheet" href="styles.css">
     <style>
         body {
             font-family: Arial, sans-serif;
             max-width: 800px;
             margin: 0 auto;
             padding: 20px;
+            line-height: 1.6;
         }
-        .header {
+
+        header {
             text-align: center;
             margin-bottom: 40px;
         }
+
         .shortcuts {
             display: flex;
             justify-content: center;
             gap: 20px;
             margin-bottom: 40px;
+            flex-wrap: wrap;
         }
+
         .shortcut-btn {
             padding: 15px 30px;
             font-size: 1.2em;
@@ -33,33 +43,54 @@
             cursor: pointer;
             text-decoration: none;
             transition: background 0.2s;
+            display: inline-block;
         }
-        .shortcut-btn:hover {
+
+        .shortcut-btn:hover,
+        .shortcut-btn:focus {
             background-color: #004a99;
         }
-        .footer {
+
+        footer {
             text-align: center;
             margin-top: 40px;
             color: #666;
             border-top: 1px solid #ddd;
             padding-top: 20px;
         }
+
+        @media (max-width: 600px) {
+            .shortcuts {
+                flex-direction: column;
+                align-items: center;
+            }
+
+            .shortcut-btn {
+                width: 100%;
+                text-align: center;
+            }
+        }
     </style>
 </head>
+
 <body>
-    <div class="header">
+    <header>
         <h1>Sistema de QR para Pasaportes</h1>
         <p>Bienvenido al sistema de generación y lectura de códigos QR para pasaportes</p>
-    </div>
+    </header>
 
-    <div class="shortcuts">
-        <a href="formulario_pasaporte.html" class="shortcut-btn">Solicitud de Tramites Consulares</a>
-        <a href="lector_QR_pasaporte.html" class="shortcut-btn">Lector de QR</a>
-    </div>
+    <main>
+        <nav class="shortcuts">
+            <a href="formulario_pasaporte.html" class="shortcut-btn"
+                aria-label="Ir a solicitud de trámites consulares">Solicitud de Trámites Consulares</a>
+            <a href="lector_QR_pasaporte.html" class="shortcut-btn" aria-label="Ir a lector de QR">Lector de QR</a>
+        </nav>
+    </main>
 
-    <div class="footer">
+    <footer>
         <p>Versión 1.0.0</p>
-        <p>Desarrollado para MINREX © 2024</p>
-    </div>
+        <p>Desarrollado para MINREX © <time datetime="2024">2024</time></p>
+    </footer>
 </body>
+
 </html>
