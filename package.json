@@ -1,0 +1,26 @@
+{
+  "name": "sistema-qr-pasaportes",
+  "version": "1.0.0",
+  "description": "Sistema de generación y lectura de códigos QR para pasaportes y trámites consulares",
+  "main": "index.html",
+  "scripts": {
+    "start": "serve",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [
+    "qr",
+    "pasaporte",
+    "consulado",
+    "tramites",
+    "cuba"
+  ],
+  "author": "",
+  "license": "MIT",
+  "dependencies": {
+    "qrcode": "^1.5.1",
+    "jspdf": "^2.5.1"
+  },
+  "devDependencies": {
+    "serve": "^14.2.0"
+  }
+}

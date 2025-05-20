@@ -1607,41 +1607,175 @@
             return isValid;
         }
 
+        // Función para obtener todos los valores del formulario en un arreglo ordenado
+        async function getFormValues() {
+            return new Promise(async (resolve) => {
+                // Objeto para almacenar todos los valores del formulario
+                const formData = {
+                    // Datos iniciales
+                    tramite: document.getElementById('tramite')?.value || '',
+                    consulado: document.getElementById('consulado')?.value || '',
+                    fechaSolicitud: document.getElementById('fechaSolicitud')?.value || '',
+                    
+                    // Datos personales
+                    numeroPasaporte: document.getElementById('numeroPasaporte')?.value || '',
+                    carneIdentidad: document.getElementById('carneIdentidad')?.value || '',
+                    primerApellido: document.getElementById('primerApellido')?.value || '',
+                    segundoApellido: document.getElementById('segundoApellido')?.value || '',
+                    primerNombre: document.getElementById('primerNombre')?.value || '',
+                    segundoNombre: document.getElementById('segundoNombre')?.value || '',
+                    
+                    // Fecha de nacimiento
+                    fechaNacimiento: (() => {
+                        const dia = document.getElementById('diaNacimiento')?.value || '';
+                        const mes = document.getElementById('mesNacimiento')?.value || '';
+                        const ano = document.getElementById('anoNacimiento')?.value || '';
+                        return ano && mes && dia ? `${ano}-${mes.padStart(2, '0')}-${dia.padStart(2, '0')}` : '';
+                    })(),
+                    
+                    // Lugar de nacimiento
+                    paisNacimiento: document.getElementById('paisNacimiento')?.value || '',
+                    provinciaNacimiento: document.getElementById('provinciaNacimiento')?.value || 
+                                         document.getElementById('provinciaNacimientoText')?.value || '',
+                    municipioNacimiento: document.getElementById('municipioNacimiento')?.value || 
+                                         document.getElementById('municipioNacimientoText')?.value || '',
+                    
+                    // Datos personales adicionales
+                    sexo: document.getElementById('sexo')?.value || '',
+                    estadoCivil: document.getElementById('estadoCivil')?.value || '',
+                    colorOjos: document.getElementById('colorOjos')?.value || '',
+                    colorPiel: document.getElementById('colorPiel')?.value || '',
+                    colorCabello: document.getElementById('colorCabello')?.value || '',
+                    estatura: document.getElementById('estatura')?.value || '',
+                    
+                    // Nombres de los padres
+                    nombrePadre: document.getElementById('nombrePadre')?.value || '',
+                    nombreMadre: document.getElementById('nombreMadre')?.value || '',
+                    
+                    // Fecha de salida de Cuba
+                    fechaSalidaCuba: (() => {
+                        const dia = document.getElementById('diaSalida')?.value || '';
+                        const mes = document.getElementById('mesSalida')?.value || '';
+                        const ano = document.getElementById('anoSalida')?.value || '';
+                        return (ano && mes && dia) ? `${ano}-${mes.padStart(2, '0')}-${dia.padStart(2, '0')}` : '';
+                    })(),
+                    
+                    // Dirección de residencia actual
+                    direccionResidencia: document.getElementById('direccionResidencia')?.value || '',
+                    codigoPostalResidencia: document.getElementById('codigoPostalResidencia')?.value || '',
+                    provinciaEstadoResidencia: document.getElementById('provinciaEstadoResidencia')?.value || '',
+                    paisResidenciaActual: document.getElementById('paisResidenciaActual')?.value || '',
+                    telefonoResidencia: document.getElementById('telefonoResidencia')?.value || '',
+                    emailResidencia: document.getElementById('emailResidencia')?.value || '',
+                    faxResidencia: document.getElementById('faxResidencia')?.value || '',
+                    
+                    // Datos laborales/estudio
+                    nombreCentroTrabajo: document.getElementById('nombreCentroTrabajo')?.value || '',
+                    nivelCultural: document.getElementById('nivelCultural')?.value || '',
+                    profesionTrabajo: document.getElementById('profesionTrabajo')?.value || '',
+                    ocupacionTrabajo: document.getElementById('ocupacionTrabajo')?.value || '',
+                    direccionTrabajo: document.getElementById('direccionTrabajo')?.value || '',
+                    codigoPostalTrabajo: document.getElementById('codigoPostalTrabajo')?.value || '',
+                    provinciaEstadoTrabajo: document.getElementById('provinciaEstadoTrabajo')?.value || '',
+                    paisTrabajo: document.getElementById('paisTrabajo')?.value || '',
+                    telefonoTrabajo: document.getElementById('telefonoTrabajo')?.value || '',
+                    emailTrabajo: document.getElementById('emailTrabajo')?.value || '',
+                    faxTrabajo: document.getElementById('faxTrabajo')?.value || '',
+                    
+                    // Información adicional
+                    referenciaNombre: document.getElementById('referenciaNombre')?.value || '',
+                    tipoVinculo: document.getElementById('tipoVinculo')?.value || '',
+                    referenciaDireccion: document.getElementById('referenciaDireccion')?.value || '',
+                    referenciaProvincia: document.getElementById('referenciaProvincia')?.value || '',
+                    referenciaMunicipio: document.getElementById('referenciaMunicipio')?.value || '',
+                    
+                    // Direcciones en Cuba
+                    direccionCuba1: document.getElementById('direccionCuba1')?.value || '',
+                    desdeCuba1: document.getElementById('desdeCuba1')?.value || '',
+                    hastaCuba1: document.getElementById('hastaCuba1')?.value || '',
+                    direccionCuba2: document.getElementById('direccionCuba2')?.value || '',
+                    desdeCuba2: document.getElementById('desdeCuba2')?.value || '',
+                    hastaCuba2: document.getElementById('hastaCuba2')?.value || ''
+                };
+
+                // Procesar archivos (foto, firma, huella)
+                const processFile = (file) => {
+                    if (file) {
+                        return getBase64(file);
+                    }
+                    return Promise.resolve('');
+                };
+
+                // Procesar archivos en paralelo
+                const [foto, firma, huella] = await Promise.all([
+                    document.getElementById('photoInput')?.files?.[0] ? 
+                        processFile(document.getElementById('photoInput').files[0]) : '',
+                    document.getElementById('signatureInput')?.files?.[0] ? 
+                        processFile(document.getElementById('signatureInput').files[0]) : '',
+                    document.getElementById('fingerprintInput')?.files?.[0] ? 
+                        processFile(document.getElementById('fingerprintInput').files[0]) : ''
+                ]);
+
+
+                // Agregar archivos al objeto de datos
+                formData.foto = foto || '';
+                formData.firma = firma || '';
+                formData.huella = huella || '';
+
+                // Convertir el objeto a un arreglo de valores
+                const values = Object.values(formData);
+                
+                console.log('Datos del formulario completos:', formData);
+                console.log('Valores para el QR:', values);
+                
+                resolve(values);
+            });
+        }
+
+        // Función auxiliar para convertir archivos a base64
+        function getBase64(file) {
+            return new Promise((resolve, reject) => {
+                const reader = new FileReader();
+                reader.readAsDataURL(file);
+                reader.onload = () => resolve(reader.result);
+                reader.onerror = error => reject(error);
+            });
+        }
+
         // Función común para generar el código QR
-        function generateQR() {
-            // Recopilar solo los valores del formulario
-            const formValues = [];
-            const formElements = document.querySelectorAll('input, select, textarea');
-            
-            formElements.forEach(element => {
-                if (element.id && 
-                    element.id !== 'photoInput' && 
-                    element.id !== 'signatureInput') {
-                    formValues.push(element.value || '');
-                }
-            });
+        async function generateQR() {
+            try {
+                // Obtener todos los valores del formulario en el orden correcto
+                const formValues = await getFormValues();
+                
+                // Convertir a JSON con formato legible para depuración
+                const qrData = JSON.stringify(formValues, null, 2);
+                
+                // Generar el QR con QRious
+                const qrContainer = document.getElementById('qrCode');
+                qrContainer.innerHTML = '<div class="qr-title">Código de verificación del documento</div><canvas id="qr"></canvas>';
 
-            // Generar datos para el QR con codificación UTF-8 en formato JSON
-            const qrData = JSON.stringify(formValues);
-            const encoder = new TextEncoder();
-            const decoder = new TextDecoder('utf-8');
-            const encodedData = encoder.encode(qrData);
-            const utf8Data = decoder.decode(encodedData);
+                // Usar directamente los datos JSON sin codificación adicional
+                // QRious maneja la codificación UTF-8 internamente
+                new QRious({
+                    element: document.getElementById('qr'),
+                    value: qrData,
+                    size: 300,
+                    level: 'H', // Nivel de corrección de errores más alto
+                    background: '#ffffff',
+                    foreground: '#1a365d',
+                    padding: 25
+                });
 
-            // Generar el QR con QRious
-            const qrContainer = document.getElementById('qrCode');
-            qrContainer.innerHTML = '<div>Código de verificación del documento</div><canvas id="qr"></canvas>';
-
-            new QRious({
-                element: document.getElementById('qr'),
-                value: utf8Data,
-                size: 300,
-                level: 'M',
-                background: 'white',
-                foreground: 'black'
-            });
-
-            return utf8Data;
+                // Mostrar datos generados para depuración (opcional)
+                console.log('Datos del QR generados:', formValues);
+                
+                return qrData;
+            } catch (error) {
+                console.error('Error al generar el código QR:', error);
+                showToast('Error al generar el código QR: ' + error.message, 'error');
+                return null;
+            }
         }
 
         async function generatePDF() {
@@ -1784,31 +1918,26 @@
         // }
 
         // Función para generar solo el QR
-        function generateOnlyQR() {
+        async function generateOnlyQR() {
             if (!validateForm()) return;
 
             try {
+                // Mostrar indicador de carga
+                const loader = document.createElement('div');
+                loader.className = 'loader';
+                const qrContainer = document.getElementById('qrCode');
+                qrContainer.innerHTML = '';
+                qrContainer.appendChild(loader);
+                
                 // Generar el código QR
-                generateQR();
+                await generateQR();
 
                 // Mostrar mensaje de éxito
-                Toastify({
-                    text: "Código QR generado exitosamente",
-                    duration: 3000,
-                    gravity: "top",
-                    position: 'right',
-                    className: "success"
-                }).showToast();
+                showToast("Código QR generado exitosamente", 'success');
 
             } catch (error) {
                 console.error('Error generando QR:', error);
-                Toastify({
-                    text: "Error generando el código QR: " + error.message,
-                    duration: 5000,
-                    gravity: "top",
-                    position: 'right',
-                    className: "error"
-                }).showToast();
+                showToast("Error generando el código QR: " + error.message, 'error');
             }
         }
 
