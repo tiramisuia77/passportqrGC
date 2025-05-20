@@ -1473,58 +1473,6 @@
             { code: '255', name: 'LIBIA' },
             { code: '256', name: 'SUDAN DEL SUR' }
         ];
-
-        // Crear un mapa de códigos ISO a códigos numéricos
-        const isoToNumericCode = {
-            'CU': '1', 'GF': '5', 'GN': '6', 'GW': '7', 'GQ': '8', 'GY': '9',
-            'HT': '10', 'HN': '11', 'HK': '12', 'HU': '13', 'IN': '14', 'ID': '15',
-            'IR': '16', 'IQ': '17', 'IE': '18', 'BV': '19', 'CX': '20', 'NF': '21',
-            'IS': '22', 'KY': '23', 'CC': '24', 'CK': '25', 'FO': '26', 'HM': '27',
-            'FK': '28', 'MP': '29', 'MH': '30', 'UM': '31', 'SB': '32', 'SJ': '33',
-            'TC': '34', 'VI': '35', 'VG': '36', 'WF': '37', 'IL': '38', 'IT': '39',
-            'LY': '40', 'JM': '41', 'JP': '42', 'JO': '43', 'KZ': '44', 'KE': '45',
-            'KG': '46', 'KI': '47', 'KW': '48', 'MK': '49', 'LS': '50', 'LV': '51',
-            'LB': '52', 'LR': '53', 'LI': '54', 'LT': '55', 'LU': '56', 'MO': '57',
-            'MG': '58', 'MY': '59', 'MW': '60', 'MV': '61', 'ML': '62', 'MT': '63',
-            'MA': '64', 'MQ': '65', 'MU': '66', 'MR': '67', 'YT': '68', 'MX': '69',
-            'FM': '70', 'MC': '71', 'MN': '72', 'MS': '73', 'MZ': '74', 'MM': '75',
-            'NA': '76', 'NR': '77', 'NP': '78', 'NI': '79', 'NE': '80', 'NG': '81',
-            'NU': '82', 'NO': '83', 'NC': '84', 'NZ': '85', 'OM': '86', 'AF': '87',
-            'AL': '88', 'DE': '89', 'AD': '90', 'AO': '91', 'AI': '92', 'AQ': '93',
-            'AG': '94', 'AN': '95', 'SA': '96', 'DZ': '97', 'AR': '98', 'AM': '99',
-            'AW': '100', 'AU': '101', 'AT': '102', 'AZ': '103', 'BS': '104', 'BH': '105',
-            'BD': '106', 'BB': '107', 'BY': '108', 'BE': '109', 'BZ': '110', 'BJ': '111',
-            'BM': '112', 'BT': '113', 'BO': '114', 'BA': '115', 'BW': '116', 'BR': '117',
-            'BN': '118', 'BG': '119', 'BF': '120', 'BI': '121', 'CV': '122', 'KH': '123',
-            'CM': '124', 'CA': '125', 'TD': '126', 'CL': '127', 'CN': '128', 'CY': '129',
-            'CO': '130', 'KM': '131', 'CG': '132', 'CR': '133', 'CI': '134', 'HR': '135',
-            'GT': '136', 'DK': '137', 'DJ': '138', 'DM': '139', 'EC': '140', 'EG': '141',
-            'SV': '142', 'AE': '143', 'SK': '144', 'ER': '145', 'SI': '146', 'ES': '147',
-            'VA': '148', 'US': '149', 'EE': '150', 'ET': '151', 'RU': '152', 'FJ': '153',
-            'PH': '154', 'FI': '155', 'FR': '156', 'FX': '157', 'GA': '158', 'GM': '159',
-            'GE': '160', 'GH': '161', 'GI': '162', 'GD': '163', 'GR': '164', 'GL': '165',
-            'GP': '166', 'GC': '167', 'NL': '168', 'PK': '169', 'PW': '170', 'PA': '171',
-            'PG': '172', 'PY': '173', 'PE': '174', 'PN': '175', 'PF': '176', 'PL': '177',
-            'PT': '178', 'PR': '179', 'QA': '180', 'GB': '181', 'SY': '187', 'CZ': '189',
-            'CD': '191', 'LA': '192', 'DO': '194', 'KP': '195', 'TZ': '196', 'RE': '197',
-            'RO': '198', 'RW': '199', 'EH': '200', 'KN': '201', 'WS': '202', 'AS': '203',
-            'SM': '204', 'VC': '205', 'SH': '206', 'LC': '207', 'ST': '208', 'SN': '209',
-            'SC': '210', 'SL': '211', 'SG': '212', 'SO': '213', 'LK': '214', 'PM': '215',
-            'ZA': '216', 'SD': '217', 'SE': '218', 'CH': '219', 'SR': '220', 'SZ': '221',
-            'TH': '222', 'TW': '223', 'TJ': '224', 'TL': '228', 'TG': '229', 'TK': '230',
-            'TO': '231', 'TT': '232', 'TN': '233', 'TM': '234', 'TR': '235', 'TV': '236',
-            'UA': '237', 'UG': '238', 'UY': '239', 'UZ': '240', 'VU': '241', 'VE': '242',
-            'VN': '243', 'YE': '244', 'RS': '245', 'ZM': '246', 'ZW': '247', 'IO': '248',
-            'CF': '249', 'GU': '250', 'MD': '251', 'GS': '252', 'KR': '253', 'PS': '254',
-            'SS': '256'
-        };
-
-        // Crear el mapa inverso (de numérico a ISO)
-        const numericToIsoCode = {};
-        Object.entries(isoToNumericCode).forEach(([isoCode, numericCode]) => {
-            numericToIsoCode[numericCode] = isoCode;
-        });
-
         const provinciasHistoricas = { /* Full list omitted for brevity - assumed present */
             before1976: [{
                 code: '1001', name: 'Pinar del Río', municipios: [
@@ -2070,7 +2018,7 @@
             { code: '55', name: 'WASHINGTON (HAVANATUR)' },
             { code: '56', name: 'HOLANDA' },
             { code: '57', name: 'HONDURAS' },
-            { code: '58', name: 'Islas Canarias' },
+            { code: '58', name: 'CANARIAS ISLAS' },
             { code: '59', name: 'INDONESIA' },
             { code: '60', name: 'INDIA' },
             { code: '61', name: 'GRAN BRETAÑA' },
@@ -2183,23 +2131,9 @@
             const selectedCountryCode = paisResidenciaSelect.value;
             let optionsToShow = [];
 
-            console.log("País seleccionado (código numérico):", selectedCountryCode);
-
-            // Obtener el código ISO correspondiente al código numérico seleccionado
-            const isoCode = numericToIsoCode[selectedCountryCode];
-            console.log("Código ISO correspondiente:", isoCode);
-            console.log("Consulados disponibles para este ISO:", consuladosPorPaisISO[isoCode]);
-
-            if (!isoCode && selectedCountryCode) {
-                console.error("No se encontró código ISO para el código numérico:", selectedCountryCode);
-                // Mostrar una alerta visual para depuración
-                alert("Error: No se encontró código ISO para el país seleccionado (código " + selectedCountryCode + ")");
-            }
-
-            if (selectedCountryCode && isoCode && consuladosPorPaisISO[isoCode]) {
-                // Usar los consulados del país seleccionado usando su código ISO
-                const consuladosPais = consuladosPorPaisISO[isoCode].sort((a, b) => a.localeCompare(b));
-                console.log("Consulados encontrados para", isoCode, ":", consuladosPais);
+            if (selectedCountryCode && consuladosPorPaisISO[selectedCountryCode]) {
+                // Usar los consulados del país seleccionado
+                const consuladosPais = consuladosPorPaisISO[selectedCountryCode].sort((a, b) => a.localeCompare(b));
 
                 optionsToShow = consuladosPais.map(nombreConsulado => {
                     // Buscar si existe un código para este consulado
@@ -2219,7 +2153,6 @@
 
                 consuladoSelect.disabled = false;
             } else if (selectedCountryCode) {
-                console.log("No se encontraron consulados específicos, mostrando todos los consulados");
                 // Mostrar todos los consulados si no hay consulados específicos para el país seleccionado
                 optionsToShow = consulados.map(c => ({
                     value: c.code,
@@ -2293,6 +2226,51 @@
             populateCountrySelects();
             const paisNacimientoSelect = document.getElementById('paisNacimiento'); if (paisNacimientoSelect) { paisNacimientoSelect.value = '1'; }
 
+            // Crear un mapa de códigos ISO a nuevos códigos numéricos
+            const isoToNumericCode = {
+                'CU': '1', 'GF': '5', 'GN': '6', 'GW': '7', 'GQ': '8', 'GY': '9',
+                'HT': '10', 'HN': '11', 'HK': '12', 'HU': '13', 'IN': '14', 'ID': '15',
+                'IR': '16', 'IQ': '17', 'IE': '18', 'BV': '19', 'CX': '20', 'NF': '21',
+                'IS': '22', 'KY': '23', 'CC': '24', 'CK': '25', 'FO': '26', 'HM': '27',
+                'FK': '28', 'MP': '29', 'MH': '30', 'UM': '31', 'SB': '32', 'SJ': '33',
+                'TC': '34', 'VI': '35', 'VG': '36', 'WF': '37', 'IL': '38', 'IT': '39',
+                'LY': '40', 'JM': '41', 'JP': '42', 'JO': '43', 'KZ': '44', 'KE': '45',
+                'KG': '46', 'KI': '47', 'KW': '48', 'MK': '49', 'LS': '50', 'LV': '51',
+                'LB': '52', 'LR': '53', 'LI': '54', 'LT': '55', 'LU': '56', 'MO': '57',
+                'MG': '58', 'MY': '59', 'MW': '60', 'MV': '61', 'ML': '62', 'MT': '63',
+                'MA': '64', 'MQ': '65', 'MU': '66', 'MR': '67', 'YT': '68', 'MX': '69',
+                'FM': '70', 'MC': '71', 'MN': '72', 'MS': '73', 'MZ': '74', 'MM': '75',
+                'NA': '76', 'NR': '77', 'NP': '78', 'NI': '79', 'NE': '80', 'NG': '81',
+                'NU': '82', 'NO': '83', 'NC': '84', 'NZ': '85', 'OM': '86', 'AF': '87',
+                'AL': '88', 'DE': '89', 'AD': '90', 'AO': '91', 'AI': '92', 'AQ': '93',
+                'AG': '94', 'AN': '95', 'SA': '96', 'DZ': '97', 'AR': '98', 'AM': '99',
+                'AW': '100', 'AU': '101', 'AT': '102', 'AZ': '103', 'BS': '104', 'BH': '105',
+                'BD': '106', 'BB': '107', 'BY': '108', 'BE': '109', 'BZ': '110', 'BJ': '111',
+                'BM': '112', 'BT': '113', 'BO': '114', 'BA': '115', 'BW': '116', 'BR': '117',
+                'BN': '118', 'BG': '119', 'BF': '120', 'BI': '121', 'CV': '122', 'KH': '123',
+                'CM': '124', 'CA': '125', 'TD': '126', 'CL': '127', 'CN': '128', 'CY': '129',
+                'CO': '130', 'KM': '131', 'CG': '132', 'CR': '133', 'CI': '134', 'HR': '135',
+                'GT': '136', 'DK': '137', 'DJ': '138', 'DM': '139', 'EC': '140', 'EG': '141',
+                'SV': '142', 'AE': '143', 'SK': '144', 'ER': '145', 'SI': '146', 'ES': '147',
+                'VA': '148', 'US': '149', 'EE': '150', 'ET': '151', 'RU': '152', 'FJ': '153',
+                'PH': '154', 'FI': '155', 'FR': '156', 'FX': '157', 'GA': '158', 'GM': '159',
+                'GE': '160', 'GH': '161', 'GI': '162', 'GD': '163', 'GR': '164', 'GL': '165',
+                'GP': '166', 'GC': '167', 'NL': '168', 'PK': '169', 'PW': '170', 'PA': '171',
+                'PG': '172', 'PY': '173', 'PE': '174', 'PN': '175', 'PF': '176', 'PL': '177',
+                'PT': '178', 'PR': '179', 'QA': '180', 'GB': '181', 'SY': '187', 'CZ': '189',
+                'CD': '191', 'LA': '192', 'DO': '194', 'KP': '195', 'TZ': '196', 'RE': '197',
+                'RO': '198', 'RW': '199', 'EH': '200', 'KN': '201', 'WS': '202', 'AS': '203',
+                'SM': '204', 'VC': '205', 'SH': '206', 'LC': '207', 'ST': '208', 'SN': '209',
+                'SC': '210', 'SL': '211', 'SG': '212', 'SO': '213', 'LK': '214', 'PM': '215',
+                'ZA': '216', 'SD': '217', 'SE': '218', 'CH': '219', 'SR': '220', 'SZ': '221',
+                'TH': '222', 'TW': '223', 'TJ': '224', 'TL': '228', 'TG': '229', 'TK': '230',
+                'TO': '231', 'TT': '232', 'TN': '233', 'TM': '234', 'TR': '235', 'TV': '236',
+                'UA': '237', 'UG': '238', 'UY': '239', 'UZ': '240', 'VU': '241', 'VE': '242',
+                'VN': '243', 'YE': '244', 'RS': '245', 'ZM': '246', 'ZW': '247', 'IO': '248',
+                'CF': '249', 'GU': '250', 'MD': '251', 'GS': '252', 'KR': '253', 'PS': '254',
+                'SS': '256'
+            };
+
             fetch('https://ipapi.co/json/').then(response => response.ok ? response.json() : Promise.reject('Failed to fetch IP info')).then(data => {
                 if (data && data.country_code) {
                     const paisResidenciaSelect = document.getElementById('paisResidencia');
@@ -2318,21 +2296,10 @@
                 updateConsulados();
             });
 
-            // Asegurar que el evento change esté correctamente configurado para paisResidencia
-            const paisResidenciaSelect = document.getElementById('paisResidencia');
-            if (paisResidenciaSelect) {
-                // Eliminar cualquier manejador de eventos existente para evitar duplicados
-                paisResidenciaSelect.removeEventListener('change', updateConsulados);
-                // Agregar el manejador de eventos
-                paisResidenciaSelect.addEventListener('change', function () {
-                    console.log("Evento change detectado en País de Residencia");
-                    updateConsulados();
-                });
-            }
-
-            ['paisNacimiento', 'fechaNacimiento'].forEach(id => {
+            ['paisResidencia', 'paisNacimiento', 'fechaNacimiento'].forEach(id => {
                 const el = document.getElementById(id);
                 if (el) el.addEventListener('change', () => {
+                    if (id === 'paisResidencia') updateConsulados();
                     if (id === 'paisNacimiento' || id === 'fechaNacimiento') handlePaisNacimientoChange();
                 });
             });
