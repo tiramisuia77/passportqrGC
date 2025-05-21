@@ -4,7 +4,7 @@ Este documento describe la estructura de datos que se codifica en el código QR 
 
 ## Estructura del Arreglo
 
-El código QR contiene un arreglo de cadenas de texto donde cada posición tiene un significado específico. A continuación se detalla cada posición del arreglo:
+El código QR contiene un arreglo de cadenas de texto donde cada posición tiene un significado específico. Los campos de imagen (foto, firma y huella) ya no se incluyen en el código QR. A continuación se detalla cada posición del arreglo:
 
 | Índice | Nombre del Campo | Tipo | Descripción |
 |--------|------------------|------|-------------|
@@ -17,7 +17,7 @@ El código QR contiene un arreglo de cadenas de texto donde cada posición tiene
 | 6 | segundoApellido | String | Segundo apellido del solicitante |
 | 7 | primerNombre | String | Primer nombre del solicitante |
 | 8 | segundoNombre | String | Segundo nombre del solicitante |
-| 9 | fechaNacimiento | Date (YYYY-MM-DD) | Fecha de nacimiento |
+| 9 | fechaNacimiento | Date (YYYY-MM-DD) | Fecha de nacimiento en formato ISO (AAAA-MM-DD). Se valida que sea una fecha válida. Si no se especifica, se usará '1900-01-01' como valor por defecto. |
 | 10 | paisNacimiento | String | País de nacimiento |
 | 11 | provinciaNacimiento | String | Provincia de nacimiento |
 | 12 | municipioNacimiento | String | Municipio de nacimiento |
@@ -59,13 +59,10 @@ El código QR contiene un arreglo de cadenas de texto donde cada posición tiene
 | 48 | direccionCuba2 | String | Segunda dirección en Cuba |
 | 49 | desdeCuba2 | String | Fecha desde (segunda dirección) |
 | 50 | hastaCuba2 | String | Fecha hasta (segunda dirección) |
-| 51 | foto | Base64 | Imagen de la foto en formato Base64 |
-| 52 | firma | Base64 | Imagen de la firma en formato Base64 |
-| 53 | huella | Base64 | Imagen de la huella en formato Base64 |
 
 ## Ejemplo del Arreglo QR
 
-A continuación se muestra un ejemplo del arreglo que se generaría al escanear el código QR:
+A continuación se muestra un ejemplo del arreglo que se generaría al escanear el código QR (sin incluir las imágenes):
 
 ```javascript
 [
@@ -119,20 +116,109 @@ A continuación se muestra un ejemplo del arreglo que se generaría al escanear 
   "2010",
   "Calle 20 #456, Miramar",
   "2010",
-  "2015",
-  "data:image/jpeg;base64,/9j/4AAQSkZJRgABAQ...",
-  "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAA...",
-  "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAA..."
+  "2015"
 ]
 ```
 
 ## Notas Importantes
 
-1. Los campos de imágenes (foto, firma, huella) se codifican en formato Base64.
-2. Las fechas siguen el formato ISO (YYYY-MM-DD).
-3. Los campos opcionales que no se completen aparecerán como cadenas vacías ("").
-4. Para los campos de selección múltiple, los valores se concatenan separados por comas.
-5. Las direcciones en Cuba incluyen la dirección y los períodos de residencia.
+1. Los campos de imágenes (foto, firma, huella) **ya no se incluyen** en el código QR.
+2. Las fechas siguen el formato ISO (YYYY-MM-DD) y se validan para asegurar que sean fechas válidas.
+3. La fecha de nacimiento se valida de la siguiente manera:
+   - Si algún campo (día, mes, año) está vacío, se usan valores por defecto (01/01/1900)
+   - Los valores se convierten a números enteros
+   - Se formatean siempre con dos dígitos para día y mes
+4. Los campos opcionales que no se completen aparecerán como cadenas vacías ("").
+5. Para los campos de selección múltiple, los valores se concatenan separados por comas.
+6. Las direcciones en Cuba incluyen la dirección y los períodos de residencia.
+
+## Nomencladores
+
+A continuación se detallan los valores permitidos para cada campo de selección en el formulario:
+
+### Sexo
+- `masculino`: M
+- `femenino`: F
+
+### Color de Ojos
+- `6`: NEGROS
+- `7`: AZULES
+- `512`: PARDOS
+- `513`: VERDES
+- `514`: CLAROS
+
+### Color de Piel
+- `3`: BLANCA
+- `4`: NEGRA
+- `5`: MESTIZA
+- `203`: ALBINA
+- `204`: AMARILLA
+
+### Color de Cabello
+- `12`: NEGRO
+- `13`: RUBIO
+- `14`: ROJO
+- `15`: CASTAÑO
+- `17`: CAOBA
+- `18`: OTRO
+- `205`: CANOSO
+
+### Estado Civil
+- `21`: CASADO
+- `22`: SOLTERO
+- `504`: DIVORCIADO
+- `505`: VIUDO
+- `506`: SEPARADO
+
+### Nivel Cultural
+- `23`: UNIVERSITARIO
+- `25`: TEC. MEDIO
+- `508`: PRIMARIO
+- `509`: SECUNDARIO
+- `510`: PRE-UNIVERSITARIO
+- `511`: ANALFABETO
+
+### Profesión
+- `861`: Abogado
+- `862`: Ama de Casa
+- `863`: Artista
+- `864`: Campesino
+- `865`: Científico
+- `866`: Comerciante
+- `867`: Deportista
+- `868`: Diplomático
+- `869`: Empleado
+- `870`: Empresario
+- `871`: Enfermera
+- `872`: Escritor
+- `873`: Estudiante
+- `874`: Funcionario
+- `875`: Informático Superior
+- `876`: Informático Técnico
+- `877`: Ingeniero
+- `878`: Intelectual
+- `879`: Licenciado
+- `880`: Maestro
+- `881`: Médico
+- `882`: Obrero
+- `883`: Periodista
+- `884`: Político
+- `885`: Profesor
+- `886`: Religioso
+- `887`: Técnico
+- `1952`: Otra
+
+### Tipo de Vínculo
+- `280`: ESPOSO(A)
+- `281`: ABUELO(A)
+- `282`: VECINO(A)
+- `283`: REPRESENTANTE LEGAL
+- `284`: PADRE
+- `285`: MADRE
+- `286`: HERMANO(A)
+- `287`: TRABAJADOR SOCIAL
+- `288`: PRIMO(A)
+- `289`: TIO(A)
 
 ## Validación de Datos
 
